@@ -23,7 +23,8 @@ return [
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
-            'name' => 'advanced-backend',
+            'name' => 'newdsp',
+            'timeout'   => 18000
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -31,20 +32,51 @@ return [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/error/' . date('Ymd') . '.log',// 错误日志目录
+                    'logVars' => [],
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['dsp'],
+                    'logFile' => '@runtime/logs/dsp/' . date('Ymd') . '.log',// 操作日志目录
+                    'logVars' => [],
                 ],
             ],
         ],
+        // language
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@backend/messages',
+                    'sourceLanguage' => 'en-US',
+                    'fileMap' => [
+                        //'group'     =>  'group.php',
+                        //'login' => 'login.php',
+                    ],
+                ],
+            ],
+        ],
+
+        //js css 增加参数,用于更新
+        'assetManager' => [
+            'class' => 'yii\web\AssetManager',
+            'appendTimestamp' => true,
+            'forceCopy' => false,
+        ],
+
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+
     ],
     'params' => $params,
 ];

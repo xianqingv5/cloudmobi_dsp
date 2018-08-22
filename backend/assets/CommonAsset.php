@@ -18,7 +18,6 @@ class CommonAsset extends AssetBundle
 		// 'assets/bootstrap-4.1.3-dist/css/bootstrap.min.css',
 		'assets/element-ui@2.4.6/index.css',
 		'css/base.css',
-		'css/common.css',
 	];
 
 	//js 文件数组

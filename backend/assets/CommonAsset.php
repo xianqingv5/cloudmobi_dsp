@@ -5,7 +5,7 @@ use yii\web\AssetBundle;
 
 /**
 *	静态资源加载公共类
-*	2016/9/20
+*	2018/08/22
 *
 */
 class CommonAsset extends AssetBundle
@@ -18,11 +18,11 @@ class CommonAsset extends AssetBundle
 		// 'assets/bootstrap-4.1.3-dist/css/bootstrap.min.css',
 		'assets/element-ui@2.4.6/index.css',
 		'css/base.css',
+		'css/common.css',
 	];
 
 	//js 文件数组
 	public $js = [
-		// 'js/jquery.3.3.1.js',
 		// 'assets/bootstrap-4.1.3-dist/js/bootstrap.min.js',
 		'js/vue.2.5.17.js',
 		'assets/element-ui@2.4.6/index.js',

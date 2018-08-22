@@ -24,24 +24,38 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <script src='//at.alicdn.com/t/font_528644_01xn979qizkqehfr.js'></script>
 </head>
 <body>
-<?php $this->beginBody() ?>
-<!-- 页面头部开始 -->
-<nav>
-<?php
-    echo $this->render('top');
-?>
-</nav>
-<!-- 页面头部结束 -->
-<div class="wrap">
-    <?php
-        echo $this->render('left');
-    ?>
-</div>
-
-<footer class="footer">
-    footer
-</footer>
+    <?php $this->beginBody() ?>
+    <div class="wrap wrapper">
+        <div class='navbarDocker'>
+            <?php
+                echo $this->render('top');
+            ?>
+        </div>
+        <div class='sidebarDocker'>
+            <?php
+                echo $this->render('left');
+            ?>
+        </div>
+        <div class='mainDocker'>
+            <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
+                <el-breadcrumb separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+                    <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+<script>
+    var mainVm = new Vue({
+        el: '.wrapper'
+    })
+</script>
+<?php $this->endBody() ?>
+<?php $this->endPage() ?>

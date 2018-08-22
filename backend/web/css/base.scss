@@ -1,4 +1,3 @@
-@import url('./element-ui@2.0.11.css');
 // 屏幕尺寸
 $size: 24;
 $size-l: 1200px;
@@ -94,7 +93,6 @@ $y) {
 .jcsb {
   justify-content: space-between !important;
 }
-
 @mixin margin ($x,
 $y) {
   @if $y=='' {

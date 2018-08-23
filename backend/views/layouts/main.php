@@ -24,50 +24,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <script src='//at.alicdn.com/t/font_528644_01xn979qizkqehfr.js'></script>
-<style>
-.wrapper img{
-width: 100%;
-height: auto;
-}
-.wrapper{
-display: grid;
-grid-auto-columns: 230px 1fr;
-grid-auto-rows: 50px 1fr;
-margin: 0 !important;
-padding: 0 !important;
-}
-.breadcrumbDocker{
-height: 50px;
-padding-left: 38px;
-border-top: 1px solid #e0e0e0;
-border-bottom: 1px solid #e0e0e0;
-}
-.navbarDocker{
-width: 100%;
-height: 50px;
-grid-column-start: 1;
-grid-column-end: 3;
-}
-.signOut{
-padding: 0 50px;
-border-left: 1px solid #ccc;
-}
-.userIcon{
-padding: 0 20px;
-}
-.navLeft{
-width: 230px;
-height: 100%;
-}
-.sidebarDocker{
-background: #1f2637;
-}
-.sidebarBox{
-    padding-top: 20px;
-    color: #cfd0d2;
-}
-</style>
+    <script src='//at.alicdn.com/t/font_528644_s64g3a7fpd.js'></script>
 </head>
 <body>
     <?php $this->beginBody() ?>

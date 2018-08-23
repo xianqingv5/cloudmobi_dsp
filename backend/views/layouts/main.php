@@ -26,28 +26,9 @@ AppAsset::register($this);
     <?php $this->head() ?>
     <script src='//at.alicdn.com/t/font_528644_01xn979qizkqehfr.js'></script>
 <style>
-.icon {
-width: 1em; height: 1em;
-vertical-align: -0.15em;
-fill: currentColor;
-overflow: hidden;
-}
-img{
+.wrapper img{
 width: 100%;
 height: auto;
-}
-.h100{
-height: 100%;
-}
-a{
-text-decoration: none;
-color: #606266 !important;
-}
-a:focus{
-text-decoration: none;
-}
-.jc-btween{
-justify-content: space-between;
 }
 .wrapper{
 display: grid;

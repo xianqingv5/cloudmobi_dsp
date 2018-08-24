@@ -14,7 +14,8 @@ return [
     'modules' => [],
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-backend',
+            'csrfParam' => 'dsp_security_param',
+            'cookieValidationKey' => '39msbiRD13_UgQpp6cQ3b6gdjyAaZfoq',
         ],
         'user' => [
             'identityClass' => 'common\models\User',

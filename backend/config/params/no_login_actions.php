@@ -3,4 +3,6 @@
 return [
     'site/login',
     'site/logout',
+    'site/language',
+    'group/group-index'
 ];

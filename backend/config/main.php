@@ -74,6 +74,10 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'admin/login/index' => 'site/login',
+
+                // group
+                'admin/group/index' => 'group/group-index',
             ],
         ],
 

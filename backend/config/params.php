@@ -16,6 +16,17 @@ return [
         'advs'          => 4,
     ],
 
+    // 区分不同的组的home_url
+    'HOME_URL_BY_ROLE'      => [
+        '1' => 'dashboard/index',
+        '2' => 'dashboard/index',
+        '3' => '',
+        '4' => '',
+    ],
+
     // 无需登录即可访问方法
     'NO_LOGIN_ACTIONS' => require 'params/no_login_actions.php',
+
+    // 需要记录操作的方法
+    'LOG_RECORD_METHOD' => require 'params/record_log.php',
 ];

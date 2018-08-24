@@ -28,6 +28,11 @@ AppAsset::register($this);
 </head>
 <body>
     <?php $this->beginBody() ?>
+
+<!-- <div class="wrap full">
+    <?= $content ?>
+</div> -->
+    <?php $this->beginBody() ?>
     <div class="wrap wrapper">
         <div class='navbarDocker'>
             <?php

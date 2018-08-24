@@ -14,3 +14,4 @@
     <a class='signOut' href="">Sign Out</a>
   </div>
 </div>
+<input name="dsp_security_param" id="spp_security" type="hidden"  value="<?= Yii::$app->request->csrfToken ?>">

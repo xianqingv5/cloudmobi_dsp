@@ -14,8 +14,8 @@
       <th>Group Name</th>
       <th>Operation</th>
     </thead>
-    <tbody>
-      <tr v-for='(item, index) in handleList'>
+    <tbody is='transition-group' name='list'>
+      <tr v-for='(item, index) in handleList' :key='item.id'>
         <td v-text='item.id'></td>
         <td v-text='item.group_name'></td>
         <td>
@@ -107,7 +107,10 @@
     },
     computed: {
       handleList () {
-        return  this.form.list
+        var vm = this
+        return  this.form.list.filter(function (ele) {
+          return ele.group_name.toLowerCase().indexOf(vm.form.search.toLowerCase()) !== -1
+        })
       }
     },
     methods: {

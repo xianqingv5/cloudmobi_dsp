@@ -1,5 +1,19 @@
 <div class='sidebarBox'>
   <ul class='sidebar-ul'>
+    <li>
+      <!-- title -->
+      <a class='sidebar-title flex jcsb'>
+        <div class='flex'>
+          <span class='sidebar-icon'>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-quanxianguanli"></use>
+            </svg>
+          </span>
+          <span>Group List</span>
+        </div>
+        <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
+      </a>
+    </li>
     <li class='act'>
       <!-- title -->
       <a class='sidebar-title flex jcsb' href=''>

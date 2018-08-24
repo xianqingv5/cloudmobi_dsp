@@ -17,7 +17,7 @@ class GroupController extends BaseController
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
             Yii::$app->response->format = Response::FORMAT_JSON;// 设置响应数据类型
             $data = GroupService::getGroupData();
-            return GroupService::getGroupData();
+            return $data;
         }
 
         return $this->render('group-index', []);

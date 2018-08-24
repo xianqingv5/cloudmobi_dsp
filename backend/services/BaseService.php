@@ -59,12 +59,17 @@ class BaseService
 
     /**
      * 获取组信息
-     * @param $group_id
+     * @param int $group_id
+     * @param array $fields
      * @return array|string
      */
-    public static function getGroupData($group_id)
+    public static function getGroupData($group_id = 0, $fields = ['*'])
     {
-        $res = UserGroup::getData(['*'], ["id='" . $group_id . "'"]);
+        $where = ['1=1'];
+        if ($group_id) {
+            $where['id'] = ["id='" . $group_id . "'"];
+        }
+        $res = UserGroup::getData($fields, $where);
         return $res;
     }
 

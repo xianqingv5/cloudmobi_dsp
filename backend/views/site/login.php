@@ -10,26 +10,35 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class='check_language'>
+        <a id='en_us' href="<?php echo Yii::$app->urlManager->createUrl(['/base/language','lang'=>'en']);?>">English</a>
+        <span>|</span>
+        <a id='ja' href="<?php echo Yii::$app->urlManager->createUrl(['/base/language','lang'=>'ja-JP']);?>">日本語</a>
+        <span>|</span>
+        <a id='zh_cn' href="<?php echo Yii::$app->urlManager->createUrl(['/base/language','lang'=>'zh-CN']);?>">中文</a>
+    </div>
+    <div class='full flex'>
+        <div class="site-login">
+            <a href='index' class='w100 imgBox flex mb-20'>
+                <img src="/images/new_login_logo.png" alt="">
+            </a>
+            <p>Effectively improve your revenue</p>
 
-    <p>Please fill out the following fields to login:</p>
+            <div class="col-auto-24 pb-40">
+                <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+                    <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                    <?= $form->field($model, 'password')->passwordInput() ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
+                    <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
-                <?= $form->field($model, 'rememberMe')->checkbox() ?>
+                    <div class="form-group">
+                        <?= Html::submitButton('Login', ['class' => 'w100 btn btn-primary', 'name' => 'login-button']) ?>
+                    </div>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
+                <?php ActiveForm::end(); ?>
+            </div>
         </div>
     </div>
-</div>
+

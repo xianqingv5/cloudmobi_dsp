@@ -59,7 +59,14 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if (!Yii::$app->user->isGuest)
+        {
+            //$this->redirectHomeUrl();
+        }
+        else
+        {
+            Yii::$app->getResponse()->redirect('/site/login');
+        }
     }
 
     /**

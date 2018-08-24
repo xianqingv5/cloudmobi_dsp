@@ -58,20 +58,24 @@ height: 100%;
 .sidebarDocker{
     background: #1f2637;
 }
-.sidebarBox{
-    color: #cfd0d2;
+.sidebarBox a{
+    color: #cfd0d2 !important;
 }
 .sidebar-title{
-    padding: 5px 0;
+    padding: 10px 0;
+    background: #161b28;
 }
 .sidebar-icon-title-right{
     margin-right: 10px;
 }
-.sidebar-icon-title-right-act{
+.act .sidebar-title{
+    background: #000;
+}
+.act .sidebar-icon-title-right{
     transform: rotateZ(180deg);
 }
-.sidebar-ul{
-    padding: 5px 0;
+.act .sidebar-con{
+    height: auto;
 }
 .sidebar-icon{
     font-size: 24px;
@@ -82,9 +86,6 @@ height: 100%;
     background: #161b28;
     height: 0;
     overflow: hidden;
-}
-.sidebar-con-act{
-    height: auto;
 }
 .sidebar-text{
     padding: 8px 0;

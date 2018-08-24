@@ -1,70 +1,57 @@
 <div class='sidebarBox'>
   <ul class='sidebar-ul'>
-    <li>
+    <li class='act'>
       <!-- title -->
-      <div class='sidebar-title flex jcsb'>
+      <a class='sidebar-title flex jcsb' href=''>
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-yonghu"></use>
+              <use xlink:href="#icon-tongzhiguangbo"></use>
             </svg>
           </span>
-          <span>123123</span>
+          <span>Campaigns</span>
         </div>
-        <span class='sidebar-icon-title-right sidebar-icon-title-right-act glyphicon glyphicon-chevron-down'></span>
-      </div>
+        <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
+      </a>
       <!-- con -->
-      <div class='sidebar-con sidebar-con-act'>
+      <!-- <div class='sidebar-con'>
         <div class='sidebar-text flex jc-start'>
           <span class='sidebar-icon-text'>
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-yuanquan"></use>
             </svg>
           </span>
-          <span>123</span>
+          <span></span>
         </div>
-        <div class='sidebar-text flex jc-start'>
-          <span class='sidebar-icon-text'>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-yuanquan"></use>
-            </svg>
-          </span>
-          <span>123</span>
-        </div>
-      </div>
+      </div> -->
     </li>
     <li>
       <!-- title -->
-      <div class='sidebar-title flex jcsb'>
+      <a class='sidebar-title flex jcsb'>
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-yonghu"></use>
+              <use xlink:href="#icon-area_chart"></use>
             </svg>
           </span>
-          <span>123123</span>
+          <span>Report</span>
         </div>
-        <span class='sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
-      </div>
-      <!-- con -->
-      <div class='sidebar-con'>
-        <div class='sidebar-text flex jc-start'>
-          <span class='sidebar-icon-text'>
+        <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
+      </a>
+    </li>
+    <li>
+      <!-- title -->
+      <a class='sidebar-title flex jcsb'>
+        <div class='flex'>
+          <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-yuanquan"></use>
+              <use xlink:href="#icon-zhanghuguanli"></use>
             </svg>
           </span>
-          <span>123</span>
+          <span>Account Management</span>
         </div>
-        <div class='sidebar-text flex jc-start'>
-          <span class='sidebar-icon-text'>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-yuanquan"></use>
-            </svg>
-          </span>
-          <span>123</span>
-        </div>
-      </div>
+        <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
+      </a>
     </li>
   </ul>
 </div>

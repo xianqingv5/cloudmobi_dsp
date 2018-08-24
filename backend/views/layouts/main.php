@@ -28,11 +28,6 @@ AppAsset::register($this);
 </head>
 <body>
     <?php $this->beginBody() ?>
-
-<!-- <div class="wrap full">
-    <?= $content ?>
-</div> -->
-    <?php $this->beginBody() ?>
     <div class="wrap wrapper">
         <div class='navbarDocker'>
             <?php
@@ -52,6 +47,9 @@ AppAsset::register($this);
                     <el-breadcrumb-item>活动列表</el-breadcrumb-item>
                     <el-breadcrumb-item>活动详情</el-breadcrumb-item>
                 </el-breadcrumb>
+            </div>
+            <div>
+                <?= $content ?>
             </div>
         </div>
     </div>

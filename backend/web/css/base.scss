@@ -1,27 +1,10 @@
-$basecolor: #606266;
-html {
-  font-size: 12px;
-  body {
-    font-size: 62.5%;
-    margin: 0;
-    overflow: hidden;
-    font-family: sans-serif;
-    line-height: 1.4;
-    color: $basecolor;
-    -webkit-text-size-adjust: 100%;
-    background: #fff;
-    &{
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
 // 屏幕尺寸
 $size: 24;
 $size-l: 1200px;
 $size-m: 992px;
 $size-s: 768px;
 $size-ss: 380px;
+
 // 响应式布局
 @mixin col($name,
 $threshold) {
@@ -43,6 +26,7 @@ $threshold) {
   }
 }
 
+// 栅格化
 @include col('auto',
 '');
 @include col('ss',
@@ -324,6 +308,14 @@ $y) {
 .base-bg-color {
   background: #1a8eff !important;
   color: #fff !important;
+}
+
+.base-color{
+  color: #fff !important;
+}
+
+.bg-white{
+  background: #fff;
 }
 
 .of-v {

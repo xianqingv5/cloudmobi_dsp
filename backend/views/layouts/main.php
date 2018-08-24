@@ -48,7 +48,7 @@ AppAsset::register($this);
                     <el-breadcrumb-item>活动详情</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
-            <div>
+            <div class='content'>
                 <?= $content ?>
             </div>
         </div>
@@ -57,7 +57,7 @@ AppAsset::register($this);
 </html>
 <script>
     var mainVm = new Vue({
-        el: '.wrapper'
+        el: '.breadcrumbDocker'
     })
 </script>
 <?php $this->endBody() ?>

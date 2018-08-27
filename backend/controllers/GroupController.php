@@ -33,10 +33,10 @@ class GroupController extends BaseController
         return $res;
     }
 
-    public function actionAddGroupPriv()
+    public function actionAddGroupPrev()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $res = GroupService::addGroupPriv();
+        $res = GroupService::addGroupPrev();
         return $res;
     }
 

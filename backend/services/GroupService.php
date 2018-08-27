@@ -44,17 +44,21 @@ class GroupService extends BaseService
     public static function addGroupPrev()
     {
         $res = ['status' => 0, 'info' => '', 'data' => []];
-        $group_id = (int)Yii::$app->request->post('group_id', 0);
+        $group_id = (int)Yii::$app->request->post('group_id', 2);
         if (empty($group_id)) {
             $res['info'] = '参数错误';
             return $res;
         }
-        $prev = Yii::$app->request->post('prev', []);
+        $prev = Yii::$app->request->post('prev', ['1']);
         $transaction = Yii::$app->db->beginTransaction();
         try {
             $prev_res = true;
             if (!empty($prev)) {
+                // 判断表中是否已有权限
+                $r = GroupRelationPriv::getData(['count(*) as num'], ["group_id='" . $group_id . "'"]);
+                if ($r[0]['num']) {
 
+                }
             }
         } catch (\Exception $e) {
             self::logs($e->getMessage());

@@ -68,21 +68,12 @@
       create: {
         name: '',
         available: '',
-        options: [
-          {
-            label: '123',
-            value: 1
-          }
-        ]
+        options: []
       },
       dialogType: null,
       dialogVisible: false,
       dialogData: {
-        list: [{
-          label: 'qwe',
-          key: 1
-
-        }],
+        list: [],
         choiceList: []
       },
       form: {
@@ -118,6 +109,7 @@
 
       },
       showDialog (type, item) {
+        var vm = this
         this.dialogVisible = true
         this.dialogType = type
         var ajaxData = {
@@ -130,6 +122,10 @@
             data: ajaxData,
             success: function (result) {
               console.log(result)
+              if (result.status === 1) {
+                vm.dialogData.list = result.data.all
+                vm.dialogData.choiceList = result.data.group
+              }
             }
           })
         }

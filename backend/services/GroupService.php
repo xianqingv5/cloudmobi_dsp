@@ -9,6 +9,6 @@ class GroupService extends BaseService
 {
     public static function addGroupPriv()
     {
-        
+
     }
 }

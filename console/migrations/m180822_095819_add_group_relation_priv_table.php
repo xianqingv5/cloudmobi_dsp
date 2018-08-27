@@ -21,7 +21,7 @@ class m180822_095819_add_group_relation_priv_table extends Migration
         $this->createTable('{{%group_relation_priv}}', [
             'id'                    => $this->primaryKey()->comment('主键'),
             'group_id'              => $this->integer()->notNull()->defaultValue(0)->comment('群组id'),
-            'priv_url'              => $this->string(200)->notNull()->defaultValue('')->comment('priv url'),
+            'prev_url'              => $this->string(200)->notNull()->defaultValue('')->comment('priv url'),
             'create_date'           => $this->dateTime()->notNull()->defaultValue('1000-00-01 00:00:01')->comment('创建时间'),
             'update_date'           => $this->dateTime()->notNull()->defaultValue('1000-00-01 00:00:01')->comment('更新时间'),
         ], $table_options);

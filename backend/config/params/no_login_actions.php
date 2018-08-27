@@ -4,5 +4,6 @@ return [
     'site/login',
     'site/logout',
     'site/language',
-    'group/group-index'
+    'group/group-index',
+    'group/get-group-prev',
 ];

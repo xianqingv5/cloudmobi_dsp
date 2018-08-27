@@ -23,9 +23,14 @@ class GroupController extends BaseController
         return $this->render('group-index', []);
     }
 
-    public function actionGetGroupPriv()
+    /**
+     * 获取群组权限信息
+     */
+    public function actionGetGroupPrev()
     {
-        
+        Yii::$app->response->format = Response::FORMAT_JSON;// 设置响应数据类型
+        $res = GroupService::getGroupPrev();
+        return $res;
     }
 
     public function actionAddGroupPriv()

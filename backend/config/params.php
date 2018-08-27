@@ -29,4 +29,7 @@ return [
 
     // 需要记录操作的方法
     'LOG_RECORD_METHOD' => require 'params/record_log.php',
+
+    // 群组权限列表
+    'GROUP_PREV' => require 'params/group_prev.php',
 ];

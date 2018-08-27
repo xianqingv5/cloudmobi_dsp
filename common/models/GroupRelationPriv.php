@@ -31,7 +31,7 @@ class GroupRelationPriv extends \yii\db\ActiveRecord
         return [
             [['group_id'], 'integer'],
             [['create_date', 'update_date'], 'safe'],
-            [['priv_url'], 'string', 'max' => 200],
+            [['prev_url'], 'string', 'max' => 200],
         ];
     }
 
@@ -43,7 +43,7 @@ class GroupRelationPriv extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'group_id' => 'Group ID',
-            'priv_url' => 'Priv Url',
+            'prev_url' => 'Prev Url',
             'create_date' => 'Create Date',
             'update_date' => 'Update Date',
         ];

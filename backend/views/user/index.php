@@ -22,10 +22,10 @@
         <td>333</td>
         <td>
           <div class='flex jc-around'>
-            <span class='icon el-icon-edit-outline color_primary' @click='showDialog("edit")'></span>
+            <span class='icon el-icon-edit-outline' @click='showDialog("edit")'></span>
             <a class='sidebar-icon'>
               <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-report-Examinationscorereport"></use>
+                <use xlink:href="#icon-chakanbaobiao"></use>
               </svg>
             </a>
           </div>

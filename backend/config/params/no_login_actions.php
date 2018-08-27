@@ -8,6 +8,6 @@ return [
     'group/get-group-prev',
     'group/add-group-prev',
     'group/update-group-status',
-    'user/create',
-    'user/user-index'
+    'user/user-index',
+    'user/create'
 ];

@@ -2,11 +2,16 @@
 namespace backend\controllers;
 
 use Yii;
+use backend\services\UserService;
 
 class UserController extends BaseController
 {
     public function actionUserIndex()
     {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $res = UserService::addUserData();
+        }
+
         return $this->render('index',[
 
         ]);
@@ -14,6 +19,10 @@ class UserController extends BaseController
 
     public function actionCreate()
     {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+
+        }
+
         return $this->render('create', [
 
         ]);
@@ -23,4 +32,5 @@ class UserController extends BaseController
     {
 
     }
+
 }

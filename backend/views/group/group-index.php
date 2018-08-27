@@ -1,6 +1,6 @@
 <div class='m-40-0 p20 app base-box-shadow bg-white'>
-  <div class='flex jcsb mb-20'>
-    <el-button type="primary" @click='showDialog("create")'>Create Group</el-button>
+  <div class='flex jc-end mb-20'>
+    <!-- <el-button type="primary" @click='showDialog("create")'>Create Group</el-button> -->
     <el-input
       class='form-search'
       placeholder="Group Name"
@@ -73,6 +73,7 @@
       dialogType: null,
       dialogVisible: false,
       dialogData: {
+        bus: {},
         list: [],
         choiceList: []
       },
@@ -112,10 +113,22 @@
         var vm = this
         this.dialogVisible = true
         this.dialogType = type
-        var ajaxData = {
-          group_id: item.id
+        vm.dialogData.bus = {}
+        vm.dialogData.list = []
+        vm.dialogData.choiceList = []
+        if (type === 'create') {
+          $.ajax({
+            url: '/group/get-group-prev',
+            type: 'post',
+            success: function (result) {
+              console.log(result)
+            }
+          })
         }
         if (type === 'edit') {
+          var ajaxData = {
+            group_id: item.id
+          }
           $.ajax({
             url: '/group/get-group-prev',
             type: 'post',
@@ -123,6 +136,7 @@
             success: function (result) {
               console.log(result)
               if (result.status === 1) {
+                vm.dialogData.bus = item
                 vm.dialogData.list = result.data.all
                 vm.dialogData.choiceList = result.data.group
               }
@@ -134,6 +148,7 @@
         return item.label.indexOf(query) > -1;
       },
       updateForm () {
+        var vm = this
         if (this.dialogType === 'create') {
           if (this.create.name && this.create.available) {
             this.dialogVisible = false
@@ -147,6 +162,18 @@
         }
         if (this.dialogType === 'edit') {
           this.dialogVisible = false
+          var ajaxData = {
+            group_id: vm.dialogData.id,
+            prev: vm.dialogData.choiceList
+          }
+          $.ajax({
+            url: '/group/add-group-prev',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log(result)
+            }
+          })
         }
       }
     }

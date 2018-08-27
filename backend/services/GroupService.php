@@ -7,5 +7,8 @@ use common\models\GroupRelationPriv;
 
 class GroupService extends BaseService
 {
-
+    public static function addGroupPriv()
+    {
+        
+    }
 }

@@ -115,20 +115,18 @@
           group_id: item.id,
           status: e
         }
-        console.log(ajaxData)
         $.ajax({
           url: '/group/update-group-status',
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            alert(result)
             if (result.status === 1) {
-              this.$message({
+              vm.$message({
                 message: result.info,
                 type: 'success'
               })
             } else {
-              this.$message.error(result.info)
+              vm.$message.error(result.info)
             }
           }
         })

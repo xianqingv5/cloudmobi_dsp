@@ -9,7 +9,7 @@ class GroupService extends BaseService
 {
     public static function getGroupPrev()
     {
-        $res = ['status' => 0, 'info' => '', 'data' => ''];
+        $res = ['status' => 0, 'info' => '', 'data' => []];
         $group_id = (int)Yii::$app->request->post('group_id', 0);
         if (!$group_id) {
             $res['info'] = '参数错误';
@@ -43,6 +43,6 @@ class GroupService extends BaseService
 
     public static function addGroupPriv()
     {
-
+        echo "<pre>";var_dump(Yii::$app->request->post());die;
     }
 }

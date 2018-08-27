@@ -15,7 +15,7 @@ class GroupController extends BaseController
     public function actionGroupIndex()
     {
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
-            Yii::$app->response->format = Response::FORMAT_JSON;// 设置响应数据类型
+            Yii::$app->response->format = Response::FORMAT_JSON;
             $data = GroupService::getGroupData();
             return $data;
         }
@@ -28,14 +28,16 @@ class GroupController extends BaseController
      */
     public function actionGetGroupPrev()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;// 设置响应数据类型
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $res = GroupService::getGroupPrev();
         return $res;
     }
 
     public function actionAddGroupPriv()
     {
-
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = GroupService::addGroupPriv();
+        return $res;
     }
 
     public function actionGroupUpdateStatus()

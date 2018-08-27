@@ -83,17 +83,16 @@
       }
     },
     mounted () {
-      var that = this
-      var csrf = document.querySelector('#spp_security').value
+      var vm = this
+      this.csrf = document.querySelector('#spp_security').value
       $.ajax({
         url: '/admin/group/index',
         type: 'post',
         data: {
-          dsp_security_param: csrf
+          dsp_security_param: vm.csrf
         },
         success: function (result) {
-          console.log(result)
-          that.form.list = result
+          vm.form.list = result
         }
       })
     },
@@ -116,15 +115,6 @@
         vm.dialogData.bus = {}
         vm.dialogData.list = []
         vm.dialogData.choiceList = []
-        if (type === 'create') {
-          $.ajax({
-            url: '/group/get-group-prev',
-            type: 'post',
-            success: function (result) {
-              console.log(result)
-            }
-          })
-        }
         if (type === 'edit') {
           var ajaxData = {
             group_id: item.id
@@ -134,7 +124,6 @@
             type: 'post',
             data: ajaxData,
             success: function (result) {
-              console.log(result)
               if (result.status === 1) {
                 vm.dialogData.bus = item
                 vm.dialogData.list = result.data.all
@@ -161,9 +150,9 @@
           }
         }
         if (this.dialogType === 'edit') {
-          this.dialogVisible = false
           var ajaxData = {
-            group_id: vm.dialogData.id,
+            dsp_security_param: vm.csrf,
+            group_id: vm.dialogData.bus.id,
             prev: vm.dialogData.choiceList
           }
           $.ajax({
@@ -171,7 +160,15 @@
             type: 'post',
             data: ajaxData,
             success: function (result) {
-              console.log(result)
+              if (result.status === 1) {
+                vm.dialogVisible = false
+                vm.$message({
+                  message: result.info,
+                  type: 'success'
+                })
+              } else {
+                vm.$message.error(result.info)
+              }
             }
           })
         }

@@ -1,6 +1,7 @@
 <?php
 namespace backend\services;
 
+use Codeception\Platform\Group;
 use Yii;
 use common\models\UserGroup;
 use common\models\GroupRelationPriv;
@@ -93,6 +94,29 @@ class GroupService extends BaseService
 
     public static function updateGroupStatus()
     {
+        $res = ['status' => 0, 'info' => '', 'data' => []];
+        $group_id = (int)Yii::$app->request->post('group_id', 0);
+        $status = (int)Yii::$app->request->post('status', 0);
+        if (!$group_id || !$status) {
+            $res['info'] = '参数错误';
+            return $res;
+        }
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $info = UserGroup::updateData(['status'=>$status], ['id'=>$group_id]);
+            if ($info) {
+                $res['status'] = 1;
+                $res['info'] = 'success';
+                $transaction->commit();
+            }
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            $res['info'] = $e->getMessage();
+            $transaction->rollBack();
+        }
+
+        return $res;
 
     }
 }

@@ -20,7 +20,7 @@
         <td v-text='item.group_name'></td>
         <td>
           <div class='flex jc-around'>
-            <el-button type="primary" icon="el-icon-setting" @click='showDialog("edit", item)' circle></el-button>
+            <span class='icon el-icon-setting color_primary' @click='showDialog("edit", item)'></span>
             <el-switch
               v-model="item.status"
               active-value="1"

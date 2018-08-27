@@ -24,7 +24,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <script src='//at.alicdn.com/t/font_528644_4jffkdtl95i.js'></script>
+    <script src='//at.alicdn.com/t/font_528644_kenb5cxvqg.js'></script>
 </head>
 <body>
     <?php $this->beginBody() ?>

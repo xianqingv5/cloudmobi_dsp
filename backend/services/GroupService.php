@@ -25,7 +25,7 @@ class GroupService extends BaseService
         $i = 0; $group_all = [];
         foreach ($group_prev as $k=>$v){
             $group_all[$i]['label'] = $v;
-            $group_all[$i]['value'] = $k;
+            $group_all[$i]['key'] = $k;
             $i++;
         }
         $res['status'] = 1;
@@ -41,8 +41,28 @@ class GroupService extends BaseService
         return $res;
     }
 
-    public static function addGroupPriv()
+    public static function addGroupPrev()
     {
+        $res = ['status' => 0, 'info' => '', 'data' => []];
+        $group_id = (int)Yii::$app->request->post('group_id', 0);
+        if (empty($group_id)) {
+            $res['info'] = '参数错误';
+            return $res;
+        }
+        $prev = Yii::$app->request->post('prev', []);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $prev_res = true;
+            if (!empty($prev)) {
+
+            }
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            $transaction->rollBack();
+            $res['info'] = $e->getMessage();
+            return $res;
+        }
+
         echo "<pre>";var_dump(Yii::$app->request->post());die;
     }
 }

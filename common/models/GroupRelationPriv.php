@@ -121,4 +121,17 @@ class GroupRelationPriv extends \yii\db\ActiveRecord
         $result = $res->execute();
         return $result;
     }
+
+    /**
+     *  删除数据
+     * @param $where
+     * @return int
+     */
+    public static function deleteData($where)
+    {
+        return Yii::$app->db->createCommand()->delete(
+            self::tableName(),
+            $where
+        )->execute();
+    }
 }

@@ -22,4 +22,14 @@ class GroupController extends BaseController
 
         return $this->render('group-index', []);
     }
+
+    public function actionAddGroupPriv()
+    {
+
+    }
+
+    public function actionGroupUpdateStatus()
+    {
+
+    }
 }

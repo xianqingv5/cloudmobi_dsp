@@ -114,9 +114,25 @@
       }
     },
     methods: {
+      getGroup (item) {
+
+      },
       showDialog (type, item) {
         this.dialogVisible = true
         this.dialogType = type
+        var ajaxData = {
+          group_id: item.id
+        }
+        if (type === 'edit') {
+          $.ajax({
+            url: '/group/get-group-prev',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log(result)
+            }
+          })
+        }
       },
       filterMethod (query, item) {
         return item.label.indexOf(query) > -1;

@@ -66,8 +66,8 @@
           <el-input v-model="ruleForm.comment" class='inputobj'></el-input>
         </el-form-item>
         <div class='flex jcsb'>
-          <el-button @click="dialogVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="updateForm">Submit</el-button>
+          <el-button @click="dialogVisible = false" @click="resetForm('ruleForm')">Cancel</el-button>
+          <el-button type="primary" @click="updateForm('ruleForm')">Submit</el-button>
         </div>
       </el-form>
     </div>
@@ -143,11 +143,30 @@
       }
     },
     methods: {
+      resetForm(formName) {
+        if (this.$refs[formName] !== undefined) {
+          this.$refs[formName].resetFields()
+        }
+      },
       showDialog () {
         this.dialogVisible = true
       },
-      updateForm () {
-
+      updateForm (formName) {
+        this.$refs[formName].validate(function (valid) {
+          if (valid) {
+            alert('submit!')
+          } else {
+            console.log('error submit!!')
+            return false;
+          }
+        });
+      }
+    },
+    watch: {
+      dialogVisible (newval) {
+        if (newval = true) {
+          this.resetForm('ruleForm')
+        }
       }
     }
   })

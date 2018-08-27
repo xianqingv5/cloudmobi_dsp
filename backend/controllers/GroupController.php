@@ -42,6 +42,8 @@ class GroupController extends BaseController
 
     public function actionGroupUpdateStatus()
     {
-
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = GroupService::updateGroupStatus();
+        return $res;
     }
 }

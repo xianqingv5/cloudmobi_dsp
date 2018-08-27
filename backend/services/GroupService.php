@@ -41,6 +41,10 @@ class GroupService extends BaseService
         return $res;
     }
 
+    /**
+     * 群组权限添加
+     * @return array
+     */
     public static function addGroupPrev()
     {
         $res = ['status' => 0, 'info' => '', 'data' => []];
@@ -65,7 +69,7 @@ class GroupService extends BaseService
                 foreach ($prev as $k=>$v) {
                     $data['group_id'] = $group_id;
                     $data['prev_url'] = $v;
-                    $prev_r = GroupRelationPriv::addData($data, true);
+                    $prev_r = GroupRelationPriv::addData($data);
                     if (!$prev_r) {
                         $prev_res = false;
                     }
@@ -85,5 +89,10 @@ class GroupService extends BaseService
         }
 
         return $res;
+    }
+
+    public static function updateGroupStatus()
+    {
+
     }
 }

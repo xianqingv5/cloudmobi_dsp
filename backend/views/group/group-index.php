@@ -22,7 +22,11 @@
           <div class='flex jc-around'>
             <el-button type="primary" icon="el-icon-setting" @click='showDialog("edit", item)' circle></el-button>
             <el-switch
-              v-model="item.status">
+              v-model="item.status"
+              active-value="1"
+              inactive-value="2"
+              @change='updateGroupStatus($event, item)'
+              >
             </el-switch>
           </div>
         </td>
@@ -105,8 +109,29 @@
       }
     },
     methods: {
-      getGroup (item) {
-
+      updateGroupStatus (e, item) {
+        var vm = this
+        var ajaxData = {
+          group_id: item.id,
+          status: e
+        }
+        console.log(ajaxData)
+        $.ajax({
+          url: '/group/update-group-status',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            alert(result)
+            if (result.status === 1) {
+              this.$message({
+                message: result.info,
+                type: 'success'
+              })
+            } else {
+              this.$message.error(result.info)
+            }
+          }
+        })
       },
       showDialog (type, item) {
         var vm = this

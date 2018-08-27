@@ -6,5 +6,6 @@ return [
     'site/language',
     'group/group-index',
     'group/get-group-prev',
-    'group/add-group-prev'
+    'group/add-group-prev',
+    'group/update-group-status',
 ];

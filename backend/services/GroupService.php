@@ -44,29 +44,46 @@ class GroupService extends BaseService
     public static function addGroupPrev()
     {
         $res = ['status' => 0, 'info' => '', 'data' => []];
-        $group_id = (int)Yii::$app->request->post('group_id', 2);
+        $group_id = (int)Yii::$app->request->post('group_id', 0);
         if (empty($group_id)) {
             $res['info'] = '参数错误';
             return $res;
         }
-        $prev = Yii::$app->request->post('prev', ['1']);
+        $prev = Yii::$app->request->post('prev', []);
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            $prev_res = true;
             if (!empty($prev)) {
-                // 判断表中是否已有权限
+                // 判断表中是否已有权限,如果存在就删除
                 $r = GroupRelationPriv::getData(['count(*) as num'], ["group_id='" . $group_id . "'"]);
+                $del_group_res = true;
                 if ($r[0]['num']) {
-
+                    $del_group_res = GroupRelationPriv::deleteData(["group_id" => $group_id]);
                 }
+
+                // 重新添加权限
+                $prev_res = true;
+                foreach ($prev as $k=>$v) {
+                    $data['group_id'] = $group_id;
+                    $data['prev_url'] = $v;
+                    $prev_r = GroupRelationPriv::addData($data, true);
+                    if (!$prev_r) {
+                        $prev_res = false;
+                    }
+                }
+
+                if ($del_group_res && $prev_res) {
+                    $res['status'] = 1;
+                    $res['info'] = 'success';
+                    $transaction->commit();
+                }
+
             }
         } catch (\Exception $e) {
             self::logs($e->getMessage());
             $transaction->rollBack();
             $res['info'] = $e->getMessage();
-            return $res;
         }
 
-        echo "<pre>";var_dump(Yii::$app->request->post());die;
+        return $res;
     }
 }

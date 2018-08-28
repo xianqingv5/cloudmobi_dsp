@@ -15,7 +15,7 @@ class UserService extends BaseService
     {
         $where['id'] = "1=1";
         // 广告代理商查询其所属的广告主
-        if (isset(Yii::$app->user->identity->group_id) && Yii::$app->user->identity->group_id == 3) {
+        if (isset(Yii::$app->user->identity->group_id) && Yii::$app->user->identity->group_id == Yii::$app->params['AGENT_ADVERTISERS']) {
             $uid = Yii::$app->user->identity->id;
             $user_res = UserRelationUser::getData(['relation_user_id'], ["user_id='".$uid."'"]);
             if ($user_res) {
@@ -61,7 +61,7 @@ class UserService extends BaseService
 
             // 代理广告主创建用户,关联id
             $uu_res = true;
-            if (isset(Yii::$app->user->identity->group_id) && Yii::$app->user->identity->group_id == 3) {
+            if (isset(Yii::$app->user->identity->group_id) && Yii::$app->user->identity->group_id == Yii::$app->params['AGENT_ADVERTISERS']) {
                 $data2 = [];
                 $data2['relation_user_id'] = Yii::$app->db->getLastInsertID();
                 $data2['user_id'] = Yii::$app->user->identity->id;

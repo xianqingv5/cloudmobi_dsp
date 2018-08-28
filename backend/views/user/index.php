@@ -63,7 +63,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Comment" prop='comment'>
-          <el-input v-model="ruleForm.comment" class='inputobj'></el-input>
+          <el-input type="textarea" autosize v-model="ruleForm.comment" class='inputobj'></el-input>
         </el-form-item>
         <div class='flex jcsb'>
           <el-button @click="dialogVisible = false" @click="resetForm('ruleForm')">Cancel</el-button>
@@ -77,17 +77,28 @@
   new Vue({
     el: '.app',
     data () {
+      // 验证email
+      var validateEmail = (rule, value, callback) => {
+        this.judeRole(value, function () {
+          console.log(123)
+        })
+      }
       // 密码
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
         } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass')
+          if (value.length < 8) {
+            callback(new Error('密码长度不得小于八位'))
+          } else {
+            if (this.ruleForm.checkPass !== '') {
+              this.$refs.ruleForm.validateField('checkPass')
+            }
+            callback()
           }
-          callback()
         }
       }
+      // 再次输入密码
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
@@ -116,7 +127,8 @@
         rules: {
           email: [
             { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] },
+            { required: true, validator: validateEmail, trigger: 'blur' }
           ],
           name: [
             { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -144,14 +156,42 @@
       }
     },
     methods: {
+      judeRole (value, callback) {
+        console.log(value)
+        var vm = this
+        var ajaxData = {
+          email: value,
+          dsp_security_param: vm.csrf
+        }
+        console.log(ajaxData)
+        $.ajax({
+          url: 'user/check-email',
+          type: 'post',
+          data: ajaxData,
+          type: 'post',
+          success: function (result) {
+            console.log(result)
+            callback()
+          }
+        })
+      },
       getRole () {
         var vm = this
         $.ajax({
           url: '/user/get-role',
           type: 'get',
           success: function (result) {
-            console.log(result)
-            vm.ruleForm.roleOptions = result
+            if (result.status === 1) {
+              result.data.map(function (ele) {
+                vm.ruleForm.roleOptions.push({
+                  label: ele.group_name,
+                  value: ele.id
+                })
+              })
+              if (result.data.length === 1) {
+                vm.ruleForm.role = result.data[0].id
+              }
+            }
           }
         })
       },

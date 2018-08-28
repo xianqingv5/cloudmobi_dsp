@@ -67,7 +67,7 @@
         </el-form-item>
         <div class='flex jcsb'>
           <el-button @click="dialogVisible = false" @click="resetForm('ruleForm')">Cancel</el-button>
-          <el-button type="primary" @click="updateForm('ruleForm')">Submit</el-button>
+          <el-button type="primary" @click="updateForm('ruleForm', dialogBus.type)">Submit</el-button>
         </div>
       </el-form>
     </div>
@@ -77,38 +77,46 @@
   new Vue({
     el: '.app',
     data () {
+      var vm = this
       // 验证email
-      var validateEmail = (rule, value, callback) => {
-        this.judeRole(value, function () {
-          console.log(123)
+      var validateEmail = function (rule, value, callback) {
+        vm.judeEmail(value, function (type, info) {
+          if (type) {
+            callback()
+          } else {
+            callback(new Error(info))
+          }
         })
       }
       // 密码
-      var validatePass = (rule, value, callback) => {
+      var validatePass = function (rule, value, callback) {
         if (value === '') {
           callback(new Error('请输入密码'))
         } else {
           if (value.length < 8) {
             callback(new Error('密码长度不得小于八位'))
           } else {
-            if (this.ruleForm.checkPass !== '') {
-              this.$refs.ruleForm.validateField('checkPass')
+            if (vm.ruleForm.checkPass !== '') {
+              vm.$refs.ruleForm.validateField('checkPass')
             }
             callback()
           }
         }
       }
       // 再次输入密码
-      var validatePass2 = (rule, value, callback) => {
+      var validatePass2 = function (rule, value, callback) {
         if (value === '') {
           callback(new Error('请再次输入密码'))
-        } else if (value !== this.ruleForm.pass) {
+        } else if (value !== vm.ruleForm.pass) {
           callback(new Error('两次输入密码不一致!'))
         } else {
           callback()
         }
       }
       return {
+        dialogBus: {
+          type: null
+        },
         dialogVisible: false,
         csrf: null,
         index: {
@@ -138,6 +146,9 @@
           ],
           checkPass: [
             { required: true, validator: validatePass2, trigger: 'blur' }
+          ],
+          role: [
+            { required: true, message: 'role必填', trigger: 'blur' }
           ]
         }
       }
@@ -156,22 +167,23 @@
       }
     },
     methods: {
-      judeRole (value, callback) {
-        console.log(value)
+      judeEmail (value, callback) {
         var vm = this
         var ajaxData = {
           email: value,
           dsp_security_param: vm.csrf
         }
-        console.log(ajaxData)
         $.ajax({
-          url: 'user/check-email',
+          url: '/user/check-email',
           type: 'post',
           data: ajaxData,
           type: 'post',
           success: function (result) {
-            console.log(result)
-            callback()
+            if (result.status !== 1) {
+              callback(false, result.info)
+            } else {
+              callback(true)
+            }
           }
         })
       },
@@ -200,13 +212,46 @@
           this.$refs[formName].resetFields()
         }
       },
-      showDialog () {
+      showDialog (type) {
         this.dialogVisible = true
+        this.dialogBus.type = type
       },
-      updateForm (formName) {
+      updateForm (formName, type) {
+        var vm = this
+        console.log(type)
         this.$refs[formName].validate(function (valid) {
           if (valid) {
-            alert('submit!')
+            if (type === 'create') {
+              // ruleForm: {
+              //   email: '',
+              //   name: '',
+              //   pass: '',
+              //   checkPass: '',
+              //   role: '',
+              //   roleOptions: [],
+              //   comment: ''
+              // }
+              var ajaxData = {
+                email: vm.ruleForm.email,
+                username: vm.ruleForm.name,
+                password: vm.ruleForm.pass,
+                check_password: vm.ruleForm.checkPass,
+                group_id: vm.ruleForm.role,
+                comment: vm.ruleForm.comment
+              }
+              console.log(ajaxData)
+              $.ajax({
+                url: 'user/create',
+                type: 'post',
+                data: ajaxData,
+                success: function (result) {
+                  console.log(result)
+                }
+              })
+            }
+            if (type === 'edit') {
+
+            }
           } else {
             console.log('error submit!!')
             return false;

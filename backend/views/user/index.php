@@ -157,6 +157,7 @@
       var vm = this
       this.csrf = document.querySelector('#spp_security').value
       this.getRole()
+      this.getList()
     },
     computed: {
       handleList () {
@@ -167,6 +168,20 @@
       }
     },
     methods: {
+      getList () {
+        var vm = this
+        var ajaxData = {
+          dsp_security_param: vm.csrf
+        }
+        $.ajax({
+          url: '/user/user-index',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            console.log(result)
+          }
+        })
+      },
       judeEmail (value, callback) {
         var vm = this
         var ajaxData = {
@@ -177,7 +192,6 @@
           url: '/user/check-email',
           type: 'post',
           data: ajaxData,
-          type: 'post',
           success: function (result) {
             if (result.status !== 1) {
               callback(false, result.info)

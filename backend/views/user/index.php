@@ -13,6 +13,7 @@
       <th>Email</th>
       <th>User Name</th>
       <th>Comment</th>
+      <th>status</th>
       <th>Operation</th>
     </thead>
     <tbody is='transition-group' name='list'>
@@ -20,6 +21,15 @@
         <td v-text='item.email'></td>
         <td v-text='item.username'></td>
         <td v-text='item.comment'></td>
+        <td>
+          <el-switch
+            v-model="item.status"
+            active-value="1"
+            inactive-value="2"
+            @change='updateStatus($event, item)'
+            >
+          </el-switch>
+        </td>
         <td>
           <div class='flex jc-around'>
             <span class='icon el-icon-edit-outline' @click='showDialog("edit", item)'></span>
@@ -171,6 +181,28 @@
       }
     },
     methods: {
+      updateStatus (e, item) {
+        var vm = this
+        var ajaxData = {
+          group_id: item.group_id,
+          status: e
+        }
+        $.ajax({
+          url: '/group/update-index-status',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            if (result.status === 1) {
+              vm.$message({
+                message: result.info,
+                type: 'success'
+              })
+            } else {
+              vm.$message.error(result.info)
+            }
+          }
+        })
+      },
       getList () {
         var vm = this
         var ajaxData = {

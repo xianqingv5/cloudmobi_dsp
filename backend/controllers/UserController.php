@@ -34,6 +34,13 @@ class UserController extends BaseController
 
     }
 
+    public function actionCheckEmail()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::checkEmail();
+        return $res;
+    }
+
     public function actionGetRole()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

@@ -24,7 +24,9 @@ class UserService extends BaseService
 
         $transaction = Yii::$app->db->beginTransaction();
         try {
-
+            $data = [];
+            $data['email'] = Yii::$app->request->post('email', '');
+            
         } catch (\Exception $e) {
             self::logs($e->getMessage());
             self::$res['info'] = $e->getMessage();
@@ -64,6 +66,16 @@ class UserService extends BaseService
         if (!$group_id) return $info['Permission error'];
 
         return $info['success'];
+    }
+
+    public static function checkEmail()
+    {
+        $email = Yii::$app->request->post('email');
+        $res = User::getData(['count(*) as num'], ["email='" . $email . "'"]);
+        if ($res[0]['num']) {
+            self::$res['info'] = 'The mailbox already exists.';
+        }
+        return self::$res;
     }
 
     public static function getRole()

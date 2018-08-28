@@ -237,7 +237,8 @@
                 password: vm.ruleForm.pass,
                 check_password: vm.ruleForm.checkPass,
                 group_id: vm.ruleForm.role,
-                comment: vm.ruleForm.comment
+                comment: vm.ruleForm.comment,
+                dsp_security_param: vm.csrf
               }
               console.log(ajaxData)
               $.ajax({

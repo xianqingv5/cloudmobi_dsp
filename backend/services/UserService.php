@@ -68,7 +68,7 @@ class UserService extends BaseService
 
     public static function getRole()
     {
-        $group_id = isset(Yii::$app->user->identity->group_id) ? Yii::$app->user->identity->group_id : 0;
+        $group_id = isset(Yii::$app->user->identity->group_id) ? Yii::$app->user->identity->group_id : 1;
         $where = ['1=1'];
         switch ($group_id) {
             case 1:// 群组id

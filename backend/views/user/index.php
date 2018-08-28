@@ -133,6 +133,7 @@
     mounted () {
       var vm = this
       this.csrf = document.querySelector('#spp_security').value
+      this.getRole()
     },
     computed: {
       handleList () {
@@ -143,6 +144,16 @@
       }
     },
     methods: {
+      // user/get-role
+      getRole () {
+        $.ajax({
+          url: '/user/get-role',
+          type: 'post',
+          success: function (result) {
+            console.log(result)
+          }
+        })
+      },
       resetForm(formName) {
         if (this.$refs[formName] !== undefined) {
           this.$refs[formName].resetFields()

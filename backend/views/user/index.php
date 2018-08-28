@@ -16,13 +16,13 @@
       <th>Operation</th>
     </thead>
     <tbody is='transition-group' name='list'>
-      <tr v-for='(item, index) in handleList' :key='item'>
-        <td>111</td>
-        <td>222</td>
-        <td>333</td>
+      <tr v-for='(item, index) in handleList' :key='item.id'>
+        <td v-text='item.email'></td>
+        <td v-text='item.username'></td>
+        <td v-text='item.comment'></td>
         <td>
           <div class='flex jc-around'>
-            <span class='icon el-icon-edit-outline' @click='showDialog("edit")'></span>
+            <span class='icon el-icon-edit-outline' @click='showDialog("edit", item)'></span>
             <a class='sidebar-icon'>
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-chakanbaobiao"></use>
@@ -40,20 +40,20 @@
     <div class='flex column'>
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
         <el-form-item label="Email" prop='email'>
-          <el-input auto-complete="off" v-model.trim="ruleForm.email" class='inputobj'></el-input>
+          <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.email" class='inputobj'></el-input>
         </el-form-item>
         <el-form-item label="User Name" prop='name'>
           <el-input v-model.trim="ruleForm.name" class='inputobj'></el-input>
         </el-form-item>
         <input class='dn' type="password"/>
-        <el-form-item label="Password" prop='pass'>
+        <el-form-item v-if='dialogBus.type !== "edit"' label="Password" prop='pass'>
           <el-input type='password' auto-complete="off" v-model="ruleForm.pass" class='inputobj'></el-input>
         </el-form-item>
-        <el-form-item label="Check Password" prop='checkPass'>
+        <el-form-item v-if='dialogBus.type !== "edit"' label="Check Password" prop='checkPass'>
           <el-input type='password' auto-complete="off" v-model="ruleForm.checkPass" class='inputobj'></el-input>
         </el-form-item>
         <el-form-item label="Role" prop='role'>
-          <el-select v-model="ruleForm.role" class='inputobj' placeholder="请选择">
+          <el-select :disabled='dialogBus.type === "edit"' v-model="ruleForm.role" class='inputobj' placeholder="请选择">
             <el-option
               v-for="item in ruleForm.roleOptions"
               :key="item.value"
@@ -65,8 +65,7 @@
         <el-form-item label="Comment" prop='comment'>
           <el-input type="textarea" autosize v-model="ruleForm.comment" class='inputobj'></el-input>
         </el-form-item>
-        <div class='flex jcsb'>
-          <el-button @click="dialogVisible = false" @click="resetForm('ruleForm')">Cancel</el-button>
+        <div class='flex jc-end'>
           <el-button type="primary" @click="updateForm('ruleForm', dialogBus.type)">Submit</el-button>
         </div>
       </el-form>
@@ -115,7 +114,8 @@
       }
       return {
         dialogBus: {
-          type: null
+          type: null,
+          json: {}
         },
         dialogVisible: false,
         csrf: null,
@@ -153,17 +153,20 @@
         }
       }
     },
+    created () {
+      this.getRole()
+    },
     mounted () {
       var vm = this
       this.csrf = document.querySelector('#spp_security').value
-      this.getRole()
       this.getList()
     },
     computed: {
       handleList () {
         var vm = this
         return  this.index.list.filter(function (ele) {
-          return ele.toLowerCase().indexOf(vm.index.search.toLowerCase()) !== -1
+          var str = ele.email + ele.username
+          return str.toLowerCase().indexOf(vm.index.search.toLowerCase()) !== -1
         })
       }
     },
@@ -184,22 +187,26 @@
       },
       judeEmail (value, callback) {
         var vm = this
-        var ajaxData = {
-          email: value,
-          dsp_security_param: vm.csrf
-        }
-        $.ajax({
-          url: '/user/check-email',
-          type: 'post',
-          data: ajaxData,
-          success: function (result) {
-            if (result.status !== 1) {
-              callback(false, result.info)
-            } else {
-              callback(true)
-            }
+        if (this.dialogBus.type === 'create') {
+          var ajaxData = {
+            email: value,
+            dsp_security_param: vm.csrf
           }
-        })
+          $.ajax({
+            url: '/user/check-email',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              if (result.status !== 1) {
+                callback(false, result.info)
+              } else {
+                callback(true)
+              }
+            }
+          })
+        } else {
+          callback(true)
+        }
       },
       getRole () {
         var vm = this
@@ -226,9 +233,32 @@
           this.$refs[formName].resetFields()
         }
       },
-      showDialog (type) {
+      clearValidate (formName) {
+        if (this.$refs[formName] !== undefined) {
+          this.$refs[formName].clearValidate()
+        }
+      },
+      showDialog (type,  item) {
         this.dialogVisible = true
         this.dialogBus.type = type
+        if (type === 'create') {
+          this.dialogBus.json = {}
+          this.ruleForm.email = ''
+          this.ruleForm.name = ''
+          this.ruleForm.pass = ''
+          this.ruleForm.checkPass = ''
+          this.ruleForm.role = ''
+          this.ruleForm.comment = ''
+        }
+        if (type === 'edit') {
+          this.dialogBus.json = item
+          this.ruleForm.email = this.dialogBus.json.email
+          this.ruleForm.name = this.dialogBus.json.username
+          this.ruleForm.pass = this.dialogBus.json.password
+          this.ruleForm.checkPass = this.dialogBus.json.password
+          this.ruleForm.role = this.dialogBus.json.group_id
+          this.ruleForm.comment = this.dialogBus.json.comment
+        }
       },
       updateForm (formName, type) {
         var vm = this
@@ -252,6 +282,7 @@
                 success: function (result) {
                   if (result.status === 1) {
                     vm.dialogVisible = false
+                    vm.getList()
                     vm.$message({
                       message: 'success',
                       type: 'success'
@@ -273,10 +304,8 @@
       }
     },
     watch: {
-      dialogVisible (newval) {
-        if (newval = true) {
-          this.resetForm('ruleForm')
-        }
+      dialogVisible () {
+        this.clearValidate('ruleForm')
       }
     }
   })

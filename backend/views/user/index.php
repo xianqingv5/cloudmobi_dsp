@@ -148,7 +148,7 @@
       getRole () {
         $.ajax({
           url: '/user/get-role',
-          type: 'post',
+          type: 'get',
           success: function (result) {
             console.log(result)
           }

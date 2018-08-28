@@ -222,15 +222,6 @@
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             if (type === 'create') {
-              // ruleForm: {
-              //   email: '',
-              //   name: '',
-              //   pass: '',
-              //   checkPass: '',
-              //   role: '',
-              //   roleOptions: [],
-              //   comment: ''
-              // }
               var ajaxData = {
                 email: vm.ruleForm.email,
                 username: vm.ruleForm.name,
@@ -240,13 +231,20 @@
                 comment: vm.ruleForm.comment,
                 dsp_security_param: vm.csrf
               }
-              console.log(ajaxData)
               $.ajax({
-                url: 'user/create',
+                url: '/user/create',
                 type: 'post',
                 data: ajaxData,
                 success: function (result) {
-                  console.log(result)
+                  if (result.status === 1) {
+                    vm.dialogVisible = false
+                    vm.$message({
+                      message: 'success',
+                      type: 'success'
+                    })
+                  } else {
+                    vm.$message.error(result.info)
+                  }
                 }
               })
             }

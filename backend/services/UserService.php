@@ -74,6 +74,8 @@ class UserService extends BaseService
         $res = User::getData(['count(*) as num'], ["email='" . $email . "'"]);
         if ($res[0]['num']) {
             self::$res['info'] = 'The mailbox already exists.';
+        } else {
+            self::$res['status'] = 1;
         }
         return self::$res;
     }

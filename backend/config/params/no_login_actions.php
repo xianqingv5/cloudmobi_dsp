@@ -5,7 +5,7 @@ return [
     'site/logout',
     'site/language',
     'user/check-email',
-    
+
     'group/group-index',
     'group/get-group-prev',
     'group/add-group-prev',

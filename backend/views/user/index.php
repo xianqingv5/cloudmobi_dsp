@@ -55,7 +55,7 @@
         <el-form-item label="Role" prop='role'>
           <el-select v-model="ruleForm.role" class='inputobj' placeholder="请选择">
             <el-option
-              v-for="item in options"
+              v-for="item in ruleForm.roleOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -104,13 +104,13 @@
           list: ["1"],
           search: ''
         },
-        options: [],
         ruleForm: {
           email: '',
           name: '',
           pass: '',
           checkPass: '',
           role: '',
+          roleOptions: [],
           comment: ''
         },
         rules: {
@@ -144,13 +144,14 @@
       }
     },
     methods: {
-      // user/get-role
       getRole () {
+        var vm = this
         $.ajax({
           url: '/user/get-role',
           type: 'get',
           success: function (result) {
             console.log(result)
+            vm.ruleForm.roleOptions = result
           }
         })
       },

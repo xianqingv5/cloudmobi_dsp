@@ -24,6 +24,9 @@ return [
         '4' => '',
     ],
 
+    // 代理广告商群组
+    'AGENT_ADVERTISERS' => 3,
+
     // 无需登录即可访问方法
     'NO_LOGIN_ACTIONS' => require 'params/no_login_actions.php',
 

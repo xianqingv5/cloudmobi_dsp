@@ -9,5 +9,6 @@ return [
     'group/add-group-prev',
     'group/update-group-status',
     'user/user-index',
-    'user/create'
+    'user/create',
+    'user/get-role',
 ];

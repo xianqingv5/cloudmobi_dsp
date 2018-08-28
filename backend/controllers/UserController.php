@@ -3,6 +3,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\services\UserService;
+use yii\web\Response;
 
 class UserController extends BaseController
 {
@@ -31,6 +32,13 @@ class UserController extends BaseController
     public function actionUpdate()
     {
 
+    }
+
+    public function actionGetRole()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::getRole();
+        return $res;
     }
 
 }

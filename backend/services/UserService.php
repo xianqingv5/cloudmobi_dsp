@@ -3,6 +3,7 @@ namespace backend\services;
 
 use Yii;
 use common\models\User;
+use common\models\UserGroup;
 
 class UserService extends BaseService
 {
@@ -54,5 +55,29 @@ class UserService extends BaseService
         if (!$group_id) return $info['Permission error'];
 
         return $info['success'];
+    }
+
+    public static function getRole()
+    {
+        $group_id = isset(Yii::$app->user->identity->group_id) ? Yii::$app->user->identity->group_id : 0;
+        $where = ['1=1'];
+        switch ($group_id) {
+            case 1:// 群组id
+               $where['id'] = 'id !=1';
+                break;
+            case 2:
+               $where['id'] = 'id not in(1,2)';
+                break;
+            case 3:
+                $where['id'] = "id = 4";
+                break;
+            default :
+                $where['id'] = 'id = 0';
+                break;
+        }
+        $g_res = UserGroup::getData(['id', 'group_name'], $where);
+        self::$res['status'] = 1;
+        self::$res['data'] = $g_res;
+        return self::$res;
     }
 }

@@ -120,7 +120,7 @@
         dialogVisible: false,
         csrf: null,
         index: {
-          list: ["1"],
+          list: [],
           search: ''
         },
         ruleForm: {
@@ -178,7 +178,7 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
+            vm.index.list = result
           }
         })
       },

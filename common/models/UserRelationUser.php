@@ -21,7 +21,7 @@ class UserRelationUser extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'dsp_user_relation_user';
+        return '{{%user_relation_user}';
     }
 
     /**

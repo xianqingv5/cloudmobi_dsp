@@ -10,7 +10,7 @@ class UserController extends BaseController
     public function actionUserIndex()
     {
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
-            
+
         }
 
         return $this->render('index',[]);

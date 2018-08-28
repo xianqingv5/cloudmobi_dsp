@@ -7,10 +7,16 @@ use yii\web\Response;
 
 class UserController extends BaseController
 {
+    /**
+     * 获取用户列表信息
+     * @return array|string
+     */
     public function actionUserIndex()
     {
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
-
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = UserService::getUserData();
+            return $res;
         }
 
         return $this->render('index',[]);

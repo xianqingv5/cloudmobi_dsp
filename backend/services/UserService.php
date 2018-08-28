@@ -13,6 +13,22 @@ class UserService extends BaseService
 
     public static function getUserData()
     {
+        $where['id'] = "1=1";
+        // 广告代理商查询其所属的广告主
+        if (isset(Yii::$app->user->identity->group_id) && Yii::$app->user->identity->group_id == 3) {
+            $uid = Yii::$app->user->identity->id;
+            $user_res = UserRelationUser::getData(['relation_user_id'], ["user_id='".$uid."'"]);
+            if ($user_res) {
+                $uids = array_column($user_res, 'relation_user_id');
+                $where['user_id'] = "id in(" . implode(',', $uids) . ")";
+            } else {
+                $where['user_id'] = "id = 0";
+            }
+
+        }
+
+        $res = User::getData(['*'], $where);
+        return $res;
 
     }
 

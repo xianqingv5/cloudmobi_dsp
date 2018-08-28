@@ -22,6 +22,15 @@ class UserService extends BaseService
             return self::$res;
         }
 
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = $e->getMessage();
+            $transaction->rollBack();
+        }
+
         return self::$res;
     }
 

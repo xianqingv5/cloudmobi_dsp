@@ -184,11 +184,12 @@
       updateStatus (e, item) {
         var vm = this
         var ajaxData = {
-          group_id: item.group_id,
-          status: e
+          id: item.id,
+          status: e,
+          dsp_security_param: vm.csrf
         }
         $.ajax({
-          url: '/group/update-index-status',
+          url: '/user/update-user-status',
           type: 'post',
           data: ajaxData,
           success: function (result) {
@@ -326,7 +327,29 @@
               })
             }
             if (type === 'edit') {
-
+              var ajaxData = {
+                username: vm.ruleForm.name,
+                comment: vm.ruleForm.comment,
+                id: vm.dialogBus.json.id,
+                dsp_security_param: vm.csrf
+              }
+              $.ajax({
+                url: '/user/update',
+                type: 'post',
+                data: ajaxData,
+                success: function (result) {
+                  if (result.status === 1) {
+                    vm.dialogVisible = false
+                    vm.getList()
+                    vm.$message({
+                      message: 'success',
+                      type: 'success'
+                    })
+                  } else {
+                    vm.$message.error(result.info)
+                  }
+                }
+              })
             }
           } else {
             console.log('error submit!!')

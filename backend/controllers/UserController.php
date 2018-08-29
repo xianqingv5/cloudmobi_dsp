@@ -37,9 +37,26 @@ class UserController extends BaseController
         return $this->render('create', []);
     }
 
+    /**
+     * 修改用户信息
+     * @return array
+     */
     public function actionUpdate()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::updateUserData();
+        return $res;
+    }
 
+    /**
+     * 修改用户状态
+     * @return array
+     */
+    public function actionUpdateUserStatus()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::updateUserData();
+        return $res;
     }
 
     /**

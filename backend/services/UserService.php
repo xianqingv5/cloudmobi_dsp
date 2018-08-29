@@ -85,9 +85,55 @@ class UserService extends BaseService
         return self::$res;
     }
 
+    /**
+     * 修改用户数据
+     * @return array
+     */
     public static function updateUserData()
     {
+        $data['username'] = Yii::$app->request->post('username', '');
+        $data['comment'] = Yii::$app->request->post('comment', '');
+        $where['id'] = Yii::$app->request->post('id', 0);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $res = User::updateData($data,$where);
+            if ($res) {
+                self::$res['status'] = 1;
+                self::$res['info'] = 'success';
+                $transaction->commit();
+            }
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = $e->getMessage();
+            $transaction->rollBack();
+        }
 
+        return self::$res;
+    }
+
+    /**
+     * 修改用户状态
+     * @return array
+     */
+    public static function updateUserStatus()
+    {
+        $where['id'] = Yii::$app->request->post('id', 0);
+        $data['status'] = Yii::$app->request->post('status', 1);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $res = User::updateData($data,$where);
+            if ($res) {
+                self::$res['status'] = 1;
+                self::$res['info'] = 'success';
+                $transaction->commit();
+            }
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = $e->getMessage();
+            $transaction->rollBack();
+        }
+
+        return self::$res;
     }
 
     /**

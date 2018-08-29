@@ -14,4 +14,6 @@ return [
     'user/create',
     'user/get-role',
     'user/check-email',
+    'user/update',
+    'user/update-user-status'
 ];

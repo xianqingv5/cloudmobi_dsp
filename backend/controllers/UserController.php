@@ -55,7 +55,7 @@ class UserController extends BaseController
     public function actionUpdateUserStatus()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $res = UserService::updateUserData();
+        $res = UserService::updateUserStatus();
         return $res;
     }
 

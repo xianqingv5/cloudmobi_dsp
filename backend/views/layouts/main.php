@@ -28,6 +28,8 @@ AppAsset::register($this);
 </head>
 <body>
     <?php $this->beginBody() ?>
+
+<?php if (!Yii::$app->user->isGuest) { ?>
     <div class="wrap wrapper">
         <div class='navbarDocker'>
             <?php
@@ -43,9 +45,9 @@ AppAsset::register($this);
             <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
                 <el-breadcrumb separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-                    <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-                    <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+                    <el-breadcrumb-item>121212</el-breadcrumb-item>
+                    <el-breadcrumb-item></el-breadcrumb-item>
+                    <el-breadcrumb-item></el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
             <div class='content'>
@@ -53,6 +55,9 @@ AppAsset::register($this);
             </div>
         </div>
     </div>
+<?php }  else {?>
+    <?= $content ?>
+<?php } ?>
 </body>
 </html>
 <script>

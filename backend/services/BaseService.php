@@ -19,14 +19,12 @@ class BaseService
      * @param int $group_id
      * @throws ForbiddenHttpException
      */
-    public function redirectHomeUrl($group_id = 0)
+    public static function redirectHomeUrl($group_id = 0)
     {
         // 获取群组id
         $gid   = $group_id ? $group_id :Yii::$app->user->identity->group_id;
-
         // 取得roles & home url list
         $home_url_list  = Yii::$app->params['HOME_URL_BY_ROLE'];
-
         // 取得home url
         $home_url = !empty($home_url_list[$gid]) ? $home_url_list[$gid] : '';
 
@@ -67,7 +65,7 @@ class BaseService
     {
         $where = ['1=1'];
         if ($group_id) {
-            $where['id'] = ["id='" . $group_id . "'"];
+            $where['id'] = "id='" . $group_id . "'";
         }
         $res = UserGroup::getData($fields, $where);
         return $res;
@@ -80,8 +78,8 @@ class BaseService
      */
     public static function getGroupRelationPriv($group_id)
     {
-        $res = GroupRelationPriv::getData(['priv_url'], ["group_id = '" . $group_id . "'"]);
-        return !empty($res) ? array_column($res, 'priv_url') : [];
+        $res = GroupRelationPriv::getData(['prev_url'], ["group_id = '" . $group_id . "'"]);
+        return !empty($res) ? array_column($res, 'prev_url') : [];
     }
 
     /**

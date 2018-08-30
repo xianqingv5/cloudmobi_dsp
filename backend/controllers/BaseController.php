@@ -38,7 +38,7 @@ class BaseController extends Controller
         // 检测group是否可用
         $group_id = Yii::$app->user->identity->group_id;
         $group_information = BaseService::getGroupData($group_id);
-        if (empty($group_information) || $group_information->status != 1) {
+        if (empty($group_information) || $group_information[0]['status'] != 1) {
             throw new ForbiddenHttpException();
         }
 

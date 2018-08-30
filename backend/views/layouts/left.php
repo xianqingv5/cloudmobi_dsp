@@ -1,8 +1,11 @@
+<?php
+use yii\helpers\Url;
+?>
 <div class='sidebarBox'>
   <ul class='sidebar-ul'>
     <li>
       <!-- title -->
-      <a class='sidebar-title flex jcsb'>
+      <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/group/group-index')?>">
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">
@@ -55,7 +58,7 @@
     </li>
     <li>
       <!-- title -->
-      <a class='sidebar-title flex jcsb'>
+      <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/user/user-index') ?>">
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">

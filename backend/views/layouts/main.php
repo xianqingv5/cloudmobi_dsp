@@ -28,7 +28,6 @@ AppAsset::register($this);
 </head>
 <body>
     <?php $this->beginBody() ?>
-
 <?php if (!Yii::$app->user->isGuest) { ?>
     <div class="wrap wrapper">
         <div class='navbarDocker'>
@@ -42,17 +41,7 @@ AppAsset::register($this);
             ?>
         </div>
         <div class='mainDocker'>
-            <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
-                <el-breadcrumb separator-class="el-icon-arrow-right">
-                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item>121212</el-breadcrumb-item>
-                    <el-breadcrumb-item></el-breadcrumb-item>
-                    <el-breadcrumb-item></el-breadcrumb-item>
-                </el-breadcrumb>
-            </div>
-            <div class='content'>
-                <?= $content ?>
-            </div>
+            <?= $content ?>
         </div>
     </div>
 <?php }  else {?>
@@ -60,10 +49,5 @@ AppAsset::register($this);
 <?php } ?>
 </body>
 </html>
-<script>
-    var mainVm = new Vue({
-        el: '.breadcrumbDocker'
-    })
-</script>
 <?php $this->endBody() ?>
 <?php $this->endPage() ?>

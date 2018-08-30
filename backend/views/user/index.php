@@ -1,86 +1,98 @@
-<div class='m-40-0 p20 app base-box-shadow bg-white'>
-  <div class='flex jc-btween mb-20'>
-    <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
-    <el-input
-      class='form-search'
-      placeholder="Group Name"
-      prefix-icon="el-icon-search"
-      v-model="index.search">
-    </el-input>
+<div class='app'>
+  <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>121212</el-breadcrumb-item>
+      <el-breadcrumb-item></el-breadcrumb-item>
+      <el-breadcrumb-item></el-breadcrumb-item>
+    </el-breadcrumb>
   </div>
-  <table class='table table-bordered'>
-    <thead>
-      <th>Email</th>
-      <th>User Name</th>
-      <th>Comment</th>
-      <th>status</th>
-      <th>Operation</th>
-    </thead>
-    <tbody is='transition-group' name='list'>
-      <tr v-for='(item, index) in handleList' :key='item.id'>
-        <td v-text='item.email'></td>
-        <td v-text='item.username'></td>
-        <td v-text='item.comment'></td>
-        <td>
-          <el-switch
-            v-model="item.status"
-            active-value="1"
-            inactive-value="2"
-            @change='updateStatus($event, item)'
-            >
-          </el-switch>
-        </td>
-        <td>
-          <div class='flex jc-around'>
-            <span class='icon el-icon-edit-outline' @click='showDialog("edit", item)'></span>
-            <a class='sidebar-icon'>
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-chakanbaobiao"></use>
-              </svg>
-            </a>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <!-- dialog -->
-  <el-dialog
-  title="权限控制"
-  :visible.sync="dialogVisible">
-    <div class='flex column'>
-      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
-        <el-form-item label="Email" prop='email'>
-          <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.email" class='inputobj'></el-input>
-        </el-form-item>
-        <el-form-item label="User Name" prop='name'>
-          <el-input v-model.trim="ruleForm.name" class='inputobj'></el-input>
-        </el-form-item>
-        <input class='dn' type="password"/>
-        <el-form-item v-if='dialogBus.type !== "edit"' label="Password" prop='pass'>
-          <el-input type='password' auto-complete="off" v-model="ruleForm.pass" class='inputobj'></el-input>
-        </el-form-item>
-        <el-form-item v-if='dialogBus.type !== "edit"' label="Check Password" prop='checkPass'>
-          <el-input type='password' auto-complete="off" v-model="ruleForm.checkPass" class='inputobj'></el-input>
-        </el-form-item>
-        <el-form-item label="Role" prop='role'>
-          <el-select :disabled='dialogBus.type === "edit"' v-model="ruleForm.role" class='inputobj' placeholder="请选择">
-            <el-option
-              v-for="item in ruleForm.roleOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Comment" prop='comment'>
-          <el-input type="textarea" autosize v-model="ruleForm.comment" class='inputobj'></el-input>
-        </el-form-item>
-        <div class='flex jc-end'>
-          <el-button type="primary" @click="updateForm('ruleForm', dialogBus.type)">Submit</el-button>
+  <div class='content'>
+    <div class='m-40-0 p20 base-box-shadow bg-white'>
+      <div class='flex jc-btween mb-20'>
+        <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+        <el-input
+          class='form-search'
+          placeholder="Group Name"
+          prefix-icon="el-icon-search"
+          v-model="index.search">
+        </el-input>
+      </div>
+      <table class='table table-bordered'>
+        <thead>
+          <th>Email</th>
+          <th>User Name</th>
+          <th>Comment</th>
+          <th>status</th>
+          <th>Operation</th>
+        </thead>
+        <tbody is='transition-group' name='list'>
+          <tr v-for='(item, index) in handleList' :key='item.id'>
+            <td v-text='item.email'></td>
+            <td v-text='item.username'></td>
+            <td v-text='item.comment'></td>
+            <td>
+              <el-switch
+                v-model="item.status"
+                active-value="1"
+                inactive-value="2"
+                @change='updateStatus($event, item)'
+                >
+              </el-switch>
+            </td>
+            <td>
+              <div class='flex jc-around'>
+                <span class='icon el-icon-edit-outline' @click='showDialog("edit", item)'></span>
+                <a class='sidebar-icon'>
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-chakanbaobiao"></use>
+                  </svg>
+                </a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- dialog -->
+      <el-dialog
+      title="权限控制"
+      :visible.sync="dialogVisible">
+        <div class='flex column'>
+          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
+            <el-form-item label="Email" prop='email'>
+              <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.email" class='inputobj'></el-input>
+            </el-form-item>
+            <el-form-item label="User Name" prop='name'>
+              <el-input v-model.trim="ruleForm.name" class='inputobj'></el-input>
+            </el-form-item>
+            <input class='dn' type="password"/>
+            <el-form-item v-if='dialogBus.type !== "edit"' label="Password" prop='pass'>
+              <el-input type='password' auto-complete="off" v-model="ruleForm.pass" class='inputobj'></el-input>
+            </el-form-item>
+            <el-form-item v-if='dialogBus.type !== "edit"' label="Check Password" prop='checkPass'>
+              <el-input type='password' auto-complete="off" v-model="ruleForm.checkPass" class='inputobj'></el-input>
+            </el-form-item>
+            <el-form-item label="Role" prop='role'>
+              <el-select :disabled='dialogBus.type === "edit"' v-model="ruleForm.role" class='inputobj' placeholder="请选择">
+                <el-option
+                  v-for="item in ruleForm.roleOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="Comment" prop='comment'>
+              <el-input type="textarea" autosize v-model="ruleForm.comment" class='inputobj'></el-input>
+            </el-form-item>
+            <div class='flex jc-end'>
+              <el-button type="primary" @click="updateForm('ruleForm', dialogBus.type)">Submit</el-button>
+            </div>
+          </el-form>
         </div>
-      </el-form>
+      </el-dialog>
     </div>
-  </el-dialog>
+  </div>
 </div>
 <script>
   new Vue({

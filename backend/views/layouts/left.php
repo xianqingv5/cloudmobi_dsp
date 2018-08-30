@@ -3,7 +3,7 @@ use yii\helpers\Url;
 ?>
 <div class='sidebarBox'>
   <ul class='sidebar-ul'>
-    <li>
+    <li class="<?php echo $this->context->id == 'group' ? 'act' : ''; ?>">
       <!-- title -->
       <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/group/group-index')?>">
         <div class='flex'>
@@ -17,9 +17,9 @@ use yii\helpers\Url;
         <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
       </a>
     </li>
-    <li class='act'>
+    <li class="<?php echo $this->context->id == 'offer' ? 'act' : ''; ?>">
       <!-- title -->
-      <a class='sidebar-title flex jcsb' href=''>
+      <a class='sidebar-title flex jcsb' href='<?php echo Url::to('/offer/offer-index') ?>'>
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">
@@ -56,7 +56,7 @@ use yii\helpers\Url;
         <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
       </a>
     </li>
-    <li>
+    <li class="<?php echo $this->context->id == 'user' ? 'act' : ''; ?>">
       <!-- title -->
       <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/user/user-index') ?>">
         <div class='flex'>

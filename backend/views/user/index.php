@@ -1,10 +1,8 @@
 <div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>121212</el-breadcrumb-item>
-      <el-breadcrumb-item></el-breadcrumb-item>
-      <el-breadcrumb-item></el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>
+      <el-breadcrumb-item>Index</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
   <div class='content'>

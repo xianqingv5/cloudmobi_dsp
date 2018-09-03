@@ -360,27 +360,19 @@
           }
         } else {
           if (data.type.indexOf('image') !== -1) {
-            var reader = new FileReader()
-            reader.onload = function (theFile) {
-              var media = new Image()
-              media.src = theFile.target.result
-              media.onload = function () {
-                var w = this.width
-                var h = this.height
-                data.w = w
-                data.h = h
-                if (type === 'icon') {
-                  if (w === h) {
-                    callback()
-                  } else {
-                    that.$message.error('图片尺寸非1:1,请重新上传')
-                  }
-                } else {
+            that.getSize(data, type, function (bob) {
+              var w = bob.width
+              var h = bob.height
+              if (type === 'icon') {
+                if (w === h) {
                   callback()
+                } else {
+                  that.$message.error('图片尺寸非1:1,请重新上传')
                 }
+              } else {
+                callback()
               }
-            }
-            reader.readAsDataURL(data.file)
+            })
           } else {
             that.$message.error('文件类型不符')
           }
@@ -417,21 +409,7 @@
           var icon0 = this.ruleForm[type + 'List'][0]
           this.deleteFun(icon0, 0, this.ruleForm[type + 'List'])
         }
-        if (type === 'video') {
-          var videoDom = document.createElement('video')
-          videoDom.classList.add('testVideo', 'dn')
-          videoDom.src = data.url
-          document.body.appendChild(videoDom)
-          videoDom.oncanplay = function () {
-            var w = this.videoWidth
-            var h = this.videoHeight
-            data.w = w
-            data.h = h
-            console.log(data)
-            // 此处执行备份到php
-          }
-        }
-
+        this.getSize(data, type)
       },
       duplicateRemoval (list, data) {
         var flag = true
@@ -445,8 +423,35 @@
         }
         return flag
       },
-      getSize () {
-
+      getSize (data, type, callback) {
+        if (type === 'video') {
+          var videoDom = document.createElement('video')
+          videoDom.classList.add('testVideo', 'dn')
+          videoDom.src = data.url
+          document.body.appendChild(videoDom)
+          videoDom.oncanplay = function () {
+            var w = this.videoWidth
+            var h = this.videoHeight
+            data.width = w
+            data.height = h
+            console.log(data)
+            // 此处执行备份到php
+          }
+        } else {
+          var reader = new FileReader()
+          reader.onload = function (theFile) {
+            var media = new Image()
+            media.src = theFile.target.result
+            media.onload = function () {
+              var w = this.width
+              var h = this.height
+              data.width = w
+              data.height = h
+              callback(this)
+            }
+          }
+          reader.readAsDataURL(data.file)
+        }
       }
     }
   })

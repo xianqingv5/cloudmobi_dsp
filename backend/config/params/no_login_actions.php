@@ -16,4 +16,5 @@ return [
 //    'user/check-email',
 //    'user/update',
 //    'user/update-user-status'
+      'offer/get-offer-config'
 ];

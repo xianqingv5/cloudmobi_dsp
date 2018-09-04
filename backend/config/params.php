@@ -35,4 +35,7 @@ return [
 
     // 群组权限列表
     'GROUP_PREV' => require 'params/group_prev.php',
+
+    // 平台版本
+    'DEMAND_PLATFORM' => require 'params/demand-offer-version.php',
 ];

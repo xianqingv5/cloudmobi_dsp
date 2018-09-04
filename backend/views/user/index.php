@@ -2,7 +2,7 @@
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>
-      <el-breadcrumb-item>Index</el-breadcrumb-item>
+      <el-breadcrumb-item>Account Management</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
   <div class='content'>
@@ -11,7 +11,7 @@
         <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
         <el-input
           class='form-search'
-          placeholder="Group Name"
+          placeholder="Email/ User List"
           prefix-icon="el-icon-search"
           v-model="index.search">
         </el-input>
@@ -53,7 +53,7 @@
       </table>
       <!-- dialog -->
       <el-dialog
-      title="权限控制"
+      title="Create User"
       :visible.sync="dialogVisible">
         <div class='flex column'>
           <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">

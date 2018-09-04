@@ -99,10 +99,10 @@
               <el-input class='form-one' v-model="ruleForm.priceWay" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
-              <el-input class='form-one' v-model="ruleForm.dailyCap" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Total Cap" prop="totalCap">
-              <el-input class='form-one' v-model="ruleForm.totalCap" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -260,12 +260,26 @@
     el: '.app',
     data () {
       var vm = this
-      var validatorTotalCap = function (rule, value, callback) {
-        if (vm.judeTotalCap) {
-          callback()
+      var validatorDailyCap = function (rule, value, callback) {
+        if (value && Number(value).toString() !== value) {
+          callback(new Error('必须为数字'))
         } else {
-          callback(new Error('Daily Cap”<= "Total Cap'))
+          callback()
         }
+      }
+      var validatorTotalCap = function (rule, value, callback) {
+        if (value) {
+          if (Number(value).toString() !== value) {
+            callback(new Error('必须为数字'))
+          } else if (!vm.judeTotalCap()) {
+            callback(new Error('Total Cap >= Daily Cap'))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+        
       }
       return {
         options: {
@@ -340,10 +354,9 @@
             { required: true, message: '此项必填', trigger: 'blur' }
           ],
           dailyCap: [
-            { required: false, type: 'number', trigger: 'blur', message: '必须为数字' }
+            { required: false, validator: validatorDailyCap, trigger: 'blur' }
           ],
           totalCap: [
-            { required: false, type: 'number', trigger: 'blur', message: '必须为数字' },
             { required: false, validator: validatorTotalCap, trigger: 'blur' }
           ]
         }
@@ -362,6 +375,14 @@
         }
         return true
       }
+    },
+    mounted () {
+      this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
+        // 每次改变都会验证totalCap
+        this.$refs['ruleForm'].validateField('totalCap')
+      }, {
+        deep: true
+      })
     },
     methods: {
       judeTotalCap () {
@@ -529,7 +550,7 @@
         reader.readAsDataURL(data.file)
       },
       submitForm (formName) {
-        this.$refs[formName].validate((valid) => {
+        this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
           } else {
@@ -542,7 +563,8 @@
         this.$refs[formName].resetFields()
         window.scrollTo(0, 0)
       }
-    }
+    },
+    watch: {}
   })
 </script>
 <style>

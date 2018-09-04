@@ -20,7 +20,7 @@ class UserGroup extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'dsp_user_group';
+        return '{{%user_group}}';
     }
 
     /**

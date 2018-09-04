@@ -14,11 +14,7 @@
         <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
         <el-input
           class='form-search'
-<<<<<<< HEAD
           placeholder="Email / User List"
-=======
-          placeholder="Email/ User List"
->>>>>>> c9f8d68b4473ad2e41bd19336d2871654b6e923a
           prefix-icon="el-icon-search"
           v-model="index.search">
         </el-input>

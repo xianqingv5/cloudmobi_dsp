@@ -142,7 +142,7 @@
               <el-select class='form-one'
                 v-model="ruleForm.minOSvsersion" :disabled='!judePlatform' clearable placeholder="">
                 <el-option
-                  v-for="item in options.minOSvsersion"
+                  v-for="item in minOSvsersionOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -282,12 +282,23 @@
         
       }
       return {
+        csrf: '',
         options: {
           campaignOwner: [],
           advertiser: [],
           attributeProvider: [],
-          platform: [],
+          platform: [
+            {
+              value: '1',
+              label: 'Android'
+            },
+            {
+              value: '2',
+              label: 'iOS'
+            }
+          ],
           deviceType: [],
+          minOSvsersionBase: {},
           minOSvsersion: [],
           city: []
         },
@@ -358,12 +369,29 @@
           ],
           totalCap: [
             { required: false, validator: validatorTotalCap, trigger: 'blur' }
-          ]
+          ],
+          // 4
+          platform: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          deviceType: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          minOSvsersion: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          networkStatus: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          city: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
         }
       }
     },
     computed: {
-      judeOne () {return true
+      judeOne () {
+        return true
         if (this.ruleForm.campaignOwner !== '' && this.ruleForm.advertiser !== '' && this.ruleForm.attributeProvider !== '') {
           return true
         }
@@ -374,17 +402,81 @@
           return false
         }
         return true
+      },
+      minOSvsersionOptions () {
+        // Android
+        if (this.ruleForm.platform === '1') {
+          var arr = []
+          this.options.minOSvsersionBase.android.map(function (ele) {
+            arr.push({
+              value: ele,
+              label: ele
+            })
+          })
+          return arr
+        }
+        if (this.ruleForm.platform === '2') {
+          var arr = []
+          this.options.minOSvsersionBase.ios.map(function (ele) {
+            arr.push({
+              value: ele,
+              label: ele
+            })
+          })
+          return arr
+        }
       }
     },
     mounted () {
+      this.csrf = document.querySelector('#spp_security').value
       this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
         // 每次改变都会验证totalCap
         this.$refs['ruleForm'].validateField('totalCap')
       }, {
         deep: true
       })
+      // initData
+      this.initData()
     },
     methods: {
+      initData () {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer/get-offer-config',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            console.log(result)
+            // Campaign Owner
+            result.data.user.map(function (ele) {
+              that.options.campaignOwner.push({
+                value: ele.id,
+                label: ele.email
+              })
+            })
+            // advertiser
+            result.data.ads.map(function (ele) {
+              that.options.advertiser.push({
+                value: ele.id,
+                label: ele.ads
+              })
+            })
+            // attributeProvider
+            result.data.tpm.map(function (ele) {
+              that.options.attributeProvider.push({
+                channel: ele.channel,
+                value: ele.id,
+                label: ele.tpm
+              })
+            })
+            // version
+            that.options.minOSvsersionBase = result.data.version
+          }
+        })
+      },
       judeTotalCap () {
         if (this.ruleForm.totalCap >= this.ruleForm.dailyCap) {
           return true

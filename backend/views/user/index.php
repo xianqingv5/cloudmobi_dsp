@@ -172,7 +172,7 @@
           email: [
             { required: true, message: '请输入邮箱地址', trigger: 'blur' },
             { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] },
-            { required: true, validator: validateEmail, trigger: 'blur' }
+            { required: true, validator: validateEmail, trigger: ['blur', 'change'] }
           ],
           name: [
             { required: true, message: '请输入用户名', trigger: 'blur' }

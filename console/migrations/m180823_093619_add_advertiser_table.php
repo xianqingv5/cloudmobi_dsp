@@ -19,10 +19,8 @@ class m180823_093619_add_advertiser_table extends Migration
         }
 
         $this->createTable('{{%advertiser}}', [
-            'id'                => $this->primaryKey()->comment('主键'),
-            'advertiser'   => $this->integer()->notNull()->defaultValue(0)->comment('广告主'),
-            'create_date'       => $this->dateTime()->notNull()->defaultValue('1000-01-01 00:00:01')->comment('创建时间'),
-            'update_date'       => $this->dateTime()->notNull()->defaultValue('1000-01-01 00:00:01')->comment('更新时间'),
+            'id'  => $this->primaryKey()->comment('主键'),
+            'ads' => $this->string(50)->notNull()->defaultValue('')->comment('广告主'),
         ], $table_options);
 
     }

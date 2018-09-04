@@ -13,14 +13,16 @@ class UserService extends BaseService
 
     public static function getUserData()
     {
-        $where['status'] = "status = 1";
+
         // 广告代理商查询其所属的广告主
         $group_id = Yii::$app->user->identity->group_id ? Yii::$app->user->identity->group_id : 0;
         switch ($group_id) {
             case 1:// super admin
+                $where['all'] = '1=1';
                 break;
             case 2:// admin
                 $where['group_id'] = "group_id in(3)";
+                $where['status'] = "status = 1";
                 break;
             case 3:// 广告代理商
                 $uid = Yii::$app->user->identity->id;
@@ -31,6 +33,7 @@ class UserService extends BaseService
                 } else {
                     $where['user_id'] = "id = 0";
                 }
+                $where['status'] = "status = 1";
                 break;
             default :
                 $where['user_id'] = "id = 0";
@@ -107,6 +110,7 @@ class UserService extends BaseService
         $transaction = Yii::$app->db->beginTransaction();
         try {
             $res = User::updateData($data,$where);
+            self::$res['info'] = 'fail';
             if ($res) {
                 self::$res['status'] = 1;
                 self::$res['info'] = 'success';
@@ -158,11 +162,17 @@ class UserService extends BaseService
             'empty_password' => 'Password is not empty',
             'password' => 'Password inconsistent',
             'group' => 'Permission error',
+            'password_length' => 'Password length is at least 8 bits.',
+            'email_check' => 'The email address is invalid',
         ];
 
         // email
         $email = trim(Yii::$app->request->post('email', ''));
         if (empty($email))return $info['email'];
+
+        // email 验证
+        $preg =  filter_var($email, FILTER_VALIDATE_EMAIL);
+        if (!$preg) return $info['email_check'];
 
         // 验证邮箱是否存在
         $e_res = self::checkEmail();
@@ -175,6 +185,7 @@ class UserService extends BaseService
         $check_pwd = trim(Yii::$app->request->post('check_password', ''));
         if (empty($pwd)) return $info['empty_password'];
         if ($pwd != $check_pwd) return $info['password'];
+        if (strlen($pwd) < 8) return $info['password_length'];
 
         // group
         $group_id = Yii::$app->request->post('group_id', 0);
@@ -212,10 +223,11 @@ class UserService extends BaseService
                $where['id'] = 'id !=1';
                 break;
             case 2:
-               $where['id'] = 'id not in(1,2)';
+               //$where['id'] = 'id not in(1,2)';
+               $where['id'] = 'id in(3)';
                 break;
             case 3:
-                $where['id'] = "id = 4";
+                $where['id'] = "id = 0";
                 break;
             default :
                 $where['id'] = 'id = 0';

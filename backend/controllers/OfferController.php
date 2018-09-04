@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\web\Response;
 use backend\services\OfferService;
 
 class OfferController extends BaseController
@@ -29,5 +30,12 @@ class OfferController extends BaseController
     public function actionDelOfferImg()
     {
 
+    }
+
+    public function actionGetOfferConfig()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = OfferService::getOfferConfig();
+        return $res;
     }
 }

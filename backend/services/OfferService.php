@@ -31,20 +31,19 @@ class OfferService extends BaseService
     public static function getOfferConfig()
     {
         // 获取offer所属者
-        $user_res = User::getData(['id', 'email'], ['group_id = 3', 'status = 1']);
-        self::$res['data']['user'] = $user_res;
+        self::$res['data']['user'] = User::getData(['id', 'email'], ['group_id = 3', 'status = 1']);
 
         // 获取第三方检测平台
-        $tpm = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['1=1']);
-        self::$res['data']['tpm'] = $tpm;
+        self::$res['data']['tpm'] = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['1=1']);
 
         // 获取广告主信息
-        $ads = Advertiser::getData(['*'], ['id>0']);
-        self::$res['data']['ads'] = $ads;
+        self::$res['data']['ads'] = Advertiser::getData(['*'], ['id>0']);
 
         // 获取平台版本
         self::$res['data']['version'] = Yii::$app->params['DEMAND_PLATFORM'];
 
+        // 获取国家数据
+        self::$res['data']['country'] = CountryService::getCountryAllData(['id', 'full_name', 'short_name'], ['id>0']);
         return self::$res;
     }
 }

@@ -11,7 +11,7 @@ body {
     background: #fff;
     overflow: scroll;
     width: 100%;
-    height: auto !important;
+    height: 100% !important;
     font-size: 12px;
 }
 table {
@@ -19,6 +19,13 @@ table {
 }
 table th{
     text-align: center;
+    border-bottom: 0 !important;
+}
+table thead th{
+    background: #f0f2f8;
+}
+table tbody tr:nth-child(odd) {
+    background-color: #f3f8fd;
 }
 table td{
     vertical-align: middle !important;

@@ -6,7 +6,7 @@
     </el-breadcrumb>
   </div>
   <div class='p30 left'>
-    <h3>ACCOUNT MANAGEMENT</h3>
+    <h3>Account Management</h3>
   </div>
   <div class='content'>
     <div class='contentBox'>
@@ -14,7 +14,7 @@
         <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
         <el-input
           class='form-search'
-          placeholder="Group Name"
+          placeholder="Email / User List"
           prefix-icon="el-icon-search"
           v-model="index.search">
         </el-input>
@@ -42,9 +42,9 @@
               </el-switch>
             </td>
             <td>
-              <div class='flex jc-around'>
-                <span class='icon el-icon-edit-outline' @click='showDialog("edit", item)'></span>
-                <a href>
+              <div class='flex'>
+                <span class='icon el-icon-edit-outline mr-25' @click='showDialog("edit", item)'></span>
+                <a class='ml-25' href>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
@@ -56,7 +56,7 @@
       </table>
       <!-- dialog -->
       <el-dialog
-      title="权限控制"
+      :title='dialogBus.title'
       :visible.sync="dialogVisible">
         <div class='flex column'>
           <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
@@ -84,7 +84,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Comment" prop='comment'>
-              <el-input type="textarea" autosize v-model="ruleForm.comment" class='inputobj'></el-input>
+              <el-input type="textarea" autosize v-model.trim="ruleForm.comment" class='inputobj'></el-input>
             </el-form-item>
             <div class='flex jc-end'>
               <el-button type="primary" @click="updateForm('ruleForm', dialogBus.type)">Submit</el-button>
@@ -101,19 +101,29 @@
     data () {
       var vm = this
       // 验证email
+      // 中文正则
+      var reg = new RegExp('[\u4e00-\u9fa5]')
       var validateEmail = function (rule, value, callback) {
-        vm.judeEmail(value, function (type, info) {
-          if (type) {
-            callback()
-          } else {
-            callback(new Error(info))
-          }
-        })
+        if (value.indexOf(' ') !== -1) {
+          callback(new Error('不得输入空格'))
+        } else if (reg.test(value)) {
+          callback(new Error('不得输入中文'))
+        } else {
+          vm.judeEmail(value, function (type, info) {
+            if (type) {
+              callback()
+            } else {
+              callback(new Error(info))
+            }
+          })
+        }
       }
       // 密码
       var validatePass = function (rule, value, callback) {
         if (value === '') {
           callback(new Error('请输入密码'))
+        } else if (value.indexOf(' ') !== -1) {
+          callback(new Error('不得输入空格'))
         } else {
           if (value.length < 8) {
             callback(new Error('密码长度不得小于八位'))
@@ -129,6 +139,8 @@
       var validatePass2 = function (rule, value, callback) {
         if (value === '') {
           callback(new Error('请再次输入密码'))
+        } else if (value.indexOf(' ') !== -1) {
+          callback(new Error('不得输入空格'))
         } else if (value !== vm.ruleForm.pass) {
           callback(new Error('两次输入密码不一致!'))
         } else {
@@ -137,6 +149,7 @@
       }
       return {
         dialogBus: {
+          title: null,
           type: null,
           json: {}
         },
@@ -163,6 +176,7 @@
           ],
           name: [
             { required: true, message: '请输入用户名', trigger: 'blur' }
+
           ],
           pass: [
             { required: true, validator: validatePass, trigger: 'blur' }
@@ -288,6 +302,7 @@
         this.dialogVisible = true
         this.dialogBus.type = type
         if (type === 'create') {
+          this.dialogBus.title = 'Create User'
           this.dialogBus.json = {}
           this.ruleForm.email = ''
           this.ruleForm.name = ''
@@ -297,6 +312,7 @@
           this.ruleForm.comment = ''
         }
         if (type === 'edit') {
+          this.dialogBus.title = 'Edit User'
           this.dialogBus.json = item
           this.ruleForm.email = this.dialogBus.json.email
           this.ruleForm.name = this.dialogBus.json.username

@@ -6,8 +6,11 @@
     </el-breadcrumb>
   </div>
   <div class='flex jcsb p30'>
-    <h3>NEW CAMPAIGN</h3>
-    <el-button type="primary">Save</el-button>
+    <h3>New Campaign</h3>
+    <div>
+      <el-button  @click='resetForm("ruleForm")'>Reset</el-button>
+      <el-button type="primary" @click='submitForm("ruleForm")'>Save</el-button>
+    </div>
   </div>
   <div class='content'>
     <div class='contentBox'>
@@ -54,6 +57,7 @@
             </el-form-item>
           </div>
         </div>
+<template v-if='judeOne'>
         <!-- 2 -->
         <div class='content-li'>
           <div class='flex jc-start content-li-title'>
@@ -75,8 +79,8 @@
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group class='form-one' v-model="ruleForm.schedule">
-                <el-radio value='2' label="OFF"></el-radio>
-                <el-radio value='1' label="ON"></el-radio>
+                <el-radio label="0">OFF</el-radio>
+                <el-radio label="1">ON</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="Comment" prop="comment">
@@ -95,10 +99,10 @@
               <el-input class='form-one' v-model="ruleForm.priceWay" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
-              <el-input class='form-one' v-model="ruleForm.dailyCap" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Total Cap" prop="totalCap">
-              <el-input class='form-one' v-model="ruleForm.totalCap" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -136,7 +140,7 @@
             </el-form-item>
             <el-form-item label="Min OS Vsersion" prop="minOSvsersion">
               <el-select class='form-one'
-                v-model="ruleForm.minOSvsersion" clearable placeholder="">
+                v-model="ruleForm.minOSvsersion" :disabled='!judePlatform' clearable placeholder="">
                 <el-option
                   v-for="item in options.minOSvsersion"
                   :key="item.value"
@@ -147,9 +151,9 @@
             </el-form-item>
             <el-form-item label="Network Status" prop="networkStatus">
               <el-radio-group class='form-one' v-model="ruleForm.networkStatus">
-                <el-radio value='1' label="WIFI & 4G"></el-radio>
-                <el-radio value='2' label="WIFI"></el-radio>
-                <el-radio value='3' label="4G"></el-radio>
+                <el-radio label="1">WIFI & 4G</el-radio>
+                <el-radio label="2">WIFI</el-radio>
+                <el-radio label="3">4G</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="select Country" prop="city">
@@ -234,8 +238,10 @@
             </div>
           </div>
         </div>
+</template>
         <div class='flex p30'>
-          <el-button type="primary">Save</el-button>
+          <el-button  @click='resetForm("ruleForm")'>Reset</el-button>
+          <el-button type="primary" @click='submitForm("ruleForm")'>Save</el-button>
         </div>
       </el-form>
     </div>
@@ -253,6 +259,28 @@
   new Vue({
     el: '.app',
     data () {
+      var vm = this
+      var validatorDailyCap = function (rule, value, callback) {
+        if (value && Number(value).toString() !== value) {
+          callback(new Error('必须为数字'))
+        } else {
+          callback()
+        }
+      }
+      var validatorTotalCap = function (rule, value, callback) {
+        if (value) {
+          if (Number(value).toString() !== value) {
+            callback(new Error('必须为数字'))
+          } else if (!vm.judeTotalCap()) {
+            callback(new Error('Total Cap >= Daily Cap'))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+        
+      }
       return {
         options: {
           campaignOwner: [],
@@ -295,19 +323,75 @@
           videoList: []
         },
         rules: {
+          // 1
           campaignOwner: [
-            {required: true}
+            { required: true, message: '此项必填', trigger: 'blur' }
           ],
           advertiser: [
-            {required: true}
+            { required: true, message: '此项必填', trigger: 'blur' }
           ],
           attributeProvider: [
-            {required: true}
+            { required: true, message: '此项必填', trigger: 'blur' }
           ],
+          // 2
+          storeUrl: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          title: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          desc: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          trackingUrl: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          schedule: [
+            { required: true, message: '至少选择一项', trigger: 'blur' }
+          ],
+          // 3
+          priceWay: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          dailyCap: [
+            { required: false, validator: validatorDailyCap, trigger: 'blur' }
+          ],
+          totalCap: [
+            { required: false, validator: validatorTotalCap, trigger: 'blur' }
+          ]
         }
       }
     },
+    computed: {
+      judeOne () {return true
+        if (this.ruleForm.campaignOwner !== '' && this.ruleForm.advertiser !== '' && this.ruleForm.attributeProvider !== '') {
+          return true
+        }
+        return false
+      },
+      judePlatform () {
+        if (this.ruleForm.platform === '') {
+          return false
+        }
+        return true
+      }
+    },
+    mounted () {
+      this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
+        // 每次改变都会验证totalCap
+        this.$refs['ruleForm'].validateField('totalCap')
+      }, {
+        deep: true
+      })
+    },
     methods: {
+      judeTotalCap () {
+        if (this.ruleForm.totalCap >= this.ruleForm.dailyCap) {
+          return true
+        } else {
+          return false
+        }
+      },
       uploadFile (type) {
         var that = this
         var str = '.' + type + 'file'
@@ -322,7 +406,9 @@
               file: file,
               fileName: file.name,
               size: file.size,
-              type: file.type
+              type: file.type,
+              width: null,
+              height: null
             }
             that.judeUploadFile(data, type, function () {
               that.uploadFun(data, type, function (err, result) {
@@ -335,8 +421,8 @@
                   console.log(result)
                   var downData = {
                     url: result.Location,
-                    width: data.w,
-                    height: data.h,
+                    width: data.width,
+                    height: data.height,
                     size: data.size,
                     type: type,
                     key: result.key
@@ -354,7 +440,17 @@
         var that = this
         if (type === 'video') {
           if (data.type.indexOf(type) !== -1) {
-            callback()
+            that.getSize(data, type, function (bob) {
+              var w = bob.videoWidth
+              var h = bob.videoHeight
+              data.width = w
+              data.height = h
+              if (w / h < 1.7 && w / h > 2.1) {
+                that.$message.error('视频尺寸不符,请重新上传')
+              } else {
+                callback()
+              }
+            })
           } else {
             that.$message.error('文件类型不符')
           }
@@ -363,6 +459,8 @@
             that.getSize(data, type, function (bob) {
               var w = bob.width
               var h = bob.height
+              data.width = w
+              data.height = h
               if (type === 'icon') {
                 if (w === h) {
                   callback()
@@ -371,6 +469,13 @@
                 }
               } else {
                 callback()
+              }
+              if (type === 'image') {
+                if (w / h < 1.7 && w / h > 2.1) {
+                  that.$message.error('图片尺寸不符,请重新上传')
+                } else {
+                  callback()
+                }
               }
             })
           } else {
@@ -408,8 +513,8 @@
         if (type === 'icon' && this.ruleForm[type + 'List'].length !== 1) {
           var icon0 = this.ruleForm[type + 'List'][0]
           this.deleteFun(icon0, 0, this.ruleForm[type + 'List'])
+          // this.getSize(data, type)
         }
-        this.getSize(data, type)
       },
       duplicateRemoval (list, data) {
         var flag = true
@@ -424,36 +529,42 @@
         return flag
       },
       getSize (data, type, callback) {
-        if (type === 'video') {
-          var videoDom = document.createElement('video')
-          videoDom.classList.add('testVideo', 'dn')
-          videoDom.src = data.url
-          document.body.appendChild(videoDom)
-          videoDom.oncanplay = function () {
-            var w = this.videoWidth
-            var h = this.videoHeight
-            data.width = w
-            data.height = h
-            console.log(data)
-            // 此处执行备份到php
-          }
-        } else {
-          var reader = new FileReader()
-          reader.onload = function (theFile) {
+        var reader = new FileReader()
+        reader.onload = function (theFile) {
+          if (type !== 'video') {
             var media = new Image()
             media.src = theFile.target.result
             media.onload = function () {
-              var w = this.width
-              var h = this.height
-              data.width = w
-              data.height = h
+              callback(this)
+            }
+          } else {
+            var videoDom = document.createElement('video')
+            videoDom.classList.add('testVideo', 'dn')
+            videoDom.src = theFile.target.result
+            document.body.appendChild(videoDom)
+            videoDom.onloadeddata = function () {
               callback(this)
             }
           }
-          reader.readAsDataURL(data.file)
         }
+        reader.readAsDataURL(data.file)
+      },
+      submitForm (formName) {
+        this.$refs[formName].validate(function (valid) {
+          if (valid) {
+            console.log('submit!')
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields()
+        window.scrollTo(0, 0)
       }
-    }
+    },
+    watch: {}
   })
 </script>
 <style>

@@ -5,8 +5,11 @@
       <el-breadcrumb-item>Account Management</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
+  <div class='p30 left'>
+    <h3>ACCOUNT MANAGEMENT</h3>
+  </div>
   <div class='content'>
-    <div class='m-40-0 p20 base-box-shadow bg-white'>
+    <div class='contentBox'>
       <div class='flex jc-btween mb-20'>
         <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
         <el-input
@@ -21,7 +24,7 @@
           <th>Email</th>
           <th>User Name</th>
           <th>Comment</th>
-          <th>status</th>
+          <th>Status</th>
           <th>Operation</th>
         </thead>
         <tbody is='transition-group' name='list'>
@@ -41,7 +44,7 @@
             <td>
               <div class='flex jc-around'>
                 <span class='icon el-icon-edit-outline' @click='showDialog("edit", item)'></span>
-                <a class='sidebar-icon'>
+                <a href>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>

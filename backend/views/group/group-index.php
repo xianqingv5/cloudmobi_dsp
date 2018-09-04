@@ -1,12 +1,15 @@
 <div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/group/group-index' }">Group</el-breadcrumb-item>
+      <el-breadcrumb-item><a href="/group/group-index">Group</a></el-breadcrumb-item>
       <el-breadcrumb-item>Index</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
+  <div class='p30 left'>
+    <h3>GROUP LIST</h3>
+  </div>
   <div class='content'>
-    <div class='m-40-0 p20 base-box-shadow bg-white'>
+    <div class='contentBox'>
       <div class='flex jc-end mb-20'>
         <!-- <el-button type="primary" @click='showDialog("create")'>Create Group</el-button> -->
         <el-input

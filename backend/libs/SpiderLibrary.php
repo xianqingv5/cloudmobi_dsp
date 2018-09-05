@@ -3,6 +3,8 @@ namespace backend\libs;
 
 use Yii;
 use backend\services\CategoryService;
+use common\models\AndroidCategory;
+use common\models\IosCategory;
 
 class SpiderLibrary
 {
@@ -16,25 +18,26 @@ class SpiderLibrary
         // 获取参数
         $url = Yii::$app->request->post('url', '');
         $platform = Yii::$app->request->post('platform', '');
-        $country = Yii::$app->request->post('country', '');
 
         // 获取远程文件内容
         $content = self::_getUrlContent($url);
+        $return = [];
         try {
             // 根据不同的平台匹配不同的信息
             if ($platform == 'android') {
                 // 获取标签
                 $type = self::get_tag_data($content, 'a', 'itemprop', 'genre');
-                $return['type'] = $type[0];
-                // 获取包名
-                $parse_url = explode('/', parse_url($url)['query']);
-                if (!empty($parse_url) ) {
-                    parse_str($parse_url[0], $query);
-                    $return['pkg_name'] = $query['id'];
+                if ($type) {
+                    $return['type'] = $type[0];
+                    // 获取包名
+                    $parse_url = explode('/', parse_url($url)['query']);
+                    if (!empty($parse_url) ) {
+                        parse_str($parse_url[0], $query);
+                        $return['pkg_name'] = $query['id'];
+                    }
+                    // 获取标签对应的id
+                    $return['category_id'] = self::_getCategoryId('US', $type[0], 1);
                 }
-                // 获取标签对应的id
-                $return['category_id'] = self::_getCategoryId('US', $type[0], 1);
-
                 self::$res['data'] = $return;
             } else if($platform == 'ios'){
                 // 获取链接路径
@@ -54,14 +57,12 @@ class SpiderLibrary
                 if ( !empty($parse_url) ) {
                     $return['pkg_name'] = substr(array_pop($parse_url), 2);
                 }
-                $return['country'] = $country;
                 self::$res['data'] = $return;
             }
         } catch (\Exception $e) {
-            self::$res['status'] = 1;
+            self::$res['status'] = 0;
             self::$res['info'] = $e->getMessage();
         }
-
         return self::$res;
     }
 
@@ -87,7 +88,8 @@ class SpiderLibrary
 
         // 查询APP分类信息
         $where[] = $c[$short_name] . "='" . $category . "'";
-        $res = CategoryService::getCategoryData(['id'], $where);
+        $res = CategoryService::getCategoryData($type, ['id'], $where);
+
         return $res ? $res[0]['id'] : $cid;
     }
 

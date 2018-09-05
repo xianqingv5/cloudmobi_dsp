@@ -43,9 +43,8 @@ class OfferController extends BaseController
     public function actionGetUrlInfo()
     {
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
             $res = SpiderLibrary::main();
-            return $res;
+            echo json_encode($res);die;
         }
 
         throw new ForbiddenHttpException();

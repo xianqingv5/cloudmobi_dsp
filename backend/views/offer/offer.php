@@ -265,17 +265,27 @@
         var reg = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
         var iOSReg = new RegExp('https://itunes.apple.com/')
         var androidReg = new RegExp('https://play.google.com/')
+        var platform = null
         if (reg.test(value)) {
           if (iOSReg.test(value)) {
             // ios
             platform = 'iOS'
-            vm.judeHref(platform, url)
           } else if (androidReg.test(value)) {
             // android
             platform = 'Android'
-            vm.judeHref(platform, url)
           } else {
             callback(new Error('不是符合的商店链接'))
+          }
+          if (platform) {
+            vm.judeHref(platform, value, function (flag) {
+              if (flag) {
+                callback()
+              } else {
+                callback(new Error('APP Apple Store or Google Play URL” may be wrong, please fill in again or use the current one.'))
+                // 弹出框
+                
+              }
+            })
           }
         } else {
           callback(new Error('不是网络链接'))
@@ -465,7 +475,7 @@
       this.initData()
     },
     methods: {
-      judeHref (platform, url) {
+      judeHref (platform, url, callback) {
         var ajaxData = {
           url: url,
           country: null,
@@ -474,10 +484,15 @@
         }
         $.ajax({
           url: '/offer/get-url-info',
-          data: data,
+          data: ajaxData,
           type: 'post',
           success: function (result) {
             console.log(result)
+            if (result.status === 1) {
+              callback(true)
+            } else {
+              callback(false)
+            }
           }
         })
       },

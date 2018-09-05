@@ -44,6 +44,9 @@ class OfferService extends BaseService
 
         // 获取国家数据
         self::$res['data']['country'] = CountryService::getCountryAllData(['id', 'full_name', 'short_name'], ['id>0']);
+
+        // 获取应用类别
+        self::$res['data']['category'] = CategoryService::getCategoryData(0, ['id', 'en_name as name'], ['parent_id = 0']);
         return self::$res;
     }
 }

@@ -5,6 +5,29 @@ $size-m: 992px;
 $size-s: 768px;
 $size-ss: 380px;
 
+a{
+  text-decoration: none;
+  color: #606266 !important;
+}
+
+a:focus{
+  text-decoration: none;
+}
+
+a:hover{
+  text-decoration: none;
+}
+
+ul,li{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+h2,h2,h3,h4,h5,h6{
+  margin: 0;
+}
+
 // 响应式布局
 @mixin col($name,
 $threshold) {
@@ -279,23 +302,23 @@ $y) {
 }
 
 .color_primary {
-  color: #337ab7;
+  color: #337ab7 !important;
 }
 
 .color_success {
-  color: #5cb85c;
+  color: #5cb85c !important;
 }
 
 .color_info {
-  color: #5bc0de;
+  color: #5bc0de !important;
 }
 
 .color_warning {
-  color: #f0ad4e;
+  color: #f0ad4e !important;
 }
 
 .color_danger {
-  color: #d9534f;
+  color: #d9534f !important;
 }
 
 .icon {
@@ -345,29 +368,6 @@ $y) {
 
 .h100{
   height: 100%;
-}
-
-a{
-  text-decoration: none;
-  color: #606266 !important;
-}
-
-a:focus{
-  text-decoration: none;
-}
-
-a:hover{
-  text-decoration: none;
-}
-
-ul,li{
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-h2,h2,h3,h4,h5,h6{
-  margin: 0;
 }
 
 // slide-fade

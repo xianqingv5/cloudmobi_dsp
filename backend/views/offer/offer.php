@@ -260,6 +260,38 @@
     el: '.app',
     data () {
       var vm = this
+      var validatorStoreUrl = function (rule, value, callback) {
+        // 正则
+        var reg = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
+        var iOSReg = new RegExp('https://itunes.apple.com/')
+        var androidReg = new RegExp('https://play.google.com/')
+        if (reg.test(value)) {
+          if (iOSReg.test(value)) {
+            // ios
+            platform = 'iOS'
+            vm.judeHref(platform, url)
+          } else if (androidReg.test(value)) {
+            // android
+            platform = 'Android'
+            vm.judeHref(platform, url)
+          } else {
+            callback(new Error('不是符合的商店链接'))
+          }
+        } else {
+          callback(new Error('不是网络链接'))
+        }
+      }
+      var validatorDailyCap = function (rule, value, callback) {
+        if (value) {
+          if (Number(value) !== value) {
+            callback(new Error('必须为数字'))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+      }
       var validatorTotalCap = function (rule, value, callback) {
         if (value) {
           if (Number(value) !== value) {
@@ -272,7 +304,6 @@
         } else {
           callback()
         }
-        
       }
       return {
         csrf: '',
@@ -339,7 +370,8 @@
           ],
           // 2
           storeUrl: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: '此项必填', trigger: 'blur' },
+            { validator: validatorStoreUrl, trigger: 'blur' }
           ],
           title: [
             { required: true, message: '此项必填', trigger: 'blur' }
@@ -359,7 +391,7 @@
             { type: 'number', message: '必须为数字', trigger: 'blur' }
           ],
           dailyCap: [
-            { type: 'number', message: '必须为数字', trigger: 'blur' }
+            { required: false, validator: validatorDailyCap, trigger: 'blur' }
           ],
           totalCap: [
             { required: false, validator: validatorTotalCap, trigger: 'blur' }
@@ -433,6 +465,22 @@
       this.initData()
     },
     methods: {
+      judeHref (platform, url) {
+        var ajaxData = {
+          url: url,
+          country: null,
+          platform: platform,
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer/get-url-info',
+          data: data,
+          type: 'post',
+          success: function (result) {
+            console.log(result)
+          }
+        })
+      },
       initData () {
         var that = this
         var ajaxData = {
@@ -468,6 +516,24 @@
             })
             // version
             that.options.minOSvsersionBase = result.data.version
+          }
+        })
+      },
+      getUrlInfo () {
+        var ajaxData = {
+          url: data,
+          country: vm.formdata.productLinkCountry,
+          platform: 'android',
+          ssp_security_param: vm.ssp_security_param
+        }
+        // 获取url信息
+        $.ajax({
+          url: '/offer/get-url-info',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            console.log(result)
+            
           }
         })
       },

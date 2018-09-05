@@ -27,8 +27,12 @@ class SpiderLibrary
             if ($platform == 'android') {
                 // 获取标签
                 $type = self::get_tag_data($content, 'a', 'itemprop', 'genre');
+                $android_title = self::get_tag_data($content, 'h1', 'itemprop', 'name');
                 if ($type) {
                     $return['type'] = $type[0];
+                    if ($android_title) {
+                        $return['offer_title'] = filter_var($android_title[0], FILTER_SANITIZE_STRING);
+                    }
                     // 获取包名
                     $parse_url = explode('/', parse_url($url)['query']);
                     if (!empty($parse_url) ) {
@@ -44,8 +48,13 @@ class SpiderLibrary
                 $parse_url = explode('/', parse_url($url)['path']);
                 // 匹配标签
                 $category_arr = self::get_tag_data($content, 'a', 'class', 'link');
+                $title_arr = self::get_tag_data($content, 'h1', 'class', 'product-header__title app-header__title');
+
+                // 处理标签数据
                 $category = !empty($category_arr) ? $category_arr[1] : '';
+                $title = !empty($title_arr) ? explode(' ',trim(filter_var($title_arr[0], FILTER_SANITIZE_STRING)))[0] : '';
                 $return['type'] = $category;
+                $return['offer_title'] = trim($title);
 
                 // 获取数据库中的标签id
                 $return['category_id'] = '';

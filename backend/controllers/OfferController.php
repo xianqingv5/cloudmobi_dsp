@@ -50,6 +50,7 @@ class OfferController extends BaseController
         throw new ForbiddenHttpException();
     }
 
+
     /**
      * 获取创建offer时各种配置信息
      * @return array

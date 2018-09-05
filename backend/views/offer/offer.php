@@ -68,11 +68,28 @@
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
               <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
+            <div class='w100 center mb-30' v-if='messageVisible'>
+              <span class='messageVisibleShow'>APP Apple Store or Google Play URL” may be wrong, please <a class='color_danger' @click='spiderAgain'>fill in again</a> or <a class='color_danger'@click='spiderUse'>use the current one</a>. </span>
+            </div>
             <el-form-item label="Campaign Title" prop="title">
               <el-input class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Campaign Description" prop="desc">
               <el-input class='form-one' v-model="ruleForm.desc" placeholder=''></el-input>
+            </el-form-item>
+            <el-form-item label="Package Name" prop="name">
+              <el-input class='form-one' v-model="ruleForm.name" placeholder=''></el-input>
+            </el-form-item>
+            <el-form-item label="Campaign Category" prop="category">
+              <el-select class='form-one'
+                v-model="ruleForm.category" clearable placeholder="">
+                <el-option
+                  v-for="item in options.category"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="Tracking Link" prop="trackingUrl">
               <el-input class='form-one' v-model="ruleForm.trackingUrl" placeholder=''></el-input>
@@ -269,10 +286,10 @@
         if (reg.test(value)) {
           if (iOSReg.test(value)) {
             // ios
-            platform = 'iOS'
+            platform = 'ios'
           } else if (androidReg.test(value)) {
             // android
-            platform = 'Android'
+            platform = 'android'
           } else {
             callback(new Error('不是符合的商店链接'))
           }
@@ -281,10 +298,10 @@
               if (flag) {
                 callback()
               } else {
-                callback(new Error('APP Apple Store or Google Play URL” may be wrong, please fill in again or use the current one.'))
+                callback(new Error('APP Apple Store or Google Play URL” may be wrong.'))
                 // 弹出框
-                
               }
+              vm.dialogVisible = true
             })
           }
         } else {
@@ -316,6 +333,7 @@
         }
       }
       return {
+        messageVisible: true,
         csrf: '',
         options: {
           campaignOwner: [],
@@ -334,7 +352,8 @@
           deviceType: [],
           minOSvsersionBase: {},
           minOSvsersion: [],
-          city: []
+          city: [],
+          category: []
         },
         ruleForm: {
           // 1
@@ -345,6 +364,8 @@
           storeUrl: '',
           title: '',
           desc: '',
+          name: '',
+          category: '',
           trackingUrl: '',
           schedule: '',
           comment: '',
@@ -387,6 +408,12 @@
             { required: true, message: '此项必填', trigger: 'blur' }
           ],
           desc: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          name: [
+            { required: true, message: '此项必填', trigger: 'blur' }
+          ],
+          category: [
             { required: true, message: '此项必填', trigger: 'blur' }
           ],
           trackingUrl: [
@@ -475,6 +502,14 @@
       this.initData()
     },
     methods: {
+      spiderAgain () {
+        // 再次爬虫
+        console.log(1)
+      },
+      spiderUse () {
+        // 手动添加name和category
+        console.log(2)
+      },
       judeHref (platform, url, callback) {
         var ajaxData = {
           url: url,
@@ -801,5 +836,9 @@
     position: absolute;
     right: 0;
     top: 0;
+  }
+  .messageVisibleShow{
+    background: #efefef;
+    padding: 10px 20px;
   }
 </style>

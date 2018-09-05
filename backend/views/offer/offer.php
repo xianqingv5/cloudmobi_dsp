@@ -75,7 +75,7 @@
               <el-input class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Campaign Description" prop="desc">
-              <el-input class='form-one' v-model="ruleForm.desc" placeholder=''></el-input>
+              <el-input type='textarea' class='form-one' v-model="ruleForm.desc" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Package Name" prop="name">
               <el-input class='form-one' v-model="ruleForm.name" placeholder=''></el-input>

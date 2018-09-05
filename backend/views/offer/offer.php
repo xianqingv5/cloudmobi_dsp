@@ -96,13 +96,13 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Price($)" prop="priceWay">
-              <el-input class='form-one' v-model="ruleForm.priceWay" placeholder=''></el-input>
+              <el-input class='form-one' v-model.number="ruleForm.priceWay" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
-              <el-input class='form-one' v-model.trim="ruleForm.dailyCap" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Total Cap" prop="totalCap">
-              <el-input class='form-one' v-model.trim="ruleForm.totalCap" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -260,16 +260,9 @@
     el: '.app',
     data () {
       var vm = this
-      var validatorDailyCap = function (rule, value, callback) {
-        if (value && Number(value).toString() !== value) {
-          callback(new Error('必须为数字'))
-        } else {
-          callback()
-        }
-      }
       var validatorTotalCap = function (rule, value, callback) {
         if (value) {
-          if (Number(value).toString() !== value) {
+          if (Number(value) !== value) {
             callback(new Error('必须为数字'))
           } else if (!vm.judeTotalCap()) {
             callback(new Error('Total Cap >= Daily Cap'))
@@ -362,10 +355,11 @@
           ],
           // 3
           priceWay: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: '此项必填', trigger: 'blur' },
+            { type: 'number', message: '必须为数字', trigger: 'blur' }
           ],
           dailyCap: [
-            { required: false, validator: validatorDailyCap, trigger: 'blur' }
+            { type: 'number', message: '必须为数字', trigger: 'blur' }
           ],
           totalCap: [
             { required: false, validator: validatorTotalCap, trigger: 'blur' }

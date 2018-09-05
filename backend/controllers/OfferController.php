@@ -18,7 +18,7 @@ class OfferController extends BaseController
     {
         if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
-            $res = OfferService::getUserData();
+            $res = OfferService::addOfferData();
             return $res;
         }
 

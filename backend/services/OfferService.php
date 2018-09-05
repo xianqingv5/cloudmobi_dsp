@@ -16,7 +16,7 @@ class OfferService extends BaseService
         // 验证参数
         $model = new DemandOffers();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-
+            echo "<pre>";var_dump(Yii::$app->request->post());die;
         } else {
             self::$res['info'] = $model->errors;
         }

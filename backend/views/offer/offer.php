@@ -68,6 +68,17 @@
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
               <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
+            <el-form-item label="Targeting Platform" prop="platform">
+              <el-select class='form-one'
+                v-model="ruleForm.platform" clearable placeholder="">
+                <el-option
+                  v-for="item in options.platform"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <div class='w100 center mb-30 of-h' v-if='messageVisible'>
               <span class='messageVisibleShow db'>APP Apple Store or Google Play URL may be wrong, please <a class='color_dangers' @click='spiderAgain'>fill in again</a> or <a class='color_dangers'@click='spiderUse'>use the current one</a>. </span>
             </div>
@@ -81,10 +92,10 @@
               <el-input class='form-one' v-model="ruleForm.name" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Campaign Category" prop="category">
-              <el-select class='form-one'
+              <el-select class='form-one' :disabled='!judePlatform'
                 v-model="ruleForm.category" clearable placeholder="">
                 <el-option
-                  v-for="item in options.category"
+                  v-for="item in judeCategoryOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -130,17 +141,6 @@
             <h5>Targeting Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item label="Targeting Platform" prop="platform">
-              <el-select class='form-one'
-                v-model="ruleForm.platform" clearable placeholder="">
-                <el-option
-                  v-for="item in options.platform"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item label="Device Type" prop="deviceType">
               <el-select class='form-one'
                 v-model="ruleForm.deviceType" clearable placeholder="">
@@ -198,7 +198,7 @@
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
-                  <el-button type="primary">Preview</el-button>
+                  <el-button type="primary" @click='primaryAddFile("icon")'>Preview</el-button>
                 </div>
                 <el-button type="primary" @click='uploadFile("icon")'/>upload creatives</el-button>
                 <input class='iconfile dn' type="file" name="iconfile">
@@ -218,7 +218,7 @@
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
-                  <el-button type="primary">Preview</el-button>
+                  <el-button type="primary" @click='primaryAddFile("image")'>Preview</el-button>
                 </div>
                 <el-button type="primary" @click='uploadFile("image")'>upload creatives</el-button>
                 <input class='imagefile dn' type="file" name="imagefile">
@@ -238,7 +238,7 @@
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>
-                  <el-button type="primary">Preview</el-button>
+                  <el-button type="primary" @click='primaryAddFile("video")'>Preview</el-button>
                 </div>
                 <el-button type="primary" @click='uploadFile("video")'>upload creatives</el-button>
                 <input class='videofile dn' type="file" name="videofile">
@@ -354,7 +354,8 @@
           minOSvsersionBase: {},
           minOSvsersion: [],
           city: [],
-          category: []
+          category: [],
+          categoryBase: {}
         },
         ruleForm: {
           // 1
@@ -363,6 +364,7 @@
           attributeProvider: '',
           // 2
           storeUrl: '',
+          platform: '',
           title: '',
           desc: '',
           name: '',
@@ -375,7 +377,6 @@
           dailyCap: '',
           totalCap: '',
           // 4
-          platform: '',
           deviceType: '',
           specificDevice: '',
           minOSvsersion: '',
@@ -404,6 +405,9 @@
           storeUrl: [
             { required: true, message: '此项必填', trigger: 'blur' },
             { validator: validatorStoreUrl, trigger: 'blur' }
+          ],
+          platform: [
+            { required: true, message: '此项必填', trigger: 'blur' }
           ],
           title: [
             { required: true, message: '此项必填', trigger: 'blur' }
@@ -435,9 +439,6 @@
             { required: false, validator: validatorTotalCap, trigger: 'blur' }
           ],
           // 4
-          platform: [
-            { required: true, message: '此项必填', trigger: 'blur' }
-          ],
           deviceType: [
             { required: true, message: '此项必填', trigger: 'blur' }
           ],
@@ -454,6 +455,31 @@
       }
     },
     computed: {
+      judeCategoryOptions () {
+        if (this.ruleForm.platform === '1') {
+          // android
+          var arr = []
+          this.options.categoryBase.android.map(function (ele) {
+            arr.push({
+              value: ele.id,
+              label: ele.name
+            })
+          })
+          this.options.category = arr
+        }
+        if (this.ruleForm.platform === '2') {
+          // ios
+          var arr = []
+          this.options.categoryBase.ios.map(function (ele) {
+            arr.push({
+              value: ele.id,
+              label: ele.name
+            })
+          })
+          this.options.category = arr
+        }
+        return arr
+      },
       judeOne () {
         return true
         if (this.ruleForm.campaignOwner !== '' && this.ruleForm.advertiser !== '' && this.ruleForm.attributeProvider !== '') {
@@ -529,7 +555,12 @@
             if (result.status === 1) {
               that.ruleForm.title = result.data.offer_title
               that.ruleForm.name = result.data.pkg_name
-              that.ruleForm.category = result.data.category_id
+              var category_id = result.data.category_id
+              that.judeCategoryOptions.map(function (ele) {
+                if (result.data.category_id === ele.value) {
+                  that.ruleForm.category = category_id
+                }
+              })
               callback(true)
             } else {
               callback(false)
@@ -572,24 +603,8 @@
             })
             // version
             that.options.minOSvsersionBase = result.data.version
-          }
-        })
-      },
-      getUrlInfo () {
-        var ajaxData = {
-          url: data,
-          country: vm.formdata.productLinkCountry,
-          platform: 'android',
-          ssp_security_param: vm.ssp_security_param
-        }
-        // 获取url信息
-        $.ajax({
-          url: '/offer/get-url-info',
-          type: 'post',
-          data: ajaxData,
-          success: function (result) {
-            console.log(result)
-            
+            // category
+            that.options.categoryBase = result.data.category
           }
         })
       },
@@ -648,7 +663,7 @@
         var that = this
         if (type === 'video') {
           if (data.type.indexOf(type) !== -1) {
-            that.getSize(data, type, function (bob) {
+            that.getOnlineFile(data, type, function (bob) {
               var w = bob.videoWidth
               var h = bob.videoHeight
               data.width = w
@@ -664,7 +679,7 @@
           }
         } else {
           if (data.type.indexOf('image') !== -1) {
-            that.getSize(data, type, function (bob) {
+            that.getOnlineFile(data, type, function (bob) {
               var w = bob.width
               var h = bob.height
               data.width = w
@@ -721,7 +736,6 @@
         if (type === 'icon' && this.ruleForm[type + 'List'].length !== 1) {
           var icon0 = this.ruleForm[type + 'List'][0]
           this.deleteFun(icon0, 0, this.ruleForm[type + 'List'])
-          // this.getSize(data, type)
         }
       },
       duplicateRemoval (list, data) {
@@ -736,26 +750,100 @@
         }
         return flag
       },
-      getSize (data, type, callback) {
+      getOnlineFile (data, type, callback) {
+        var that = this
         var reader = new FileReader()
         reader.onload = function (theFile) {
-          if (type !== 'video') {
-            var media = new Image()
-            media.src = theFile.target.result
-            media.onload = function () {
-              callback(this)
-            }
-          } else {
-            var videoDom = document.createElement('video')
-            videoDom.classList.add('testVideo', 'dn')
-            videoDom.src = theFile.target.result
-            document.body.appendChild(videoDom)
-            videoDom.onloadeddata = function () {
-              callback(this)
-            }
-          }
+          var url = theFile.target.result
+          that.getOnline(type, url, callback)
         }
         reader.readAsDataURL(data.file)
+      },
+      getOnline (type, src, callback, errorcallback) {
+        if (type !== 'video') {
+          var media = new Image()
+          media.src = src
+          media.onload = function () {
+            callback(this)
+          }
+          media.error = function () {
+            errorcallback(this)
+          }
+        } else {
+          var videoDom = document.createElement('video')
+          videoDom.classList.add('testVideo', 'dn')
+          videoDom.src = src
+          document.body.appendChild(videoDom)
+          videoDom.onloadeddata = function () {
+            callback(this)
+          }
+          videoDom.error = function () {
+            errorcallback(this)
+          }
+        }
+      },
+      primaryAddFile (type) {
+        var that = this
+        var ajaxData = {
+          width: null,
+          height: null,
+          key: null,
+          size: null,
+          type: type,
+          url: null
+        }
+        if (type === 'icon') {
+          var src = this.ruleForm.icon
+          this.getOnline(type, src, function (obj) {
+            var w = obj.width
+            var h = obj.height
+            if (w === h) {
+              ajaxData = {
+                width: w,
+                height: h,
+                key: src,
+                size: null,
+                type: type,
+                url: src
+              }
+              that.uploadCallback(ajaxData, type)
+            } else {
+              that.$message.error('图片尺寸非1:1,请重新上传')
+            }
+          })
+        }
+        if (type === 'image') {
+          var src = this.ruleForm.image
+          this.getOnline(type, src, function (obj) {
+            var w = obj.width
+            var h = obj.height
+            ajaxData = {
+              width: w,
+              height: h,
+              key: src,
+              size: null,
+              type: type,
+              url: src
+            }
+            that.uploadCallback(ajaxData, type)
+          })
+        }
+        if (type === 'video') {
+          var src = this.ruleForm.video
+          this.getOnline(type, src, function (obj) {
+            var w = obj.videoWidth
+            var h = obj.videoHeight
+            ajaxData = {
+              width: w,
+              height: h,
+              key: src,
+              size: null,
+              type: type,
+              url: src
+            }
+            that.uploadCallback(ajaxData, type)
+          })
+        }
       },
       submitForm (formName) {
         this.$refs[formName].validate(function (valid) {

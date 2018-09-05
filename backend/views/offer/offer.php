@@ -69,7 +69,7 @@
               <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <div class='w100 center mb-30 of-h' v-if='messageVisible'>
-              <span class='messageVisibleShow db'>APP Apple Store or Google Play URL may be wrong, please <a class='color_danger' @click='spiderAgain'>fill in again</a> or <a class='color_danger'@click='spiderUse'>use the current one</a>. </span>
+              <span class='messageVisibleShow db'>APP Apple Store or Google Play URL may be wrong, please <a class='color_dangers' @click='spiderAgain'>fill in again</a> or <a class='color_dangers'@click='spiderUse'>use the current one</a>. </span>
             </div>
             <el-form-item label="Campaign Title" prop="title">
               <el-input class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
@@ -291,14 +291,15 @@
             // android
             platform = 'android'
           } else {
-            callback(new Error('不是符合的商店链接'))
+            vm.messageVisible = true
+            callback()
           }
           if (platform) {
             vm.judeHref(platform, value, function (flag) {
               if (flag) {
                 callback()
               } else {
-                callback(new Error('APP Apple Store or Google Play URL” may be wrong.'))
+                callback(new Error('APP Apple Store or Google Play URL may be wrong.'))
                 // 弹出框
               }
               vm.dialogVisible = true
@@ -333,7 +334,7 @@
         }
       }
       return {
-        messageVisible: true,
+        messageVisible: false,
         csrf: '',
         options: {
           campaignOwner: [],
@@ -511,6 +512,7 @@
         console.log(2)
       },
       judeHref (platform, url, callback) {
+        var that = this
         var ajaxData = {
           url: url,
           country: null,
@@ -522,8 +524,12 @@
           data: ajaxData,
           type: 'post',
           success: function (result) {
+            var result = JSON.parse(result)
             console.log(result)
             if (result.status === 1) {
+              that.ruleForm.title = result.data.offer_title
+              that.ruleForm.name = result.data.pkg_name
+              that.ruleForm.category = result.data.category_id
               callback(true)
             } else {
               callback(false)
@@ -541,6 +547,7 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
+            console.log(result)
             // Campaign Owner
             result.data.user.map(function (ele) {
               that.options.campaignOwner.push({

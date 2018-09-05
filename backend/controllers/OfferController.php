@@ -4,6 +4,8 @@ namespace backend\controllers;
 use Yii;
 use yii\web\Response;
 use backend\services\OfferService;
+use backend\libs\SpiderLibrary;
+use yii\web\ForbiddenHttpException;
 
 class OfferController extends BaseController
 {
@@ -38,10 +40,30 @@ class OfferController extends BaseController
 
     }
 
+    public function actionGetUrlInfo()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = SpiderLibrary::main();
+            return $res;
+        }
+
+        throw new ForbiddenHttpException();
+    }
+
+    /**
+     * 获取创建offer时各种配置信息
+     * @return array
+     * @throws ForbiddenHttpException
+     */
     public function actionGetOfferConfig()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $res = OfferService::getOfferConfig();
-        return $res;
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = OfferService::getOfferConfig();
+            return $res;
+        }
+
+        throw new ForbiddenHttpException();
     }
 }

@@ -19,5 +19,7 @@ return [
     'offer/offer-create' => 'offer 创建',
     'offer/offer-update' => 'offer 修改',
     'offer/offer-update-status' => 'offer 状态修改',
+    'offer/get-offer-config' => 'offer create 各种信息提供',
+    'offer/get-url-info' => 'offer 抓取url信息',
 
 ];

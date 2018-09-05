@@ -68,8 +68,8 @@
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
               <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
-            <div class='w100 center mb-30' v-if='messageVisible'>
-              <span class='messageVisibleShow'>APP Apple Store or Google Play URL” may be wrong, please <a class='color_danger' @click='spiderAgain'>fill in again</a> or <a class='color_danger'@click='spiderUse'>use the current one</a>. </span>
+            <div class='w100 center mb-30 of-h' v-if='messageVisible'>
+              <span class='messageVisibleShow db'>APP Apple Store or Google Play URL may be wrong, please <a class='color_danger' @click='spiderAgain'>fill in again</a> or <a class='color_danger'@click='spiderUse'>use the current one</a>. </span>
             </div>
             <el-form-item label="Campaign Title" prop="title">
               <el-input class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
@@ -541,7 +541,6 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
             // Campaign Owner
             result.data.user.map(function (ele) {
               that.options.campaignOwner.push({

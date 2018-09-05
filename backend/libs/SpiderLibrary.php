@@ -6,7 +6,7 @@ use backend\services\CategoryService;
 
 class SpiderLibrary
 {
-
+    public static $res = ['status'=>1, 'info'=> '', 'data'=>[]];
     /**
      * 抓取网页内容,匹配标签
      * @return string
@@ -20,42 +20,49 @@ class SpiderLibrary
 
         // 获取远程文件内容
         $content = self::_getUrlContent($url);
-        // 根据不同的平台匹配不同的信息
-        if ($platform == 'android') {
-            // 获取标签
-            $type = self::get_tag_data($content, 'a', 'itemprop', 'genre');
-            $return['type'] = $type[0];
-            // 获取包名
-            $parse_url = explode('/', parse_url($url)['query']);
-            if (!empty($parse_url) ) {
-                parse_str($parse_url[0], $query);
-                $return['pkg_name'] = $query['id'];
-            }
-            // 获取标签对应的id
-            $return['category_id'] = self::_getCategoryId('US', $type[0], 1);
-            return $return;
-        } else if($platform == 'ios'){
-            // 获取链接路径
-            $parse_url = explode('/', parse_url($url)['path']);
-            // 匹配标签
-            $category_arr = self::get_tag_data($content, 'a', 'class', 'link');
-            $category = !empty($category_arr) ? $category_arr[1] : '';
-            $return['type'] = $category;
+        try {
+            // 根据不同的平台匹配不同的信息
+            if ($platform == 'android') {
+                // 获取标签
+                $type = self::get_tag_data($content, 'a', 'itemprop', 'genre');
+                $return['type'] = $type[0];
+                // 获取包名
+                $parse_url = explode('/', parse_url($url)['query']);
+                if (!empty($parse_url) ) {
+                    parse_str($parse_url[0], $query);
+                    $return['pkg_name'] = $query['id'];
+                }
+                // 获取标签对应的id
+                $return['category_id'] = self::_getCategoryId('US', $type[0], 1);
 
-            // 获取数据库中的标签id
-            $return['category_id'] = '';
-            if (!empty($parse_url) && isset($parse_url['1'])) {
-                $return['category_id'] = self::_getCategoryId($parse_url[1], $category, 2);
-            }
+                self::$res['data'] = $return;
+            } else if($platform == 'ios'){
+                // 获取链接路径
+                $parse_url = explode('/', parse_url($url)['path']);
+                // 匹配标签
+                $category_arr = self::get_tag_data($content, 'a', 'class', 'link');
+                $category = !empty($category_arr) ? $category_arr[1] : '';
+                $return['type'] = $category;
 
-            // 获取包名
-            if ( !empty($parse_url) ) {
-                $return['pkg_name'] = substr(array_pop($parse_url), 2);
+                // 获取数据库中的标签id
+                $return['category_id'] = '';
+                if (!empty($parse_url) && isset($parse_url['1'])) {
+                    $return['category_id'] = self::_getCategoryId($parse_url[1], $category, 2);
+                }
+
+                // 获取包名
+                if ( !empty($parse_url) ) {
+                    $return['pkg_name'] = substr(array_pop($parse_url), 2);
+                }
+                $return['country'] = $country;
+                self::$res['data'] = $return;
             }
-            $return['country'] = $country;
-            return $return;
+        } catch (\Exception $e) {
+            self::$res['status'] = 1;
+            self::$res['info'] = $e->getMessage();
         }
-        return '';
+
+        return self::$res;
     }
 
     /**

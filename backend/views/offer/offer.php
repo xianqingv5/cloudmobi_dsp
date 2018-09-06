@@ -198,7 +198,7 @@
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
-                  <el-button type="primary" @click='primaryAddFile("icon")'>Preview</el-button>
+                  <el-button type="primary" @click='previewAddFile("icon")'>Preview</el-button>
                 </div>
                 <el-button type="primary" @click='uploadFile("icon")'/>upload creatives</el-button>
                 <input class='iconfile dn' type="file" name="iconfile">
@@ -218,7 +218,7 @@
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
-                  <el-button type="primary" @click='primaryAddFile("image")'>Preview</el-button>
+                  <el-button type="primary" @click='previewAddFile("image")'>Preview</el-button>
                 </div>
                 <el-button type="primary" @click='uploadFile("image")'>upload creatives</el-button>
                 <input class='imagefile dn' type="file" name="imagefile">
@@ -238,7 +238,7 @@
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>
-                  <el-button type="primary" @click='primaryAddFile("video")'>Preview</el-button>
+                  <el-button type="primary" @click='previewAddFile("video")'>Preview</el-button>
                 </div>
                 <el-button type="primary" @click='uploadFile("video")'>upload creatives</el-button>
                 <input class='videofile dn' type="file" name="videofile">
@@ -273,6 +273,9 @@
       Bucket: albumBucketName
     }
   })
+  // 上传图片和视频的尺寸规范
+  var minRatio = 1.7
+  var maxRatio = 2.3
   new Vue({
     el: '.app',
     data () {
@@ -537,6 +540,7 @@
         // 手动添加name和category
         console.log(2)
       },
+      // 验证商店地址
       judeHref (platform, url, callback) {
         var that = this
         var ajaxData = {
@@ -568,6 +572,7 @@
           }
         })
       },
+      // 初始化页面
       initData () {
         var that = this
         var ajaxData = {
@@ -608,6 +613,7 @@
           }
         })
       },
+      // 判断totalCap
       judeTotalCap () {
         if (this.ruleForm.totalCap >= this.ruleForm.dailyCap) {
           return true
@@ -615,6 +621,7 @@
           return false
         }
       },
+      // 上传文件
       uploadFile (type) {
         var that = this
         var str = '.' + type + 'file'
@@ -625,7 +632,7 @@
           var files = filesInput.files
           var file = files[0]
           if (files.length !== 0) {
-            var data = {
+            var fileData = {
               file: file,
               fileName: file.name,
               size: file.size,
@@ -633,7 +640,8 @@
               width: null,
               height: null
             }
-            that.judeUploadFile(data, type, function () {
+            that.judeUploadFile(fileData, type, function () {
+              // 上传函数
               that.uploadFun(data, type, function (err, result) {
                 // 总是清空input file
                 filesInput.value = ''
@@ -648,7 +656,8 @@
                     height: data.height,
                     size: data.size,
                     type: type,
-                    key: result.key
+                    key: result.key,
+                    ratio: data.width / data.height
                   }
                   that.uploadCallback(downData, type)
                 }
@@ -659,16 +668,18 @@
         }
         filesInput.addEventListener('change', addEventListenerFun, true)
       },
-      judeUploadFile (data, type, callback) {
+      // 判断上传文件
+      judeUploadFile (fileData, type, callback) {
         var that = this
         if (type === 'video') {
-          if (data.type.indexOf(type) !== -1) {
-            that.getOnlineFile(data, type, function (bob) {
+          if (fileData.type.indexOf(type) !== -1) {
+            that.getOnlineFile(fileData, type, function (bob) {
               var w = bob.videoWidth
               var h = bob.videoHeight
-              data.width = w
-              data.height = h
-              if (w / h < 1.7 && w / h > 2.1) {
+              var ratio = w / h
+              fileData.width = w
+              fileData.height = h
+              if (ratio < minRatio && ratio > maxRatio) {
                 that.$message.error('视频尺寸不符,请重新上传')
               } else {
                 callback()
@@ -682,8 +693,10 @@
             that.getOnlineFile(data, type, function (bob) {
               var w = bob.width
               var h = bob.height
+              var ratio = w / h
               data.width = w
               data.height = h
+              data.ratio = ratio
               if (type === 'icon') {
                 if (w === h) {
                   callback()
@@ -694,7 +707,7 @@
                 callback()
               }
               if (type === 'image') {
-                if (w / h < 1.7 && w / h > 2.1) {
+                if (ratio < minRatio && ratio > maxRatio) {
                   that.$message.error('图片尺寸不符,请重新上传')
                 } else {
                   callback()
@@ -706,6 +719,7 @@
           }
         }
       },
+      // 上传s3函数
       uploadFun (data, type, callback) {
         console.log('开始上传')
         var that = this
@@ -718,6 +732,7 @@
           callback(err, result)
         })
       },
+      // 删除s3函数
       deleteFun (data, index, list) {
         var that = this
         var photoKey = data.key
@@ -731,6 +746,7 @@
           }
         })
       },
+      // 上传s3成功之后的回调
       uploadCallback (data, type) {
         var flag = this.duplicateRemoval(this.ruleForm[type + 'List'], data)
         if (type === 'icon' && this.ruleForm[type + 'List'].length !== 1) {
@@ -738,6 +754,7 @@
           this.deleteFun(icon0, 0, this.ruleForm[type + 'List'])
         }
       },
+      // 去重函数
       duplicateRemoval (list, data) {
         var flag = true
         list.map(function (ele) {
@@ -750,6 +767,7 @@
         }
         return flag
       },
+      // 验证本地文件
       getOnlineFile (data, type, callback) {
         var that = this
         var reader = new FileReader()
@@ -759,6 +777,7 @@
         }
         reader.readAsDataURL(data.file)
       },
+      // 预处理文件地址信息
       getOnline (type, src, callback, errorcallback) {
         if (type !== 'video') {
           var media = new Image()
@@ -782,7 +801,8 @@
           }
         }
       },
-      primaryAddFile (type) {
+      // 点击preview按钮
+      previewAddFile (type) {
         var that = this
         var ajaxData = {
           width: null,
@@ -797,6 +817,7 @@
           this.getOnline(type, src, function (obj) {
             var w = obj.width
             var h = obj.height
+            var ratio = w / h
             if (w === h) {
               ajaxData = {
                 width: w,
@@ -804,7 +825,8 @@
                 key: src,
                 size: null,
                 type: type,
-                url: src
+                url: src,
+                ratio: ratio
               }
               that.uploadCallback(ajaxData, type)
             } else {
@@ -817,15 +839,21 @@
           this.getOnline(type, src, function (obj) {
             var w = obj.width
             var h = obj.height
+            var ratio = w / h
             ajaxData = {
               width: w,
               height: h,
               key: src,
               size: null,
               type: type,
-              url: src
+              url: src,
+              ratio: ratio
             }
-            that.uploadCallback(ajaxData, type)
+            if (ratio < minRatio && ratio > maxRatio) {
+              that.$message.error('图片尺寸不符,请重新上传')
+            } else {
+              that.uploadCallback(ajaxData, type)
+            }
           })
         }
         if (type === 'video') {
@@ -833,18 +861,25 @@
           this.getOnline(type, src, function (obj) {
             var w = obj.videoWidth
             var h = obj.videoHeight
+            var ratio = w / h
             ajaxData = {
               width: w,
               height: h,
               key: src,
               size: null,
               type: type,
-              url: src
+              url: src,
+              ratio: ratio
             }
-            that.uploadCallback(ajaxData, type)
+            if (ratio < minRatio && ratio > maxRatio) {
+              that.$message.error('图片尺寸不符,请重新上传')
+            } else {
+              that.uploadCallback(ajaxData, type)
+            }
           })
         }
       },
+      // 表单提交
       submitForm (formName) {
         this.$refs[formName].validate(function (valid) {
           if (valid) {
@@ -855,6 +890,7 @@
           }
         })
       },
+      // 重置表单
       resetForm(formName) {
         this.$refs[formName].resetFields()
         window.scrollTo(0, 0)

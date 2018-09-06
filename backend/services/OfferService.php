@@ -6,19 +6,43 @@ use common\models\User;
 use common\models\ThirdPartyMonitoring;
 use common\models\Advertiser;
 use common\models\DemandOffers;
+use common\models\DemandOffersCreatives;
+use common\models\DemandOffersDeliveryCountry;
 
 class OfferService extends BaseService
 {
     public static $res = ['status'=>0, 'info'=>'', 'data'=>[]];
 
+    /**
+     * offer 各种数据添加
+     * @return array
+     */
     public static function addOfferData()
     {
         // 验证参数
-        $model = new DemandOffers();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            echo "<pre>";var_dump(Yii::$app->request->post());die;
-        } else {
-            self::$res['info'] = $model->errors;
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            // offer 添加
+            $demand_offer_id = self::addDemandOffer();
+            if ($demand_offer_id) {
+                self::$res['info'] = 'offer create fail.';
+                return self::$res;
+            }
+            // offer下的素材添加
+            $offer_file = self::addOfferFile($demand_offer_id);
+
+            // offer投放国家添加
+            $offer_country = self::addOfferCountryData($demand_offer_id);
+
+            if ($demand_offer_id && $offer_file && $offer_country) {
+                self::$res['status'] = 1;
+                self::$res['info'] = 'success';
+                $transaction->commit();
+            }
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = 'offer create fail.';
+            $transaction->rollBack();
         }
 
         return self::$res;
@@ -67,11 +91,101 @@ class OfferService extends BaseService
         return $offer_id;
     }
 
+    /**
+     * offer 素材添加
+     * @param $offer_id
+     * @return int|string
+     */
     public static function addOfferFile($offer_id)
     {
+        $date = date('Y-m-d H:i:s');
         // icon
-        //$data[]
+        $icon_res = json_decode(Yii::$app->request->post('icon', []));
+        $icon = [];
+        if ($icon_res) {
+            $icon['demand_offer_id'] = $offer_id;
+            $icon['url'] = $icon_res['url'];
+            $icon['width'] = $icon_res['width'];
+            $icon['height'] = $icon_res['height'];
+            $icon['mime_type'] = $icon_res['type'];
+            $icon['type'] = 1;
+            $icon['status'] = 1;
+            $icon['create_date'] = $date;
+            $icon['update_date'] = $date;
+        }
+
+        // image
+        $image_res = json_decode(Yii::$app->request->post('image', []));
+        $image = [];
+        if ($image_res) {
+            foreach ($image_res as $k=>$v) {
+                $image[$k]['demand_offer_id'] = $offer_id;
+                $image[$k]['url'] = $v['url'];
+                $image[$k]['width'] = $v['width'];
+                $image[$k]['height'] = $v['height'];
+                $image[$k]['mime_type'] = $v['mime_type'];
+                $image[$k]['type'] = 2;
+                $image[$k]['status'] = 1;
+                $image[$k]['create_date'] = $date;
+                $image[$k]['update_date'] = $date;
+            }
+        }
+
+        // video
+        $video_res = json_decode(Yii::$app->request->post('video', []));
+        $video = [];
+        if ($video_res) {
+            foreach ($image_res as $k=>$v) {
+                $video[$k]['demand_offer_id'] = $offer_id;
+                $video[$k]['url'] = $v['url'];
+                $video[$k]['width'] = $v['width'];
+                $video[$k]['height'] = $v['height'];
+                $video[$k]['mime_type'] = $v['mime_type'];
+                $video[$k]['type'] = 3;
+                $video[$k]['status'] = 1;
+                $video[$k]['create_date'] = $date;
+                $video[$k]['update_date'] = $date;
+            }
+        }
+
+        $data = array_merge($icon, $image, $video);
+        $res = DemandOffersCreatives::addData($data);
+        return $res;
+
     }
+
+    /**
+     * offer 投放国家
+     * @param $offer_id
+     * @return int|string
+     */
+    public static function addOfferCountryData($offer_id)
+    {
+        $date = date('Y-m-d H:i:s');
+        $country_type = Yii::$app->request->post('country_type', 0);
+        $country_res = json_decode(Yii::$app->request->post('country', []));
+
+        $data = [];
+        if ($country_type && $country_type != 1 && $country_res) {
+            foreach ($country_res as $k=>$v) {
+                $data[$k]['demand_offer_id'] = $offer_id;
+                $data[$k]['country_id'] = $v['id'];
+                $data[$k]['type'] = $country_type;
+                $data[$k]['create_date'] = $date;
+                $data[$k]['update_date'] = $date;
+            }
+        } else { // all country
+            $data[0]['demand_offer_id'] = $offer_id;
+            $data[0]['country_id'] = 0;
+            $data[0]['type'] = 1;
+            $data[0]['create_date'] = $date;
+            $data[0]['update_date'] = $date;
+        }
+
+        $res = DemandOffersDeliveryCountry::addAllData($data);
+        return $res;
+    }
+
 
     /**
      * 获取offer各种配置信息
@@ -99,6 +213,7 @@ class OfferService extends BaseService
 
         // 获取设备信息
         self::$res['data']['mobile'] = Yii::$app->params['MOBILE'];
+
         return self::$res;
     }
 }

@@ -5,28 +5,23 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "{{%demand_offers_creatives}}".
+ * This is the model class for table "{{%demand_offers_delivery_country}}".
  *
  * @property int $id 主键
  * @property int $demand_offer_id 投放的offer id
- * @property string $url 素材url
- * @property string $mime_type 素材mime type
- * @property int $width 素材宽度
- * @property int $height 素材高度
- * @property int $size 素材大小
- * @property int $type 1:icon; 2:image; 3:video
- * @property int $status 1:enable; 2:disable;
+ * @property int $country_id 投放的国家id, 0:代表所有国家
+ * @property int $type 1:所有国家、2:需投放的国家、3:排除的国家
  * @property string $create_date 创建时间
  * @property string $update_date 更新时间
  */
-class DemandOffersCreatives extends \yii\db\ActiveRecord
+class DemandOffersDeliveryCountry extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%demand_offers_creatives}}';
+        return '{{%demand_offers_delivery_country}}';
     }
 
     /**
@@ -35,10 +30,9 @@ class DemandOffersCreatives extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['demand_offer_id', 'width', 'height', 'size', 'type', 'status'], 'integer'],
+            [['demand_offer_id', 'country_id', 'type'], 'integer'],
             [['create_date', 'update_date'], 'safe'],
-            [['url'], 'string', 'max' => 400],
-            [['mime_type'], 'string', 'max' => 100],
+            [['demand_offer_id', 'country_id'], 'unique', 'targetAttribute' => ['demand_offer_id', 'country_id']],
         ];
     }
 
@@ -50,13 +44,8 @@ class DemandOffersCreatives extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'demand_offer_id' => 'Demand Offer ID',
-            'url' => 'Url',
-            'mime_type' => 'Mime Type',
-            'width' => 'Width',
-            'height' => 'Height',
-            'size' => 'Size',
+            'country_id' => 'Country ID',
             'type' => 'Type',
-            'status' => 'Status',
             'create_date' => 'Create Date',
             'update_date' => 'Update Date',
         ];

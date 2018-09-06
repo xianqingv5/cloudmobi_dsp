@@ -47,6 +47,9 @@ class OfferService extends BaseService
 
         // 获取应用类别
         self::$res['data']['category'] = CategoryService::getCategoryData(0, ['id', 'en_name as name'], ['parent_id = 0']);
+
+        // 获取设备信息
+        self::$res['data']['mobile'] = Yii::$app->params['MOBILE'];
         return self::$res;
     }
 }

@@ -38,4 +38,7 @@ return [
 
     // 平台版本
     'DEMAND_PLATFORM' => require 'params/demand-offer-version.php',
+
+    // 设备信息
+    'MOBILE' => require 'params/mobile.php',
 ];

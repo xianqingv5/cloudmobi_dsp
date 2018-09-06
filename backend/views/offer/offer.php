@@ -97,7 +97,7 @@
               <el-select class='form-one' :disabled='!judePlatform'
                 v-model="ruleForm.category" clearable placeholder="">
                 <el-option
-                  v-for="item in judeCategoryOptions"
+                  v-for="item in options.category"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -113,8 +113,34 @@
                 <el-radio label="1">ON</el-radio>
               </el-radio-group>
             </el-form-item>
+            <template v-if='ruleForm.schedule === "1"'>
+              <el-form-item  prop="deliveryDate">
+                <el-date-picker
+                  class='form-one'
+                  v-model="ruleForm.deliveryDate"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item label="Comment" prop="deliveryWeek">
+                <el-checkbox-group class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
+                  <el-checkbox label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="Comment" prop="deliveryHour">
+                <el-checkbox-group class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
+                  <el-checkbox label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </template>
             <el-form-item label="Comment" prop="comment">
-              <el-input class='form-one' type='textarea' v-model="ruleForm.comment" placeholder=''></el-input>
+              <el-input class='form-one mt-20' type='textarea' v-model="ruleForm.comment" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -147,14 +173,14 @@
               <el-select class='form-one' :disabled='!judePlatform'
                 v-model="ruleForm.deviceType" clearable placeholder="">
                 <el-option
-                  v-for="item in judeDeviceType"
+                  v-for="item in options.deviceType"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Specific Device" prop="specificDevice">
+            <el-form-item label="Specific Device" prop="specificDevice" v-if='judeDeviceType'>
               <el-select class='form-one' multiple filterable :disabled='ruleForm.deviceType === ""'
                 v-model="ruleForm.specificDevice" clearable placeholder="">
                 <el-option
@@ -169,7 +195,7 @@
               <el-select class='form-one'
                 v-model="ruleForm.minOSvsersion" :disabled='!judePlatform' clearable placeholder="">
                 <el-option
-                  v-for="item in minOSvsersionOptions"
+                  v-for="item in options.minOSvsersion"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -426,6 +452,16 @@
           categoryBase: {},
           specificDevice: [],
           specificDeviceBase: {},
+          deliveryWeek: [
+            {value: 0, label: 'Sun'},
+            {value: 1, label: 'Mon'},
+            {value: 2, label: 'Tues'},
+            {value: 3, label: 'Weds'},
+            {value: 4, label: 'Thu'},
+            {value: 5, label: 'Fri'},
+            {value: 6, label: 'Sat'},
+          ],
+          deliveryHour: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
         },
         ruleForm: {
           // 1
@@ -441,6 +477,9 @@
           category: '',
           trackingUrl: '',
           schedule: '',
+          deliveryDate: '',
+          deliveryWeek: [],
+          deliveryHour: [],
           comment: '',
           // 3
           priceWay: '',
@@ -448,7 +487,7 @@
           totalCap: '',
           // 4
           deviceType: '',
-          specificDevice: '',
+          specificDevice: [],
           minOSvsersion: '',
           networkStatus: '',
           countryType: '',
@@ -529,57 +568,6 @@
       }
     },
     computed: {
-      judeSpecificDevice () {
-
-      },
-      judeDeviceType () {
-        var arr = []
-        if (this.ruleForm.platform === '1') {
-          // android
-          this.options.deviceTypeBase.android.map(function (ele) {
-            arr.push({
-              value: ele,
-              label: ele
-            })
-          })
-          this.options.deviceType = arr
-        }
-        if (this.ruleForm.platform === '2') {
-          // ios
-          this.options.deviceTypeBase.ios.map(function (ele) {
-            arr.push({
-              value: ele,
-              label: ele
-            })
-          })
-          this.options.deviceType = arr
-        }
-        return arr
-      },
-      judeCategoryOptions () {
-        var arr = []
-        if (this.ruleForm.platform === '1') {
-          // android
-          this.options.categoryBase.android.map(function (ele) {
-            arr.push({
-              value: ele.id,
-              label: ele.name
-            })
-          })
-          this.options.category = arr
-        }
-        if (this.ruleForm.platform === '2') {
-          // ios
-          this.options.categoryBase.ios.map(function (ele) {
-            arr.push({
-              value: ele.id,
-              label: ele.name
-            })
-          })
-          this.options.category = arr
-        }
-        return arr
-      },
       judeOne () {
         return true
         if (this.ruleForm.campaignOwner !== '' && this.ruleForm.advertiser !== '' && this.ruleForm.attributeProvider !== '') {
@@ -587,34 +575,104 @@
         }
         return false
       },
-      judePlatform () {
-        if (this.ruleForm.platform === '') {
+      judeDeviceType () {
+        var that = this
+        // 置空
+        that.options.specificDevice.splice(0)
+        // 
+        if (this.ruleForm.platform === '1') {
+          // android
           return false
         }
-        return true
+        if (this.ruleForm.platform === '2') {
+          // ios
+          if (this.ruleForm.deviceType === 'phone') {
+            this.options.specificDeviceBase.ios.phone.map(function (ele) {
+              that.options.specificDevice.push({
+                value: ele,
+                label: ele
+              })
+            })
+          }
+          if (this.ruleForm.deviceType === 'ipad') {
+            this.options.specificDeviceBase.ios.tablet.map(function (ele) {
+              that.options.specificDevice.push({
+                value: ele,
+                label: ele
+              })
+            })
+          }
+          if (this.ruleForm.deviceType === 'unlimited') {
+            this.options.specificDeviceBase.ios.other.map(function (ele) {
+              that.options.specificDevice.push({
+                value: ele,
+                label: ele
+              })
+            })
+          }
+          that.ruleForm.specificDevice = []
+          return true
+        }
       },
-      minOSvsersionOptions () {
-        // Android
+      judePlatform () {
+        var that = this
+        var flag = false
+        // 置空
+        that.options.deviceType.splice(0)
+        that.options.category.splice(0)
+        that.options.minOSvsersion.splice(0)
+        that.ruleForm.deviceType = ''
+        that.ruleForm.category = ''
+        that.ruleForm.minOSvsersion = ''
+        // 
+        if (this.ruleForm.platform === '') {
+          flag = false
+        }
         if (this.ruleForm.platform === '1') {
-          var arr = []
-          this.options.minOSvsersionBase.android.map(function (ele) {
-            arr.push({
+          flag = true
+          // android
+          this.options.deviceTypeBase.android.map(function (ele) {
+            that.options.deviceType.push({
               value: ele,
               label: ele
             })
           })
-          return arr
+          this.options.categoryBase.android.map(function (ele) {
+            that.options.category.push({
+              value: ele.id,
+              label: ele.name
+            })
+          })
+          this.options.minOSvsersionBase.android.map(function (ele) {
+            that.options.minOSvsersion.push({
+              value: ele,
+              label: ele
+            })
+          })
         }
         if (this.ruleForm.platform === '2') {
-          var arr = []
-          this.options.minOSvsersionBase.ios.map(function (ele) {
-            arr.push({
+          flag = true
+          // ios
+          this.options.deviceTypeBase.ios.map(function (ele) {
+            that.options.deviceType.push({
               value: ele,
               label: ele
             })
           })
-          return arr
+          this.options.categoryBase.ios.map(function (ele) {
+            that.options.category.push({
+              value: ele.id,
+              label: ele.name
+            })
+          })
+          this.options.minOSvsersionBase.ios.map(function (ele) {
+            that.options.minOSvsersion.push({
+              value: ele,
+              label: ele
+            })
+          })
         }
+        return flag
       }
     },
     mounted () {
@@ -689,7 +747,6 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
             // Campaign Owner
             result.data.user.map(function (ele) {
               that.options.campaignOwner.push({
@@ -720,6 +777,9 @@
                 label: ele.full_name
               })
             })
+            // specificDevice
+            that.options.specificDeviceBase = result.data.mobile
+            // country
             that.options.country = country
             // version
             that.options.minOSvsersionBase = result.data.version
@@ -1053,7 +1113,7 @@
     padding: 20px 0;
   }
   .form-one{
-    width: 400px;
+    width: 400px !important;
   }
   .imgDocker{
     margin-top: 20px;
@@ -1095,5 +1155,13 @@
   .messageVisibleShow{
     background: #efefef;
     padding: 10px 20px;
+  }
+  .el-checkbox{
+    margin-left: 30px;
+  }
+  .checkbox-docker {
+    margin-top: 20px;
+    padding: 20px 0;
+    border: 1px solid #dcdfe6;
   }
 </style>

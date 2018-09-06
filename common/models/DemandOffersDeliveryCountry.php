@@ -61,10 +61,13 @@ class DemandOffersDeliveryCountry extends \yii\db\ActiveRecord
      * @param bool $is_return_sql
      * @return array|string
      */
-    public static function getData($fields, $where, $group_by = '', $order_by = '', $limit = '', $is_return_sql = false)
+    public static function getData($fields, $where = [], $group_by = '', $order_by = '', $limit = '', $is_return_sql = false)
     {
-        $sql  = "SELECT " . implode(', ', $fields) . " FROM "
-            . self::tableName() . " WHERE " . implode(' AND ', $where);
+        $sql  = "SELECT " . implode(', ', $fields) . " FROM " . self::tableName();
+
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(' AND ', $where);
+        }
 
         if ( !empty($group_by) ) {
             $sql    .= " GROUP BY " . $group_by;

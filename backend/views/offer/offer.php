@@ -65,9 +65,6 @@
             <h5>Campaign Detail Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
-            </el-form-item>
             <el-form-item label="Targeting Platform" prop="platform">
               <el-select class='form-one'
                 v-model="ruleForm.platform" clearable placeholder="">
@@ -79,9 +76,14 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <div class='w100 center mb-30 of-h' v-if='messageVisible'>
+            <el-form-item label="App Store or Google Play URL" prop="storeUrl">
+              <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
+            </el-form-item>
+            <transition name='fade'>
+              <div class='w100 center mb-30 of-h' v-if='messageVisible'>
               <span class='messageVisibleShow db'>APP Apple Store or Google Play URL may be wrong, please <a class='color_dangers' @click='spiderAgain'>fill in again</a> or <a class='color_dangers'@click='spiderUse'>use the current one</a>. </span>
             </div>
+            </transition>
             <el-form-item label="Campaign Title" prop="title">
               <el-input class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
             </el-form-item>
@@ -280,6 +282,8 @@
     required: '此项必填',
     shouldNumber: '必须为数字',
     notWWW: '不是正确的网址',
+    notStore: 'APP Apple Store or Google Play URL may be wrong.',
+    shouldInputPlatform: '请先填写平台后再试',
     uploadImageError: '图片上传失败',
     uploadVideoError: '视频上传失败',
     fileTypeError: '文件类型不符',
@@ -313,18 +317,22 @@
             callback()
           }
           if (platform) {
-            vm.judeHref(platform, value, function (flag) {
-              if (flag) {
-                callback()
-              } else {
-                callback(new Error('APP Apple Store or Google Play URL may be wrong.'))
-                // 弹出框
-              }
-              vm.dialogVisible = true
-            })
+            if (vm.ruleForm.platform) {
+              vm.judeHref(platform, value, function (flag) {
+                if (flag) {
+                  callback()
+                } else {
+                  callback(new Error(ruleLanguagePackage.notStore))
+                  // 弹出框
+                }
+                vm.dialogVisible = true
+              })
+            } else {
+              callback(new Error(ruleLanguagePackage.shouldInputPlatform))
+            }
           }
         } else {
-          callback(new Error('不是网络链接'))
+          callback(new Error(ruleLanguagePackage.notWWW))
         }
       }
       var validatorDailyCap = function (rule, value, callback) {
@@ -570,7 +578,6 @@
           type: 'post',
           success: function (result) {
             var result = JSON.parse(result)
-            console.log(result)
             if (result.status === 1) {
               that.ruleForm.title = result.data.offer_title
               that.ruleForm.name = result.data.pkg_name

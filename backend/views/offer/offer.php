@@ -155,7 +155,15 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Specific Device" prop="specificDevice">
-              <el-input class='form-one' v-model="ruleForm.specificDevice" placeholder=''></el-input>
+              <el-select class='form-one' multiple filterable :disabled='ruleForm.deviceType === ""'
+                v-model="ruleForm.specificDevice" clearable placeholder="">
+                <el-option
+                  v-for="item in options.specificDevice"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="Min OS Vsersion" prop="minOSvsersion">
               <el-select class='form-one'
@@ -175,11 +183,22 @@
                 <el-radio label="3">4G</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="select Country" prop="city">
-              <el-select class='form-one' multiple filterable 
-                v-model="ruleForm.city" clearable placeholder="">
+            <el-form-item label="Targeting Countries" prop="countryType">
+              <el-select class='form-one'
+                v-model="ruleForm.countryType" clearable placeholder="">
                 <el-option
-                  v-for="item in options.city"
+                  v-for="item in options.countryType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if='ruleForm.countryType !== "1" && ruleForm.countryType' label="select Country" prop="country">
+              <el-select class='form-one' multiple filterable 
+                v-model="ruleForm.country" clearable placeholder="">
+                <el-option
+                  v-for="item in options.country"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -277,7 +296,10 @@
   })
   // 上传图片和视频的尺寸规范
   var minRatio = 1.7
-  var maxRatio = 2.3
+  var maxRatio = 2.1
+  var baseRatio = 1.9 / 1
+  var maxImageSize = 500
+  var maxVideoSize = 2 * 1024
   var ruleLanguagePackage = {
     required: '此项必填',
     shouldNumber: '必须为数字',
@@ -287,6 +309,8 @@
     uploadImageError: '图片上传失败',
     uploadVideoError: '视频上传失败',
     fileTypeError: '文件类型不符',
+    uploadImageSizeMax: '图片大小应小于500KB',
+    uploadVideoSizeMax: '视频大小应小于2M',
     uploadIconSizeError: '图片尺寸不是1：1',
     uploadImageSizeError: '图片尺寸不符',
     uploadVideoSizeError: '视频尺寸不符',
@@ -383,9 +407,25 @@
           },
           minOSvsersionBase: {},
           minOSvsersion: [],
-          city: [],
+          countryType: [
+            {
+              value: '1',
+              label: 'select all countries'
+            },
+            {
+              value: '2',
+              label: 'select countries to add'
+            },
+            {
+              value: '3',
+              label: 'select countries to exclude'
+            }
+          ],
+          country: [],
           category: [],
-          categoryBase: {}
+          categoryBase: {},
+          specificDevice: [],
+          specificDeviceBase: {},
         },
         ruleForm: {
           // 1
@@ -411,7 +451,8 @@
           specificDevice: '',
           minOSvsersion: '',
           networkStatus: '',
-          city: [],
+          countryType: '',
+          country: [],
           // 5
           icon: '',
           iconList: [],
@@ -478,13 +519,19 @@
           networkStatus: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
-          city: [
+          countryType: [
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
+          ],
+          country: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
         }
       }
     },
     computed: {
+      judeSpecificDevice () {
+
+      },
       judeDeviceType () {
         var arr = []
         if (this.ruleForm.platform === '1') {
@@ -571,10 +618,20 @@
       }
     },
     mounted () {
+      var that = this
       this.csrf = document.querySelector('#spp_security').value
       this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
         // 每次改变都会验证totalCap
         this.$refs['ruleForm'].validateField('totalCap')
+      }, {
+        deep: true
+      })
+      this.$watch('ruleForm.countryType', function (newVal, oldVal) {
+        // 每次改变都会验证countryType
+        that.ruleForm.country.splice(0)
+        if (newVal === '1') {
+          that.ruleForm.country = JSON.parse(JSON.stringify(that.options.country))
+        }
       }, {
         deep: true
       })
@@ -655,6 +712,15 @@
                 label: ele.tpm
               })
             })
+            // country
+            var country = []
+            result.data.country.map(function (ele) {
+              country.push({
+                value: ele.id,
+                label: ele.full_name
+              })
+            })
+            that.options.country = country
             // version
             that.options.minOSvsersionBase = result.data.version
             // category
@@ -691,7 +757,7 @@
             }
             that.judeUploadFile(fileData, type, function () {
               // 上传函数
-              that.uploadFun(data, type, function (err, result) {
+              that.uploadFun(fileData, type, function (err, result) {
                 // 总是清空input file
                 filesInput.value = ''
                 if (err) {
@@ -702,12 +768,12 @@
                   console.log(result)
                   var downData = {
                     url: result.Location,
-                    width: data.width,
-                    height: data.height,
-                    size: data.size,
+                    width: fileData.width,
+                    height: fileData.height,
+                    size: fileData.size,
                     type: type,
                     key: result.key,
-                    ratio: data.width / data.height
+                    ratio: fileData.ratio
                   }
                   that.uploadCallback(downData, type)
                 }
@@ -729,39 +795,45 @@
               var ratio = w / h
               fileData.width = w
               fileData.height = h
-              if (ratio < minRatio && ratio > maxRatio) {
-                that.$message.error(ruleLanguagePackage.uploadVideoSizeError)
-              } else {
+              fileData.ratio = ratio
+              if (fileData.size <= maxVideoSize) {
                 callback()
+              } else {
+                that.$message.error(ruleLanguagePackage.uploadVideoSizeMax)
               }
             })
           } else {
             that.$message.error(ruleLanguagePackage.fileTypeError)
           }
         } else {
-          if (data.type.indexOf('image') !== -1) {
-            that.getOnlineFile(data, type, function (bob) {
+          if (fileData.type.indexOf('image') !== -1) {
+            that.getOnlineFile(fileData, type, function (bob) {
               var w = bob.width
               var h = bob.height
               var ratio = w / h
-              data.width = w
-              data.height = h
-              data.ratio = ratio
-              if (type === 'icon') {
-                if (w === h) {
-                  callback()
+              fileData.width = w
+              fileData.height = h
+              fileData.ratio = ratio
+              if (fileData.size <= maxImageSize) {
+                if (type === 'icon') {
+                  if (w === h) {
+                    callback()
+                  } else {
+                    that.$message.error(ruleLanguagePackage.uploadIconSizeError)
+                  }
                 } else {
-                  that.$message.error(ruleLanguagePackage.uploadIconSizeError)
+                  callback()
+                }
+                if (type === 'image') {
+                  var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
+                  if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
+                    that.$message.error(ruleLanguagePackage.uploadImageSizeError)
+                  } else {
+                    callback()
+                  }
                 }
               } else {
-                callback()
-              }
-              if (type === 'image') {
-                if (ratio < minRatio && ratio > maxRatio) {
-                  that.$message.error(ruleLanguagePackage.uploadImageSizeError)
-                } else {
-                  callback()
-                }
+                that.$message.error(ruleLanguagePackage.uploadImageSizeMax)
               }
             })
           } else {
@@ -905,7 +977,8 @@
               url: src,
               ratio: ratio
             }
-            if (ratio < minRatio && ratio > maxRatio) {
+            var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
+            if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
               that.$message.error(ruleLanguagePackage.uploadImageSizeError)
             } else {
               that.uploadCallback(ajaxData, type)
@@ -927,11 +1000,7 @@
               url: src,
               ratio: ratio
             }
-            if (ratio < minRatio && ratio > maxRatio) {
-              that.$message.error(ruleLanguagePackage.uploadVideoSizeError)
-            } else {
-              that.uploadCallback(ajaxData, type)
-            }
+            that.uploadCallback(ajaxData, type)
           })
         }
       },

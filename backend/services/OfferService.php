@@ -155,7 +155,7 @@ class OfferService extends BaseService
     }
 
     /**
-     * offer 投放国家
+     * offer 投放国家 添加
      * @param $offer_id
      * @return int|string
      */
@@ -184,6 +184,40 @@ class OfferService extends BaseService
 
         $res = DemandOffersDeliveryCountry::addAllData($data);
         return $res;
+    }
+
+    /**
+     * offer 投放国家 删除
+     * @return array
+     */
+    public static function delOfferCountryData() {
+        $offer_id = Yii::$app->request->post('offer_id', 0);
+        $res = DemandOffersDeliveryCountry::deleteData(['demand_offer_id'=>$offer_id]);
+        if ($res) {
+            self::$res['status'] = 1;
+            self::$res['info'] = 'success';
+        } else {
+            self::$res['info'] = 'fail';
+        }
+        return self::$res;
+    }
+
+    /**
+     * offer 状态 修改
+     * @return array
+     */
+    public static function updateOfferStatus()
+    {
+        $offer_id = Yii::$app->request->post('offer_id', 0);
+        $status = Yii::$app->request->post('status', 1);
+        $res = DemandOffers::updateData(['status' => $status], ['id' => $offer_id]);
+        if ($res) {
+            self::$res['status'] = 1;
+            self::$res['info'] = 'success';
+        } else {
+            self::$res['info'] = 'fail';
+        }
+        return self::$res;
     }
 
 

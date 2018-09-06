@@ -276,6 +276,21 @@
   // 上传图片和视频的尺寸规范
   var minRatio = 1.7
   var maxRatio = 2.3
+  var ruleLanguagePackage = {
+    required: '此项必填',
+    shouldNumber: '必须为数字',
+    notWWW: '不是正确的网址',
+    uploadImageError: '图片上传失败',
+    uploadVideoError: '视频上传失败',
+    fileTypeError: '文件类型不符',
+    uploadIconSizeError: '图片尺寸不是1：1',
+    uploadImageSizeError: '图片尺寸不符',
+    uploadVideoSizeError: '视频尺寸不符',
+    s3UploadFile: '图片上传成功',
+    s3DeleteFile: '图片删除失败',
+    shouldChoiceOne: '至少选择一项'
+  }
+  // 初始化vue对象
   new Vue({
     el: '.app',
     data () {
@@ -315,7 +330,7 @@
       var validatorDailyCap = function (rule, value, callback) {
         if (value) {
           if (Number(value) !== value) {
-            callback(new Error('必须为数字'))
+            callback(new Error(ruleLanguagePackage.shouldNumber))
           } else {
             callback()
           }
@@ -326,7 +341,7 @@
       var validatorTotalCap = function (rule, value, callback) {
         if (value) {
           if (Number(value) !== value) {
-            callback(new Error('必须为数字'))
+            callback(new Error(ruleLanguagePackage.shouldNumber))
           } else if (!vm.judeTotalCap()) {
             callback(new Error('Total Cap >= Daily Cap'))
           } else {
@@ -396,44 +411,44 @@
         rules: {
           // 1
           campaignOwner: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           advertiser: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           attributeProvider: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           // 2
           storeUrl: [
-            { required: true, message: '此项必填', trigger: 'blur' },
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
             { validator: validatorStoreUrl, trigger: 'blur' }
           ],
           platform: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           title: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           desc: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           name: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           category: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           trackingUrl: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           schedule: [
-            { required: true, message: '至少选择一项', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
           ],
           // 3
           priceWay: [
-            { required: true, message: '此项必填', trigger: 'blur' },
-            { type: 'number', message: '必须为数字', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
+            { type: 'number', message: ruleLanguagePackage.shouldNumber , trigger: 'blur' }
           ],
           dailyCap: [
             { required: false, validator: validatorDailyCap, trigger: 'blur' }
@@ -443,16 +458,16 @@
           ],
           // 4
           deviceType: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           minOSvsersion: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           networkStatus: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           city: [
-            { required: true, message: '此项必填', trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
         }
       }
@@ -647,7 +662,8 @@
                 filesInput.value = ''
                 if (err) {
                   console.log(err)
-                  that.$message.error('图片上传失败')
+                  that.$message.error(ruleLanguagePackage.uploadImageError)
+                  return
                 } else {
                   console.log(result)
                   var downData = {
@@ -680,13 +696,13 @@
               fileData.width = w
               fileData.height = h
               if (ratio < minRatio && ratio > maxRatio) {
-                that.$message.error('视频尺寸不符,请重新上传')
+                that.$message.error(ruleLanguagePackage.uploadVideoSizeError)
               } else {
                 callback()
               }
             })
           } else {
-            that.$message.error('文件类型不符')
+            that.$message.error(ruleLanguagePackage.fileTypeError)
           }
         } else {
           if (data.type.indexOf('image') !== -1) {
@@ -701,21 +717,21 @@
                 if (w === h) {
                   callback()
                 } else {
-                  that.$message.error('图片尺寸非1:1,请重新上传')
+                  that.$message.error(ruleLanguagePackage.uploadIconSizeError)
                 }
               } else {
                 callback()
               }
               if (type === 'image') {
                 if (ratio < minRatio && ratio > maxRatio) {
-                  that.$message.error('图片尺寸不符,请重新上传')
+                  that.$message.error(ruleLanguagePackage.uploadImageSizeError)
                 } else {
                   callback()
                 }
               }
             })
           } else {
-            that.$message.error('文件类型不符')
+            that.$message.error(ruleLanguagePackage.fileTypeError)
           }
         }
       },
@@ -739,7 +755,7 @@
         s3.deleteObject({ Key: photoKey }, function (err, result) {
           if (err) {
             console.log(err)
-            that.$message.error('图片删除失败')
+            that.$message.error(ruleLanguagePackage.s3DeleteFile)
           } else {
             console.log(result)
             list.splice(index, 1)
@@ -830,7 +846,7 @@
               }
               that.uploadCallback(ajaxData, type)
             } else {
-              that.$message.error('图片尺寸非1:1,请重新上传')
+              that.$message.error(ruleLanguagePackage.uploadIconSizeError)
             }
           })
         }
@@ -850,7 +866,7 @@
               ratio: ratio
             }
             if (ratio < minRatio && ratio > maxRatio) {
-              that.$message.error('图片尺寸不符,请重新上传')
+              that.$message.error(ruleLanguagePackage.uploadImageSizeError)
             } else {
               that.uploadCallback(ajaxData, type)
             }
@@ -872,7 +888,7 @@
               ratio: ratio
             }
             if (ratio < minRatio && ratio > maxRatio) {
-              that.$message.error('图片尺寸不符,请重新上传')
+              that.$message.error(ruleLanguagePackage.uploadVideoSizeError)
             } else {
               that.uploadCallback(ajaxData, type)
             }

@@ -759,15 +759,19 @@
       deleteFun (data, index, list) {
         var that = this
         var photoKey = data.key
-        s3.deleteObject({ Key: photoKey }, function (err, result) {
-          if (err) {
-            console.log(err)
-            that.$message.error(ruleLanguagePackage.s3DeleteFile)
-          } else {
-            console.log(result)
-            list.splice(index, 1)
-          }
-        })
+        if (photoKey) {
+          s3.deleteObject({ Key: photoKey }, function (err, result) {
+            if (err) {
+              console.log(err)
+              that.$message.error(ruleLanguagePackage.s3DeleteFile)
+            } else {
+              console.log(result)
+              list.splice(index, 1)
+            }
+          })
+        } else {
+          list.splice(index, 1)
+        }
       },
       // 上传s3成功之后的回调
       uploadCallback (data, type) {
@@ -776,6 +780,8 @@
           var icon0 = this.ruleForm[type + 'List'][0]
           this.deleteFun(icon0, 0, this.ruleForm[type + 'List'])
         }
+        // clear
+        this.ruleForm[type] = ''
       },
       // 去重函数
       duplicateRemoval (list, data) {
@@ -845,7 +851,7 @@
               ajaxData = {
                 width: w,
                 height: h,
-                key: src,
+                key: null,
                 size: null,
                 type: type,
                 url: src,
@@ -866,7 +872,7 @@
             ajaxData = {
               width: w,
               height: h,
-              key: src,
+              key: null,
               size: null,
               type: type,
               url: src,
@@ -888,7 +894,7 @@
             ajaxData = {
               width: w,
               height: h,
-              key: src,
+              key: null,
               size: null,
               type: type,
               url: src,

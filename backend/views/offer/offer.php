@@ -113,28 +113,34 @@
                 <el-radio label="1">ON</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item  prop="deliveryDate">
-              <el-date-picker
-                class='form-one'
-                v-model="ruleForm.deliveryDate"
-                type="daterange"
-                align="right"
-                unlink-panels
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-                >
-              </el-date-picker>
-              <el-checkbox-group class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
-                <el-checkbox label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
-              </el-checkbox-group>
-              <el-checkbox-group class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
-                <el-checkbox label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
+            <template v-if='ruleForm.schedule === "1"'>
+              <el-form-item  prop="deliveryDate">
+                <el-date-picker
+                  class='form-one'
+                  v-model="ruleForm.deliveryDate"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item label="Comment" prop="deliveryWeek">
+                <el-checkbox-group class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
+                  <el-checkbox label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="Comment" prop="deliveryHour">
+                <el-checkbox-group class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
+                  <el-checkbox label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </template>
             <el-form-item label="Comment" prop="comment">
-              <el-input class='form-one' type='textarea' v-model="ruleForm.comment" placeholder=''></el-input>
+              <el-input class='form-one mt-20' type='textarea' v-model="ruleForm.comment" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>

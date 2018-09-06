@@ -724,7 +724,7 @@
               that.ruleForm.title = result.data.offer_title
               that.ruleForm.name = result.data.pkg_name
               var category_id = result.data.category_id
-              that.judeCategoryOptions.map(function (ele) {
+              that.options.category.map(function (ele) {
                 if (result.data.category_id === ele.value) {
                   that.ruleForm.category = category_id
                 }
@@ -1066,9 +1066,11 @@
       },
       // 表单提交
       submitForm (formName) {
+        var that = this
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
+            that.submitAjax()
           } else {
             console.log('error submit!!')
             return false
@@ -1079,6 +1081,9 @@
       resetForm(formName) {
         this.$refs[formName].resetFields()
         window.scrollTo(0, 0)
+      },
+      submitAjax () {
+        
       }
     },
     watch: {}

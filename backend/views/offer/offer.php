@@ -144,10 +144,10 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Device Type" prop="deviceType">
-              <el-select class='form-one'
+              <el-select class='form-one' :disabled='!judePlatform'
                 v-model="ruleForm.deviceType" clearable placeholder="">
                 <el-option
-                  v-for="item in options.deviceType"
+                  v-for="item in judeDeviceType"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -377,6 +377,10 @@
             }
           ],
           deviceType: [],
+          deviceTypeBase: {
+            ios: ['phone', 'ipad', 'unlimited'],
+            android: ['phone', 'tablet', 'unlimited']
+          },
           minOSvsersionBase: {},
           minOSvsersion: [],
           city: [],
@@ -481,10 +485,34 @@
       }
     },
     computed: {
-      judeCategoryOptions () {
+      judeDeviceType () {
+        var arr = []
         if (this.ruleForm.platform === '1') {
           // android
-          var arr = []
+          this.options.deviceTypeBase.android.map(function (ele) {
+            arr.push({
+              value: ele,
+              label: ele
+            })
+          })
+          this.options.deviceType = arr
+        }
+        if (this.ruleForm.platform === '2') {
+          // ios
+          this.options.deviceTypeBase.ios.map(function (ele) {
+            arr.push({
+              value: ele,
+              label: ele
+            })
+          })
+          this.options.deviceType = arr
+        }
+        return arr
+      },
+      judeCategoryOptions () {
+        var arr = []
+        if (this.ruleForm.platform === '1') {
+          // android
           this.options.categoryBase.android.map(function (ele) {
             arr.push({
               value: ele.id,
@@ -495,7 +523,6 @@
         }
         if (this.ruleForm.platform === '2') {
           // ios
-          var arr = []
           this.options.categoryBase.ios.map(function (ele) {
             arr.push({
               value: ele.id,

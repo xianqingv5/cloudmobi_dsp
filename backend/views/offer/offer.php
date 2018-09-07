@@ -1,4 +1,4 @@
-<div class='app' data-type="<?php echo $type; ?>">
+<div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>
@@ -151,8 +151,8 @@
             <h5>Budget Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item label="Price($)" prop="priceWay">
-              <el-input class='form-one' v-model.number="ruleForm.priceWay" placeholder=''></el-input>
+            <el-form-item label="Price($)" prop="payout">
+              <el-input class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
               <el-input class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
@@ -191,11 +191,11 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Min OS Vsersion" prop="minOSvsersion">
+            <el-form-item label="Min OS Version" prop="minOSversion">
               <el-select class='form-one'
-                v-model="ruleForm.minOSvsersion" :disabled='!judePlatform' clearable placeholder="">
+                v-model="ruleForm.minOSversion" :disabled='!judePlatform' clearable placeholder="">
                 <el-option
-                  v-for="item in options.minOSvsersion"
+                  v-for="item in options.minOSversion"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -324,8 +324,8 @@
   var minRatio = 1.7
   var maxRatio = 2.1
   var baseRatio = 1.9 / 1
-  var maxImageSize = 500
-  var maxVideoSize = 2 * 1024
+  var maxImageSize = 500 * 1024
+  var maxVideoSize = 2 * 1024 * 1024
   var ruleLanguagePackage = {
     required: '此项必填',
     shouldNumber: '必须为数字',
@@ -421,6 +421,8 @@
         }
       }
       return {
+        pageType: "<?php echo $type; ?>",
+        channel: null,
         messageVisible: false,
         csrf: '',
         options: {
@@ -442,8 +444,8 @@
             ios: ['phone', 'ipad', 'unlimited'],
             android: ['phone', 'tablet', 'unlimited']
           },
-          minOSvsersionBase: {},
-          minOSvsersion: [],
+          minOSversionBase: {},
+          minOSversion: [],
           countryType: [
             {
               value: '1',
@@ -493,13 +495,13 @@
           deliveryHour: [],
           comment: '',
           // 3
-          priceWay: '',
+          payout: '',
           dailyCap: '',
           totalCap: '',
           // 4
           deviceType: '',
           specificDevice: [],
-          minOSvsersion: '',
+          minOSversion: '',
           networkStatus: '',
           countryType: '',
           country: [],
@@ -549,7 +551,7 @@
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
           ],
           // 3
-          priceWay: [
+          payout: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
             { type: 'number', message: ruleLanguagePackage.shouldNumber , trigger: 'blur' }
           ],
@@ -563,7 +565,7 @@
           deviceType: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
-          minOSvsersion: [
+          minOSversion: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           networkStatus: [
@@ -631,10 +633,10 @@
         // 置空
         that.options.deviceType.splice(0)
         that.options.category.splice(0)
-        that.options.minOSvsersion.splice(0)
+        that.options.minOSversion.splice(0)
         that.ruleForm.deviceType = ''
         that.ruleForm.category = ''
-        that.ruleForm.minOSvsersion = ''
+        that.ruleForm.minOSversion = ''
         // 
         if (this.ruleForm.platform === '') {
           flag = false
@@ -654,8 +656,8 @@
               label: ele.name
             })
           })
-          this.options.minOSvsersionBase.android.map(function (ele) {
-            that.options.minOSvsersion.push({
+          this.options.minOSversionBase.android.map(function (ele) {
+            that.options.minOSversion.push({
               value: ele,
               label: ele
             })
@@ -676,8 +678,8 @@
               label: ele.name
             })
           })
-          this.options.minOSvsersionBase.ios.map(function (ele) {
-            that.options.minOSvsersion.push({
+          this.options.minOSversionBase.ios.map(function (ele) {
+            that.options.minOSversion.push({
               value: ele,
               label: ele
             })
@@ -798,7 +800,7 @@
             // country
             that.options.country = country
             // version
-            that.options.minOSvsersionBase = result.data.version
+            that.options.minOSversionBase = result.data.version
             // category
             that.options.categoryBase = result.data.category
           }
@@ -847,9 +849,19 @@
                     width: fileData.width,
                     height: fileData.height,
                     size: fileData.size,
-                    type: type,
+                    type: null,
+                    urltype: type,
                     key: result.key,
                     ratio: fileData.ratio
+                  }
+                  if (type === 'icon') {
+                    downData.type = '1'
+                  }
+                  if (type === 'image') {
+                    downData.type = '2'
+                  }
+                  if (type === 'video') {
+                    downData.type = '3'
                   }
                   that.uploadCallback(downData, type)
                 }
@@ -897,8 +909,6 @@
                   } else {
                     that.$message.error(ruleLanguagePackage.uploadIconSizeError)
                   }
-                } else {
-                  callback()
                 }
                 if (type === 'image') {
                   var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
@@ -934,13 +944,15 @@
       deleteFun (data, index, list) {
         var that = this
         var photoKey = data.key
+        // 权宜之策，暂时不删除s3文件
+        photoKey = null
         if (photoKey) {
           s3.deleteObject({ Key: photoKey }, function (err, result) {
             if (err) {
-              console.log(err)
+              // console.log(err)
               that.$message.error(ruleLanguagePackage.s3DeleteFile)
             } else {
-              console.log(result)
+              // console.log(result)
               list.splice(index, 1)
             }
           })
@@ -1028,7 +1040,8 @@
                 height: h,
                 key: null,
                 size: null,
-                type: type,
+                type: '1',
+                urltype: type,
                 url: src,
                 ratio: ratio
               }
@@ -1049,7 +1062,8 @@
               height: h,
               key: null,
               size: null,
-              type: type,
+              type: '2',
+              urltype: type,
               url: src,
               ratio: ratio
             }
@@ -1072,7 +1086,8 @@
               height: h,
               key: null,
               size: null,
-              type: type,
+              type: '3',
+              urltype: type,
               url: src,
               ratio: ratio
             }
@@ -1099,7 +1114,74 @@
         window.scrollTo(0, 0)
       },
       submitAjax () {
-
+        var that = this
+        var ajaxData = {
+          channel: that.channel,
+          dsp_security_param: that.csrf,
+          // 1
+          campaign_owner: that.ruleForm.campaignOwner,
+          sponsor: that.ruleForm.advertiser,
+          att_pro: that.ruleForm.attributeProvider,
+          // 2
+          platform: that.ruleForm.platform,
+          final_url: that.ruleForm.storeUrl,
+          title: that.ruleForm.title,
+          desc: that.ruleForm.desc,
+          pkg_name: that.ruleForm.name,
+          category_id: that.ruleForm.category,
+          tracking_url: that.ruleForm.trackingUrl,
+          delivery_status: that.ruleForm.schedule,
+          delivery_start_data: that.ruleForm.deliveryDate[0],
+          delivery_end_data: that.ruleForm.deliveryDate[1],
+          delivery_week: that.ruleForm.deliveryWeek,
+          delivery_hour: that.ruleForm.deliveryHour,
+          comment: that.ruleForm.comment,
+          // 3
+          payout: that.ruleForm.payout,
+          daily_cap: that.ruleForm.dailyCap,
+          total_cap: that.ruleForm.totalCap,
+          // 4
+          device_target: that.ruleForm.deviceType,
+          specific_device: that.ruleForm.specificDevice,
+          min_os_version: that.ruleForm.minOSversion,
+          network_environment: that.ruleForm.networkStatus,
+          type: that.ruleForm.countryType,
+          country_id: that.ruleForm.country,
+          // 5
+          icon: that.ruleForm.iconList,
+          image: that.ruleForm.imageList,
+          video: that.ruleForm.videoList
+        }
+        if (that.ruleForm.countryType === '1') {
+          ajaxData.country_id.splice(0)
+        }
+        console.log(ajaxData)
+        if (that.pageType === 'create') {
+          $.ajax({
+            url: '/offer/offer-create',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log(result)
+            },
+            error: function (result) {
+              console.log(result)
+            }
+          })
+        }
+        if (that.pageType === 'edit') {
+          $.ajax({
+            url: '/offer/offer-update',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log(result)
+            },
+            error: function (result) {
+              console.log(result)
+            }
+          })
+        }
       }
     },
     watch: {}

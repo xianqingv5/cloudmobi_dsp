@@ -44,7 +44,7 @@ class OfferController extends BaseController
      * offer update
      * @return array|string
      */
-    public function actionOfferUpdate()
+    public function actionOfferUpdateInfo()
     {
         if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
@@ -54,6 +54,16 @@ class OfferController extends BaseController
 
         return $this->render('offer', ['type' => 'update']);
     }
+
+    public function actionOfferUpdate()
+    {
+        if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = OfferService::getDemandOfferData();
+            return $res;
+        }
+    }
+
 
     /**
      * offer status update
@@ -65,21 +75,6 @@ class OfferController extends BaseController
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $res = OfferService::updateOfferStatus();
-            return $res;
-        }
-        throw new ForbiddenHttpException();
-    }
-
-    /**
-     * delete offer 素材
-     * @return array
-     * @throws ForbiddenHttpException
-     */
-    public function actionDelOfferFile()
-    {
-        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            $res = OfferService::delOfferFile();
             return $res;
         }
         throw new ForbiddenHttpException();

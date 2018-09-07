@@ -45,7 +45,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Attribute Provider" prop="attributeProvider">
-              <el-select class='form-one'
+              <el-select class='form-one' @change='judeChannel'
                 v-model="ruleForm.attributeProvider" clearable placeholder="">
                 <el-option
                   v-for="item in options.attributeProvider"
@@ -721,8 +721,10 @@
       this.initData()
     },
     methods: {
+      judeChannel (item) {
+        console.log(item)
+      },
       storeUrlFocus () {
-        console.log(111)
         this.storeUrlFlag = true
       },
       spiderAgain () {

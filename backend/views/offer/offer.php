@@ -1,4 +1,4 @@
-<div class='app'>
+<div class='app' data-type="<?php echo $type; ?>">
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>
@@ -426,6 +426,7 @@
         }
       }
       return {
+        offerID: "<?php echo $offer_id; ?>",
         pageType: "<?php echo $type; ?>",
         channel: null,
         messageVisible: false,
@@ -719,8 +720,25 @@
       })
       // initData
       this.initData()
+      this.getUpdateInfo()
     },
     methods: {
+      getUpdateInfo () {
+        if (this.pageType === 'update') {
+          var ajaxData = {
+            offer_id: this.offerID,
+            dsp_security_param: this.csrf
+          }
+          $.ajax({
+            url: '/offer/offer-update-info',
+            data: ajaxData,
+            type: 'post',
+            success: function (result) {
+              console.log(result)
+            }
+          })
+        }
+      },
       judeChannel (newval) {
         var that = this
         this.options.attributeProvider.map(function (ele) {

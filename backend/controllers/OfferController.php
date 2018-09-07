@@ -52,7 +52,7 @@ class OfferController extends BaseController
             return $res;
         }
 
-        $offer_id = Yii::$app->request->post('offer_id', 0);
+        $offer_id = Yii::$app->request->get('offer_id', 0);
         return $this->render('offer', ['type' => 'update', 'offer_id'=> $offer_id]);
     }
 

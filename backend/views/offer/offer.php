@@ -331,6 +331,7 @@
     shouldNumber: '必须为数字',
     notWWW: '不是正确的网址',
     notStore: 'APP Apple Store or Google Play URL may be wrong.',
+    notEqualToPlatform: '所填链接与所选平台不符',
     shouldInputPlatform: '请先填写平台后再试',
     uploadImageError: '图片上传失败',
     uploadVideoError: '视频上传失败',
@@ -355,33 +356,43 @@
         var iOSReg = new RegExp('https://itunes.apple.com/')
         var androidReg = new RegExp('https://play.google.com/')
         var platform = null
+        var vmPlatform = null
         if (reg.test(value)) {
           if (iOSReg.test(value)) {
             // ios
             platform = 'ios'
+            vmPlatform = '2'
           } else if (androidReg.test(value)) {
             // android
             platform = 'android'
+            vmPlatform = '1'
           } else {
             vm.messageVisible = true
             callback()
           }
-          if (platform) {
-            if (vm.ruleForm.platform) {
-              vm.judeHref(platform, value, function (flag) {
-                if (flag) {
-                  callback()
-                } else {
-                  callback(new Error(ruleLanguagePackage.notStore))
-                  // 弹出框
-                }
-                vm.dialogVisible = true
-              })
+          if (vm.ruleForm.platform) {
+            if (vmPlatform === vm.ruleForm.platform) {
+              if (platform) {
+                vm.judeHref(platform, value, function (flag) {
+                  if (flag) {
+                    callback()
+                  } else {
+                    // 没有查询到商店
+                    callback(new Error(ruleLanguagePackage.notStore))
+                  }
+                  vm.dialogVisible = true
+                })
+              }
             } else {
-              callback(new Error(ruleLanguagePackage.shouldInputPlatform))
+              // 与所填平台不符
+              callback(new Error(ruleLanguagePackage.notEqualToPlatform))
             }
+          } else {
+            // 应该填写平台
+            callback(new Error(ruleLanguagePackage.shouldInputPlatform))
           }
         } else {
+          // 不是网址
           callback(new Error(ruleLanguagePackage.notWWW))
         }
       }
@@ -678,6 +689,11 @@
     mounted () {
       var that = this
       this.csrf = document.querySelector('#spp_security').value
+      this.$watch('ruleForm.platform', function (newVal, oldVal) {
+        this.$refs['ruleForm'].validateField('storeUrl')
+      }, {
+        deep: true
+      })
       this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
         // 每次改变都会验证totalCap
         this.$refs['ruleForm'].validateField('totalCap')

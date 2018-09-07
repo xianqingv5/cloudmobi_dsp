@@ -31,7 +31,7 @@ class OfferController extends BaseController
     public function actionOfferCreate()
     {
         if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
-            echo "<pre>";var_dump(Yii::$app->request->post());die;
+            //echo "<pre>";var_dump(Yii::$app->request->post());die;
             Yii::$app->response->format = Response::FORMAT_JSON;
             $res = OfferService::addOfferData();
             return $res;

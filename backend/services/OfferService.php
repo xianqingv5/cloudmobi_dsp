@@ -122,10 +122,11 @@ class OfferService extends BaseService
         try {
             // offer 添加
             $demand_offer_id = self::addDemandOffer();
-            if ($demand_offer_id) {
+            if (!$demand_offer_id) {
                 self::$res['info'] = 'offer create fail.';
                 return self::$res;
             }
+
             // offer下的素材添加
             $offer_file = self::addOfferFile($demand_offer_id);
 
@@ -233,10 +234,10 @@ class OfferService extends BaseService
 
         // 投放时间
         $data['delivery_status'] = Yii::$app->request->post('delivery_status', 2);
-        $data['delivery_start_day'] = Yii::$app->request->post('delivery_start_day', '');
-        $data['delivery_end_day'] = Yii::$app->request->post('delivery_end_day', '');
-        $data['delivery_week'] = Yii::$app->request->post('delivery_week', '');
-        $data['delivery_hour'] = Yii::$app->request->post('delivery_hour', '');
+        $data['delivery_start_day'] = Yii::$app->request->post('delivery_start_data', date('Y-m-d'));
+        $data['delivery_end_day'] = Yii::$app->request->post('delivery_end_data', date('Y-m-d', strtotime('+14 days')));
+        $data['delivery_week'] = json_encode(Yii::$app->request->post('delivery_week', ''));
+        $data['delivery_hour'] = json_encode(Yii::$app->request->post('delivery_hour', ''));
 
         // 设备机型
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));
@@ -255,14 +256,14 @@ class OfferService extends BaseService
     {
         $date = date('Y-m-d H:i:s');
         // icon
-        $icon_res = json_decode(Yii::$app->request->post('icon', []));
+        $icon_res = Yii::$app->request->post('icon', []);
         $icon = [];
         if ($icon_res && is_array($icon_res)) {
             $icon[0]['demand_offer_id'] = $offer_id;
             $icon[0]['url'] = $icon_res[0]['url'];
             $icon[0]['width'] = $icon_res[0]['width'];
             $icon[0]['height'] = $icon_res[0]['height'];
-            $icon[0]['mime_type'] = $icon_res[0]['type'];
+            $icon[0]['mime_type'] = $icon_res[0]['mime_type'];
             $icon[0]['type'] = 1;
             $icon[0]['status'] = 1;
             $icon[0]['create_date'] = $date;
@@ -270,7 +271,7 @@ class OfferService extends BaseService
         }
 
         // image
-        $image_res = json_decode(Yii::$app->request->post('image', []));
+        $image_res = Yii::$app->request->post('image', []);
         $image = [];
         if ($image_res) {
             foreach ($image_res as $k=>$v) {
@@ -287,10 +288,10 @@ class OfferService extends BaseService
         }
 
         // video
-        $video_res = json_decode(Yii::$app->request->post('video', []));
+        $video_res = Yii::$app->request->post('video', []);
         $video = [];
         if ($video_res) {
-            foreach ($image_res as $k=>$v) {
+            foreach ($video_res as $k=>$v) {
                 $video[$k]['demand_offer_id'] = $offer_id;
                 $video[$k]['url'] = $v['url'];
                 $video[$k]['width'] = $v['width'];
@@ -304,7 +305,7 @@ class OfferService extends BaseService
         }
 
         $data = array_merge($icon, $image, $video);
-        $res = DemandOffersCreatives::addData($data);
+        $res = DemandOffersCreatives::addAllData($data);
         return $res;
 
     }
@@ -318,7 +319,7 @@ class OfferService extends BaseService
     {
         $date = date('Y-m-d H:i:s');
         $country_type = Yii::$app->request->post('country_type', 0);
-        $country_res = json_decode(Yii::$app->request->post('country', []));
+        $country_res = Yii::$app->request->post('country', []);
 
         $data = [];
         if ($country_type && $country_type != 1 && $country_res) {

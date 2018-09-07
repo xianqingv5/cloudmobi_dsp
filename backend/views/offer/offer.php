@@ -6,9 +6,10 @@
     </el-breadcrumb>
   </div>
   <div class='flex jcsb p30'>
-    <h3>New Campaign</h3>
+    <h3 v-if='pageType === "create"'>New Campaign</h3>
+    <h3 v-if='pageType === "update"'>Edit Campaign</h3>
     <div>
-      <el-button  @click='resetForm("ruleForm")'>Reset</el-button>
+      <!-- <el-button  @click='resetForm("ruleForm")'>Reset</el-button> -->
       <el-button type="primary" @click='submitForm("ruleForm")'>Save</el-button>
     </div>
   </div>
@@ -66,7 +67,7 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Targeting Platform" prop="platform">
-              <el-select class='form-one'
+              <el-select class='form-one' @change='changePlatform'
                 v-model="ruleForm.platform" clearable placeholder="">
                 <el-option
                   v-for="item in options.platform"
@@ -77,7 +78,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input class='form-one' @focus='storeUrlFocus' v-model="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input class='form-one' @focus='storeUrlFocus' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <transition name='fade'>
               <div class='w100 center mb-30 of-h' v-if='messageVisible'>
@@ -105,7 +106,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Tracking Link" prop="trackingUrl">
-              <el-input class='form-one' v-model="ruleForm.trackingUrl" placeholder=''></el-input>
+              <el-input class='form-one' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group class='form-one' v-model="ruleForm.schedule">
@@ -171,7 +172,7 @@
           <div class='content-con flex column'>
             <el-form-item label="Device Type" prop="deviceType">
               <el-select class='form-one' :disabled='!judePlatform'
-                v-model="ruleForm.deviceType" clearable placeholder="">
+                v-model="ruleForm.deviceType" @change='changeDeviceType' clearable placeholder="">
                 <el-option
                   v-for="item in options.deviceType"
                   :key="item.value"
@@ -211,7 +212,7 @@
             </el-form-item>
             <el-form-item label="Targeting Countries" prop="countryType">
               <el-select class='form-one'
-                v-model="ruleForm.countryType" clearable placeholder="">
+                v-model="ruleForm.countryType" @change='changeCountryType' clearable placeholder="">
                 <el-option
                   v-for="item in options.countryType"
                   :key="item.value"
@@ -220,7 +221,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-if='ruleForm.countryType !== "1" && ruleForm.countryType' label="select Country" prop="country">
+            <el-form-item v-if='showCountry' label="select Country" prop="country">
               <el-select class='form-one' multiple filterable 
                 v-model="ruleForm.country" clearable placeholder="">
                 <el-option
@@ -304,7 +305,7 @@
         </div>
 </template>
         <div class='flex p30'>
-          <el-button  @click='resetForm("ruleForm")'>Reset</el-button>
+          <!-- <el-button  @click='resetForm("ruleForm")'>Reset</el-button> -->
           <el-button type="primary" @click='submitForm("ruleForm")'>Save</el-button>
         </div>
       </el-form>
@@ -330,6 +331,7 @@
     required: '此项必填',
     shouldNumber: '必须为数字',
     notWWW: '不是正确的网址',
+    notSpace: '网址有空格',
     notStore: 'APP Apple Store or Google Play URL may be wrong.',
     notEqualToPlatform: '所填链接与所选平台不符',
     shouldInputPlatform: '请先填写平台后再试',
@@ -350,16 +352,21 @@
     el: '.app',
     data () {
       var vm = this
+      // 正则
+      var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
+      var iOSReg = new RegExp('https://itunes.apple.com/')
+      var androidReg = new RegExp('https://play.google.com/')
+      var spaceReg = new RegExp('\\s+')
       var validatorStoreUrl = function (rule, value, callback) {
         if (vm.storeUrlFlag) {
           vm.storeUrlFlag = false
-          // 正则
-          var reg = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
-          var iOSReg = new RegExp('https://itunes.apple.com/')
-          var androidReg = new RegExp('https://play.google.com/')
           var platform = null
           var vmPlatform = null
-          if (reg.test(value)) {
+          if (spaceReg.test(value)) {
+            // 有空格
+            vm.messageVisible = false
+            callback(new Error(ruleLanguagePackage.notSpace))
+          } else if (regHref.test(value)) {
             if (iOSReg.test(value)) {
               // ios
               platform = 'ios'
@@ -401,6 +408,15 @@
           callback()
         }
       }
+      var validatorTrackingUrl = function (rule, value, callback) {
+        if (spaceReg.test(value)) {
+          callback(new Error(ruleLanguagePackage.notSpace))
+        } else if (!regHref.test(value)) {
+          callback(new Error(ruleLanguagePackage.notWWW))
+        } else {
+          callback()
+        }
+      }
       var validatorDailyCap = function (rule, value, callback) {
         if (value) {
           if (Number(value) !== value) {
@@ -432,6 +448,7 @@
         messageVisible: false,
         csrf: '',
         storeUrlFlag: false,
+        showCountry: true,
         options: {
           campaignOwner: [],
           advertiser: [],
@@ -473,13 +490,13 @@
           specificDevice: [],
           specificDeviceBase: {},
           deliveryWeek: [
-            {value: 0, label: 'Sun'},
-            {value: 1, label: 'Mon'},
-            {value: 2, label: 'Tues'},
-            {value: 3, label: 'Weds'},
-            {value: 4, label: 'Thu'},
-            {value: 5, label: 'Fri'},
-            {value: 6, label: 'Sat'},
+            {value: '0', label: 'Sun'},
+            {value: '1', label: 'Mon'},
+            {value: '2', label: 'Tues'},
+            {value: '3', label: 'Weds'},
+            {value: '4', label: 'Thu'},
+            {value: '5', label: 'Fri'},
+            {value: '6', label: 'Sat'},
           ],
           deliveryHour: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
         },
@@ -497,7 +514,7 @@
           category: '',
           trackingUrl: '',
           schedule: '',
-          deliveryDate: '',
+          deliveryDate: [],
           deliveryWeek: [],
           deliveryHour: [],
           comment: '',
@@ -552,7 +569,8 @@
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           trackingUrl: [
-            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
+            { validator: validatorTrackingUrl, trigger: 'blur' }
           ],
           schedule: [
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
@@ -630,21 +648,12 @@
               })
             })
           }
-          that.ruleForm.specificDevice = []
           return true
         }
       },
       judePlatform () {
         var that = this
         var flag = false
-        // 置空
-        that.options.deviceType.splice(0)
-        that.options.category.splice(0)
-        that.options.minOSversion.splice(0)
-        that.ruleForm.deviceType = ''
-        that.ruleForm.category = ''
-        that.ruleForm.minOSversion = ''
-        // 
         if (this.ruleForm.platform === '') {
           flag = false
         }
@@ -701,29 +710,30 @@
       this.$watch('ruleForm.platform', function (newVal, oldVal) {
         this.$refs['ruleForm'].validateField('storeUrl')
       }, {
-        deep: true
+        deep: false
       })
       this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
         // 每次改变都会验证totalCap
         this.$refs['ruleForm'].validateField('totalCap')
       }, {
-        deep: true
+        deep: false
       })
       this.$watch('ruleForm.countryType', function (newVal, oldVal) {
-        // 每次改变都会验证countryType
-        that.ruleForm.country.splice(0)
         if (newVal === '1') {
-          that.ruleForm.country = JSON.parse(JSON.stringify(that.options.country))
+          that.options.country.map(function (ele) {
+            that.ruleForm.country.push(ele.value)
+          })
         }
       }, {
-        deep: true
+        deep: false
       })
       // initData
       this.initData()
-      this.getUpdateInfo()
     },
     methods: {
+      // 获取已经保存的信息
       getUpdateInfo () {
+        var that = this
         if (this.pageType === 'update') {
           var ajaxData = {
             offer_id: this.offerID,
@@ -734,10 +744,72 @@
             data: ajaxData,
             type: 'post',
             success: function (result) {
-              console.log(result)
+              that.channel = result.data.channel
+              // 1
+              that.ruleForm.campaignOwner = result.data.campaign_owner
+              that.ruleForm.advertiser = result.data.sponsor
+              that.ruleForm.attributeProvider = result.data.att_pro
+              // 2
+              that.ruleForm.platform = result.data.platform
+              that.ruleForm.storeUrl = result.data.final_url
+              that.ruleForm.title = result.data.title
+              that.ruleForm.desc = result.data.desc
+              that.ruleForm.name = result.data.pkg_name
+              that.ruleForm.category = result.data.category_id
+              that.ruleForm.trackingUrl = result.data.tracking_url
+              that.ruleForm.schedule = result.data.delivery_status
+              var deliveryDate = []
+              deliveryDate.push(result.data.delivery_start_day)
+              deliveryDate.push(result.data.delivery_end_day)
+              that.ruleForm.deliveryDate = deliveryDate
+              that.ruleForm.deliveryWeek = JSON.parse(result.data.delivery_week)
+              that.ruleForm.deliveryHour = JSON.parse(result.data.delivery_hour)
+              that.ruleForm.comment = result.data.comment
+              // 3
+              that.ruleForm.payout = Number(result.data.payout)
+              that.ruleForm.dailyCap = Number(result.data.daily_cap)
+              that.ruleForm.totalCap = Number(result.data.total_cap)
+              // 4
+              that.ruleForm.deviceType = result.data.device_target
+              that.ruleForm.specificDevice = JSON.parse(result.data.specific_device)
+              that.ruleForm.minOSversion = result.data.min_os_version
+              that.ruleForm.networkStatus = result.data.network_environment
+              that.ruleForm.countryType = result.data.country_type
+              that.ruleForm.country = result.data.country
+              // 5
+              that.ruleForm.iconList.push(result.data.icon)
+              that.ruleForm.imageList = result.data.image
+              that.ruleForm.videoList = result.data.video
+              // 
+              that.showCountryFun()
             }
           })
         }
+      },
+      showCountryFun () {
+        this.showCountry = false
+        if (this.ruleForm.countryType !== '') {
+          if (this.ruleForm.countryType !== '1') {
+            this.showCountry = true
+          }
+        }
+      },
+      changeDeviceType () {
+        this.ruleForm.specificDevice.splice(0)
+      },
+      changePlatform () {
+        // 置空
+        var that = this
+        that.options.deviceType.splice(0)
+        that.options.category.splice(0)
+        that.options.minOSversion.splice(0)
+        that.ruleForm.deviceType = ''
+        that.ruleForm.category = ''
+        that.ruleForm.minOSversion = ''
+      },
+      changeCountryType () {
+        this.ruleForm.country.splice(0)
+        this.showCountryFun()
       },
       judeChannel (newval) {
         var that = this
@@ -800,7 +872,6 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
             // Campaign Owner
             result.data.user.map(function (ele) {
               that.options.campaignOwner.push({
@@ -839,6 +910,8 @@
             that.options.minOSversionBase = result.data.version
             // category
             that.options.categoryBase = result.data.category
+            // 
+            that.getUpdateInfo()
           }
         })
       },
@@ -1208,7 +1281,7 @@
             }
           })
         }
-        if (that.pageType === 'edit') {
+        if (that.pageType === 'update') {
           $.ajax({
             url: '/offer/offer-update',
             type: 'post',

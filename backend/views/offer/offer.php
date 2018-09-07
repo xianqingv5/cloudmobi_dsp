@@ -45,7 +45,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Attribute Provider" prop="attributeProvider">
-              <el-select class='form-one'
+              <el-select class='form-one' @change='judeChannel'
                 v-model="ruleForm.attributeProvider" clearable placeholder="">
                 <el-option
                   v-for="item in options.attributeProvider"
@@ -721,8 +721,15 @@
       this.initData()
     },
     methods: {
+      judeChannel (newval) {
+        var that = this
+        this.options.attributeProvider.map(function (ele) {
+          if (newval.toString() === ele.value) {
+            that.channel = ele.channel
+          }
+        })
+      },
       storeUrlFocus () {
-        console.log(111)
         this.storeUrlFlag = true
       },
       spiderAgain () {
@@ -1166,14 +1173,17 @@
         if (that.ruleForm.countryType === '1') {
           ajaxData.country.splice(0)
         }
-        console.log(ajaxData)
         if (that.pageType === 'create') {
           $.ajax({
             url: '/offer/offer-create',
             type: 'post',
             data: ajaxData,
             success: function (result) {
-              console.log(result)
+              if (result.status === 1) {
+                window.location.href = '/offer/offer-index'
+              } else {
+                that.$message.error(result.info)
+              }
             },
             error: function (result) {
               console.log(result)
@@ -1186,7 +1196,11 @@
             type: 'post',
             data: ajaxData,
             success: function (result) {
-              console.log(result)
+              if (result.status === 1) {
+                window.location.href = '/offer/offer-index'
+              } else {
+                that.$message.error(result.info)
+              }
             },
             error: function (result) {
               console.log(result)

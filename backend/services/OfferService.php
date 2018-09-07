@@ -149,7 +149,7 @@ class OfferService extends BaseService
 
     public static function updateOfferData()
     {
-        $offer_id = Yii::$app->request->post('id', 0);
+        $offer_id = Yii::$app->request->post('offer_id', 0);
         $transaction = Yii::$app->db->beginTransaction();
         try {
             // demand offer update

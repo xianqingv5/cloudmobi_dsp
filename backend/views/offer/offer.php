@@ -77,7 +77,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input class='form-one' v-model="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input class='form-one' @focus='storeUrlFocus' v-model="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <transition name='fade'>
               <div class='w100 center mb-30 of-h' v-if='messageVisible'>
@@ -351,49 +351,54 @@
     data () {
       var vm = this
       var validatorStoreUrl = function (rule, value, callback) {
-        // 正则
-        var reg = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
-        var iOSReg = new RegExp('https://itunes.apple.com/')
-        var androidReg = new RegExp('https://play.google.com/')
-        var platform = null
-        var vmPlatform = null
-        if (reg.test(value)) {
-          if (iOSReg.test(value)) {
-            // ios
-            platform = 'ios'
-            vmPlatform = '2'
-          } else if (androidReg.test(value)) {
-            // android
-            platform = 'android'
-            vmPlatform = '1'
-          } else {
-            vm.messageVisible = true
-            callback()
-          }
-          if (vm.ruleForm.platform) {
-            if (vmPlatform === vm.ruleForm.platform) {
-              if (platform) {
-                vm.judeHref(platform, value, function (flag) {
-                  if (flag) {
-                    callback()
-                  } else {
-                    // 没有查询到商店
-                    callback(new Error(ruleLanguagePackage.notStore))
-                  }
-                  vm.dialogVisible = true
-                })
+        if (vm.storeUrlFlag) {
+          vm.storeUrlFlag = false
+          // 正则
+          var reg = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
+          var iOSReg = new RegExp('https://itunes.apple.com/')
+          var androidReg = new RegExp('https://play.google.com/')
+          var platform = null
+          var vmPlatform = null
+          if (reg.test(value)) {
+            if (iOSReg.test(value)) {
+              // ios
+              platform = 'ios'
+              vmPlatform = '2'
+            } else if (androidReg.test(value)) {
+              // android
+              platform = 'android'
+              vmPlatform = '1'
+            } else {
+              vm.messageVisible = true
+              callback()
+            }
+            if (vm.ruleForm.platform) {
+              if (vmPlatform === vm.ruleForm.platform) {
+                if (platform) {
+                  vm.judeHref(platform, value, function (flag) {
+                    if (flag) {
+                      callback()
+                    } else {
+                      // 没有查询到商店
+                      callback(new Error(ruleLanguagePackage.notStore))
+                    }
+                    vm.dialogVisible = true
+                  })
+                }
+              } else {
+                // 与所填平台不符
+                callback(new Error(ruleLanguagePackage.notEqualToPlatform))
               }
             } else {
-              // 与所填平台不符
-              callback(new Error(ruleLanguagePackage.notEqualToPlatform))
+              // 应该填写平台
+              callback(new Error(ruleLanguagePackage.shouldInputPlatform))
             }
           } else {
-            // 应该填写平台
-            callback(new Error(ruleLanguagePackage.shouldInputPlatform))
+            // 不是网址
+            callback(new Error(ruleLanguagePackage.notWWW))
           }
         } else {
-          // 不是网址
-          callback(new Error(ruleLanguagePackage.notWWW))
+          callback()
         }
       }
       var validatorDailyCap = function (rule, value, callback) {
@@ -425,6 +430,7 @@
         channel: null,
         messageVisible: false,
         csrf: '',
+        storeUrlFlag: false,
         options: {
           campaignOwner: [],
           advertiser: [],
@@ -715,6 +721,10 @@
       this.initData()
     },
     methods: {
+      storeUrlFocus () {
+        console.log(111)
+        this.storeUrlFlag = true
+      },
       spiderAgain () {
         // 再次爬虫
         console.log(1)
@@ -765,6 +775,7 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
+            console.log(result)
             // Campaign Owner
             result.data.user.map(function (ele) {
               that.options.campaignOwner.push({
@@ -850,7 +861,7 @@
                     height: fileData.height,
                     size: fileData.size,
                     type: null,
-                    urltype: type,
+                    mime_type: type,
                     key: result.key,
                     ratio: fileData.ratio
                   }
@@ -1041,7 +1052,7 @@
                 key: null,
                 size: null,
                 type: '1',
-                urltype: type,
+                mime_type: type,
                 url: src,
                 ratio: ratio
               }
@@ -1063,7 +1074,7 @@
               key: null,
               size: null,
               type: '2',
-              urltype: type,
+              mime_type: type,
               url: src,
               ratio: ratio
             }
@@ -1087,7 +1098,7 @@
               key: null,
               size: null,
               type: '3',
-              urltype: type,
+              mime_type: type,
               url: src,
               ratio: ratio
             }
@@ -1145,15 +1156,15 @@
           specific_device: that.ruleForm.specificDevice,
           min_os_version: that.ruleForm.minOSversion,
           network_environment: that.ruleForm.networkStatus,
-          type: that.ruleForm.countryType,
-          country_id: that.ruleForm.country,
+          country_type: that.ruleForm.countryType,
+          country: that.ruleForm.country,
           // 5
           icon: that.ruleForm.iconList,
           image: that.ruleForm.imageList,
           video: that.ruleForm.videoList
         }
         if (that.ruleForm.countryType === '1') {
-          ajaxData.country_id.splice(0)
+          ajaxData.country.splice(0)
         }
         console.log(ajaxData)
         if (that.pageType === 'create') {

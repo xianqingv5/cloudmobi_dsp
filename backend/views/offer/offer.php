@@ -1225,6 +1225,7 @@
       submitAjax () {
         var that = this
         var ajaxData = {
+          offer_id: that.offerID,
           channel: that.channel,
           dsp_security_param: that.csrf,
           // 1
@@ -1264,6 +1265,7 @@
         if (that.ruleForm.countryType === '1') {
           ajaxData.country.splice(0)
         }
+        console.log(ajaxData)
         if (that.pageType === 'create') {
           $.ajax({
             url: '/offer/offer-create',

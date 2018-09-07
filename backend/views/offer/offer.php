@@ -1,4 +1,4 @@
-<div class='app'>
+<div class='app' data-type="<?php echo $type; ?>">
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>

@@ -9,37 +9,86 @@ use yii\web\ForbiddenHttpException;
 
 class OfferController extends BaseController
 {
+    /**
+     * offer list
+     * @return array|string
+     */
     public function actionOfferIndex()
     {
+        if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = OfferService::getOfferList();
+            return $res;
+        }
+
         return $this->render('offer-index');
     }
 
+    /**
+     * offer create
+     * @return array|string
+     */
     public function actionOfferCreate()
     {
         if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
+            echo "<pre>";var_dump(Yii::$app->request->post());die;
             Yii::$app->response->format = Response::FORMAT_JSON;
             $res = OfferService::addOfferData();
             return $res;
         }
 
-        return $this->render('offer');
+        return $this->render('offer', ['type' => 'create']);
     }
 
+    /**
+     * offer update
+     * @return array|string
+     */
     public function actionOfferUpdate()
     {
+        if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = OfferService::getDemandOfferData();
+            return $res;
+        }
 
+        return $this->render('offer', ['type' => 'update']);
     }
 
+    /**
+     * offer status update
+     * @return array
+     * @throws ForbiddenHttpException
+     */
     public function actionOfferUpdateStatus()
     {
-
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = OfferService::updateOfferStatus();
+            return $res;
+        }
+        throw new ForbiddenHttpException();
     }
 
-    public function actionDelOfferImg()
+    /**
+     * delete offer 素材
+     * @return array
+     * @throws ForbiddenHttpException
+     */
+    public function actionDelOfferFile()
     {
-
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = OfferService::delOfferFile();
+            return $res;
+        }
+        throw new ForbiddenHttpException();
     }
 
+    /**
+     * 抓取 url 信息
+     * @throws ForbiddenHttpException
+     */
     public function actionGetUrlInfo()
     {
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {

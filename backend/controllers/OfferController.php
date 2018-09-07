@@ -37,7 +37,7 @@ class OfferController extends BaseController
             return $res;
         }
 
-        return $this->render('offer', ['type' => 'create']);
+        return $this->render('offer', ['type' => 'create', 'offer_id'=> 0]);
     }
 
     /**
@@ -52,7 +52,8 @@ class OfferController extends BaseController
             return $res;
         }
 
-        return $this->render('offer', ['type' => 'update']);
+        $offer_id = Yii::$app->request->post('offer_id', 0);
+        return $this->render('offer', ['type' => 'update', 'offer_id'=> $offer_id]);
     }
 
     public function actionOfferUpdate()

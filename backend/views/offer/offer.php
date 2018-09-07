@@ -721,8 +721,13 @@
       this.initData()
     },
     methods: {
-      judeChannel (item) {
-        console.log(item)
+      judeChannel (newval) {
+        var that = this
+        this.options.attributeProvider.map(function (ele) {
+          if (newval.toString() === ele.value) {
+            that.channel = ele.channel
+          }
+        })
       },
       storeUrlFocus () {
         this.storeUrlFlag = true

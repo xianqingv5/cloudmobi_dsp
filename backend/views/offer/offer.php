@@ -1173,14 +1173,17 @@
         if (that.ruleForm.countryType === '1') {
           ajaxData.country.splice(0)
         }
-        console.log(ajaxData)
         if (that.pageType === 'create') {
           $.ajax({
             url: '/offer/offer-create',
             type: 'post',
             data: ajaxData,
             success: function (result) {
-              console.log(result)
+              if (result.status === 1) {
+                window.location.href = '/offer/offer-index'
+              } else {
+                that.$message.error(result.info)
+              }
             },
             error: function (result) {
               console.log(result)
@@ -1193,7 +1196,11 @@
             type: 'post',
             data: ajaxData,
             success: function (result) {
-              console.log(result)
+              if (result.status === 1) {
+                window.location.href = '/offer/offer-index'
+              } else {
+                that.$message.error(result.info)
+              }
             },
             error: function (result) {
               console.log(result)

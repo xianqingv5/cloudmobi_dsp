@@ -689,6 +689,11 @@
     mounted () {
       var that = this
       this.csrf = document.querySelector('#spp_security').value
+      this.$watch('ruleForm.platform', function (newVal, oldVal) {
+        this.$refs['ruleForm'].validateField('storeUrl')
+      }, {
+        deep: true
+      })
       this.$watch('ruleForm.dailyCap', function (newVal, oldVal) {
         // 每次改变都会验证totalCap
         this.$refs['ruleForm'].validateField('totalCap')

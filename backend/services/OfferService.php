@@ -118,7 +118,6 @@ class OfferService extends BaseService
      */
     public static function addOfferData()
     {
-        // 验证参数
         $transaction = Yii::$app->db->beginTransaction();
         try {
             // offer 添加
@@ -147,11 +146,71 @@ class OfferService extends BaseService
         return self::$res;
     }
 
+    public static function updateOfferData()
+    {
+        $offer_id = Yii::$app->request->post('id', 0);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            // demand offer update
+            $demand_offer = self::updateDemandOffer($offer_id);
+
+            // del offer 素材
+            $del_offer_file = self::delOfferFile($offer_id);
+
+            // offer 素材 添加
+            $add_offer_file = self::addOfferFile($offer_id);
+
+            // offer 投放国家删除
+            $del_offer_country = self::delOfferCountryData($offer_id);
+
+            // offer 投放国家添加
+            $add_offer_country = self::addOfferCountryData($offer_id);
+
+            // commit
+            if ($demand_offer && $del_offer_file && $add_offer_file && $del_offer_country && $add_offer_country) {
+                self::$res['status'] = 1;
+                self::$res['info'] = 'success';
+                $transaction->commit();
+            }
+
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = 'offer update fail.';
+            $transaction->rollBack();
+        }
+
+        return self::$res;
+    }
+
     /**
      * demand offer table 添加数据
      * @return int|string
      */
     public static function addDemandOffer()
+    {
+
+        $data = self::getPostInfo();
+        $data['status'] = in_array(Yii::$app->user->identity->group_id, [1,2]) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
+        $data['create_date'] = date('Y-m-d H:i:s');
+
+        $offer_id = DemandOffers::addData($data);
+        return $offer_id;
+    }
+
+    public static function updateDemandOffer($offer_id)
+    {
+        $data = self::getPostInfo();
+        $data['status'] = Yii::$app->request->post('status', 1);
+        $res = DemandOffers::updateData($data, ['id' => $offer_id]);
+        return $res;
+
+    }
+
+    /**
+     * 组装post提交数据
+     * @return mixed
+     */
+    private static function getPostInfo()
     {
         $data['channel'] = Yii::$app->request->post('channel', '');
         $data['campaign_owner'] = Yii::$app->request->post('campaign_owner', 0);
@@ -182,12 +241,9 @@ class OfferService extends BaseService
         // 设备机型
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));
 
-        $data['status'] = in_array(Yii::$app->user->identity->group_id, [1,2]) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
-        $data['create_date'] = date('Y-m-d H:i:s');
         $data['update_date'] = date('Y-m-d H:i:s');
 
-        $offer_id = DemandOffers::addData($data);
-        return $offer_id;
+        return $data;
     }
 
     /**
@@ -287,10 +343,10 @@ class OfferService extends BaseService
 
     /**
      * offer 投放国家 删除
+     * @param $offer_id
      * @return array
      */
-    public static function delOfferCountryData() {
-        $offer_id = Yii::$app->request->post('offer_id', 0);
+    public static function delOfferCountryData($offer_id) {
         $res = DemandOffersDeliveryCountry::deleteData(['demand_offer_id'=>$offer_id]);
         if ($res) {
             self::$res['status'] = 1;
@@ -301,10 +357,14 @@ class OfferService extends BaseService
         return self::$res;
     }
 
-    public static function delOfferFile()
+    /**
+     * 删除offer素材
+     * @param $offer_id
+     * @return array
+     */
+    public static function delOfferFile($offer_id)
     {
-        $id = Yii::$app->request->post('id', 0);
-        $res = DemandOffersCreatives::deleteData(['id'=>$id]);
+        $res = DemandOffersCreatives::deleteData(['demand_offer_id'=>$offer_id]);
         if ($res) {
             self::$res['status'] = 1;
             self::$res['info'] = 'success';

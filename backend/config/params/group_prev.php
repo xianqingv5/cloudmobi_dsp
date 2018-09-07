@@ -17,9 +17,9 @@ return [
     // offer
     'offer/offer-index' => 'offer 列表页',
     'offer/offer-create' => 'offer 创建',
-    'offer/offer-update' => 'offer 修改',
+    'offer/offer-update' => 'offer修改',
+    'offer/offer-update-info' => 'offer修改页数据获取',
     'offer/offer-update-status' => 'offer 状态修改',
-    'offer/del-offer-file' => '删除offer素材',
     'offer/get-offer-config' => 'offer create 各种信息提供',
     'offer/get-url-info' => 'offer 抓取url信息',
 

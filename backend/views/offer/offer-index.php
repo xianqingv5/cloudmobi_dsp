@@ -48,9 +48,9 @@
         </el-select>
         <el-input
           @change='searchFun'
-          v-model="search.search"
+          v-model="search.title"
           class='col-auto-4'
-          placeholder="search"
+          placeholder="Title"
           prefix-icon="el-icon-search">
         </el-input>
       </div>
@@ -64,30 +64,26 @@
         </thead>
         <tbody is='transition-group' name='list'>
           <tr v-for='(item, index) in list' :key='index'>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
+            <td v-text='item.id'></td>
+            <td v-text='item.title'></td>
+            <td v-text='item.payout'></td>
             <td>
               <div class='flex'>
                 <div class='flex jcsb col-auto-18'>
-                  <span>{{item.aa}}</span>
-                  <el-switch
-                    v-if='item.status !== "3"'
-                    v-model="item.status"
-                    active-value='1'
-                    inactive-value='2'
-                  >
-                  </el-switch>
-                  <el-switch
-                    v-else
-                    :disabled='item.status === "3"'
-                    v-model="item.status"
-                    active-value='3'
-                    inactive-value='2'
-                    active-color="yellow"
-                    inactive-color="#ff4949"
-                  >
-                  </el-switch>
+                  <span v-if='item.status === "1"'>Active</span>
+                  <span v-if='item.status === "2"'>Inactive</span>
+                  <span v-if='item.status === "3"'>under review</span>
+                  <template v-if='item.status !== "3"'>
+                    <el-switch
+                      v-model="item.status"
+                      active-value='1'
+                      inactive-value='2'
+                    >
+                    </el-switch>
+                  </template>
+                  <template v-if='item.status === "3"'>
+                    <el-button type="success" icon="el-icon-check" circle @click='allowOffer(item)'></el-button>
+                  </template>
                 </div>
               </div>
             </td>
@@ -101,6 +97,7 @@
                 <a href>
                   <span class='icon el-icon-edit'></span>
                 </a>
+                <span class='icon el-icon-view'></span>
               </div>
             </td>
           </tr>
@@ -114,6 +111,7 @@
     el: '.app',
     data () {
       return {
+        csrf: '',
         search: {
           campaignID: '',
           advertiser: '',
@@ -121,30 +119,40 @@
           campaignOwner: '',
           status: '',
           statusOptions: [],
-          search: ''
+          title: ''
         },
-        list: [
-          {
-            status: '1',
-            aa: 'Active'
-          },
-          {
-            status: '2',
-            aa: 'Inactive'
-          },
-          {
-            status: '3',
-            aa: 'under review'
-          }
-        ]
+        list: []
       }
     },
+    mounted () {
+      this.csrf = document.querySelector('#spp_security').value
+      this.getList()
+    },
     methods: {
+      allowOffer (item) {
+        item.status = '1'
+      },
       searchFun () {
         this.getList()
       },
       getList () {
-        console.log("get list")
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer/offer-index',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            console.log(result)
+            if (result.status === 1) {
+              that.list = result.data
+            } else {
+              that.$message.error(result.info)
+            }
+          }
+        })
       }
     }
   })

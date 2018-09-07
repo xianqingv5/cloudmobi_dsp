@@ -94,7 +94,7 @@
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
                 </a>
-                <a href>
+                <a :href="'/offer/offer-update-info?offer_id=' + item.id">
                   <span class='icon el-icon-edit'></span>
                 </a>
                 <span class='icon el-icon-view'></span>

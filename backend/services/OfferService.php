@@ -257,16 +257,16 @@ class OfferService extends BaseService
         // icon
         $icon_res = json_decode(Yii::$app->request->post('icon', []));
         $icon = [];
-        if ($icon_res) {
-            $icon['demand_offer_id'] = $offer_id;
-            $icon['url'] = $icon_res['url'];
-            $icon['width'] = $icon_res['width'];
-            $icon['height'] = $icon_res['height'];
-            $icon['mime_type'] = $icon_res['type'];
-            $icon['type'] = 1;
-            $icon['status'] = 1;
-            $icon['create_date'] = $date;
-            $icon['update_date'] = $date;
+        if ($icon_res && is_array($icon_res)) {
+            $icon[0]['demand_offer_id'] = $offer_id;
+            $icon[0]['url'] = $icon_res[0]['url'];
+            $icon[0]['width'] = $icon_res[0]['width'];
+            $icon[0]['height'] = $icon_res[0]['height'];
+            $icon[0]['mime_type'] = $icon_res[0]['type'];
+            $icon[0]['type'] = 1;
+            $icon[0]['status'] = 1;
+            $icon[0]['create_date'] = $date;
+            $icon[0]['update_date'] = $date;
         }
 
         // image
@@ -324,7 +324,7 @@ class OfferService extends BaseService
         if ($country_type && $country_type != 1 && $country_res) {
             foreach ($country_res as $k=>$v) {
                 $data[$k]['demand_offer_id'] = $offer_id;
-                $data[$k]['country_id'] = $v['id'];
+                $data[$k]['country_id'] = $v;
                 $data[$k]['type'] = $country_type;
                 $data[$k]['create_date'] = $date;
                 $data[$k]['update_date'] = $date;

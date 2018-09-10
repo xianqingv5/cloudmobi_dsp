@@ -19,6 +19,8 @@ return [
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => true],
         ],
+        // offer update 页面
+        'offer-update-info' => ['show' => true,'operate' => true],
         'user-index' => [
 
         ],
@@ -37,7 +39,9 @@ return [
             'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => true],
-        ]
+        ],
+        // offer update 页面
+        'offer-update-info' => ['show' => true,'operate' => true],
     ],
     // advertiser agent
     '3' => [
@@ -53,6 +57,8 @@ return [
             'offer_status' => ['show' => true,'operate' => false],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => false],
-        ]
+        ],
+        // offer update 页面
+        'offer-update-info' => ['show' => true,'operate' => false],
     ]
 ];

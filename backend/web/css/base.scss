@@ -370,6 +370,18 @@ $y) {
   height: 100%;
 }
 
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.center{
+  text-align: center;
+}
+
 // slide-fade
 .slide-fade-enter-active {
   transition: all .5s ease;

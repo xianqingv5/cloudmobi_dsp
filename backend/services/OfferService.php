@@ -249,7 +249,7 @@ class OfferService extends BaseService
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));
 
         $data['update_date'] = date('Y-m-d H:i:s');
-        echo "<pre>";var_dump($data);die;
+
         return $data;
     }
 

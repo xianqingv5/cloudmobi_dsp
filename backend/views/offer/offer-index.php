@@ -69,7 +69,7 @@
             <td v-text='item.payout'></td>
             <td>
               <div class='flex'>
-                <div class='flex col-auto-18' :class={jcsb:'power.offer_status.show'}>
+                <div class='flex col-auto-18' :class={jcsb:power.offer_status.show}>
                   <span v-if='item.status === "1"'>Active</span>
                   <span v-if='item.status === "2"'>Inactive</span>
                   <span v-if='item.status === "3"'>under review</span>

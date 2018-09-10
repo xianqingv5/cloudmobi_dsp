@@ -6140,6 +6140,18 @@ h2, h2, h3, h4, h5, h6 {
   height: 100%;
 }
 
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
 .slide-fade-enter-active {
   -webkit-transition: all .5s ease;
   transition: all .5s ease;

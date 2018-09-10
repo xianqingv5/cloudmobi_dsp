@@ -1403,6 +1403,10 @@
     position: absolute;
     right: 0;
     top: 0;
+    background: #fff;
+    opacity: 1;
+    border-radius: 50%;
+    font-size: 14px;
   }
   .messageVisibleShow{
     background: #efefef;

@@ -98,7 +98,9 @@
                 <a :href="'/offer/offer-update-info?offer_id=' + item.id">
                   <span class='icon el-icon-edit'></span>
                 </a>
-                <span class='icon el-icon-view'></span>
+                <a :href="'/offer/offer-update-info?offer_id=' + item.id">
+                  <span class='icon el-icon-view'></span>
+                </a>
               </div>
             </td>
           </tr>

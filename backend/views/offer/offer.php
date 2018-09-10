@@ -816,8 +816,12 @@ console.log(power)
               that.ruleForm.comment = result.data.comment
               // 3
               that.ruleForm.payout = Number(result.data.payout)
-              that.ruleForm.dailyCap = Number(result.data.daily_cap)
-              that.ruleForm.totalCap = Number(result.data.total_cap)
+              var daily_cap = Number(result.data.daily_cap)
+              if (daily_cap === -1) daily_cap = null
+              that.ruleForm.dailyCap = daily_cap
+              var total_cap = Number(result.data.total_cap)
+              if (total_cap === -1) total_cap = null
+              that.ruleForm.totalCap = total_cap
               // 4
               that.ruleForm.deviceType = result.data.device_target.toString()
               that.ruleForm.specificDevice = JSON.parse(result.data.specific_device)

@@ -38,6 +38,10 @@ class OfferService extends BaseService
     private static function getWhere()
     {
         $where = [];
+        // 是否是代理广告商
+        if (Yii::$app->user->identity->group_id == 3) {
+            $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";
+        }
 
         // search campaign id
         $offer_id = Yii::$app->request->post('offer_id', '');

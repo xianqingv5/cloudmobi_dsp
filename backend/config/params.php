@@ -41,4 +41,7 @@ return [
 
     // 设备信息
     'MOBILE' => require 'params/mobile.php',
+
+    // 页面按钮权限
+    'VIEW_GROUP' => require 'params/view_group_prev.php',
 ];

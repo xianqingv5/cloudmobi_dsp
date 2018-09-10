@@ -985,6 +985,8 @@ console.log(power)
         var filesInput = document.querySelector(str)
         filesInput.click()
         var addEventListenerFun = function () {
+          filesInput.removeEventListener('change', addEventListenerFun, true)
+          console.log('addEventListenerFun')
           // 那么开始上传
           var files = filesInput.files
           var file = files[0]
@@ -998,8 +1000,10 @@ console.log(power)
               height: null
             }
             that.judeUploadFile(fileData, type, function () {
+              console.log('judeUploadFile')
               // 上传函数
               that.uploadFun(fileData, type, function (err, result) {
+                console.log('uploadFun')
                 // 总是清空input file
                 filesInput.value = ''
                 if (err) {
@@ -1029,7 +1033,6 @@ console.log(power)
                   }
                   that.uploadCallback(downData, type)
                 }
-                filesInput.removeEventListener('change', addEventListenerFun, true)
               })
             })
           }
@@ -1042,6 +1045,7 @@ console.log(power)
         if (type === 'video') {
           if (fileData.type.indexOf(type) !== -1) {
             that.getOnlineFile(fileData, type, function (bob) {
+              console.log('getOnlineFile')
               var w = bob.videoWidth
               var h = bob.videoHeight
               var ratio = w / h
@@ -1060,6 +1064,7 @@ console.log(power)
         } else {
           if (fileData.type.indexOf('image') !== -1) {
             that.getOnlineFile(fileData, type, function (bob) {
+              console.log('getOnlineFile')
               var w = bob.width
               var h = bob.height
               var ratio = w / h
@@ -1126,6 +1131,7 @@ console.log(power)
       },
       // 上传s3成功之后的回调
       uploadCallback (data, type) {
+        console.log('uploadCallback')
         var flag = this.duplicateRemoval(this.ruleForm[type + 'List'], data)
         if (type === 'icon' && this.ruleForm[type + 'List'].length !== 1) {
           var icon0 = this.ruleForm[type + 'List'][0]
@@ -1136,6 +1142,7 @@ console.log(power)
       },
       // 去重函数
       duplicateRemoval (list, data) {
+        console.log('duplicateRemoval')
         var flag = true
         list.map(function (ele) {
           if (ele.url === data.url) {

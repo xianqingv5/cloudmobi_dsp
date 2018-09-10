@@ -7,7 +7,7 @@
   </div>
   <div class='flex jcsb p30'>
     <h3>CAMPAIGNS</h3>
-    <el-button type="primary"><a href="/offer/offer-create" class='base-color'>New Campaign</a></el-button>
+    <a href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
   </div>
   <div class='content'>
     <div class='contentBox'>
@@ -29,13 +29,13 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input
+        <!-- <el-input
           @change='searchFun'
           v-model='search.campaignOwner'
           class='col-auto-4'
           placeholder="Campaigns Owner"
           prefix-icon="el-icon-search">
-        </el-input>
+        </el-input> -->
         <el-select 
           @change='searchFun'
           v-model="search.status" clearable placeholder="Status">
@@ -64,7 +64,7 @@
         </thead>
         <tbody is='transition-group' name='list'>
           <tr v-for='(item, index) in list' :key='index'>
-            <td v-text='item.id'></td>
+            <td v-text='item.channel+"_offline"+item.id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
             <td>
@@ -78,11 +78,12 @@
                       v-model="item.status"
                       active-value='1'
                       inactive-value='2'
+                      @change='changeStatus($event, item.id)'
                     >
                     </el-switch>
                   </template>
                   <template v-if='item.status === "3"'>
-                    <el-button type="success" icon="el-icon-check" circle @click='allowOffer(item)'></el-button>
+                    <el-button type="success" icon="el-icon-check" circle @click='allowOffer(item, item.id)'></el-button>
                   </template>
                 </div>
               </div>
@@ -118,7 +119,11 @@
           advertiserOptions: [],
           campaignOwner: '',
           status: '',
-          statusOptions: [],
+          statusOptions: [
+            {value: 1, label: 'Active'},
+            {value: 2, label: 'Inactive'},
+            {value: 3, label: 'under review'}
+          ],
           title: ''
         },
         list: []
@@ -126,18 +131,25 @@
     },
     mounted () {
       this.csrf = document.querySelector('#spp_security').value
+      this.initData()
       this.getList()
     },
     methods: {
-      allowOffer (item) {
+      allowOffer (item, offerID) {
         item.status = '1'
+        this.changeStatus(item.status, offerID)
       },
       searchFun () {
+
         this.getList()
       },
       getList () {
         var that = this
         var ajaxData = {
+          offer_id: this.search.campaignID,
+          sponsor: this.search.advertiser,
+          status: this.search.status,
+          title: this.search.title,
           dsp_security_param: this.csrf
         }
         $.ajax({
@@ -150,6 +162,50 @@
               that.list = result.data
             } else {
               that.$message.error(result.info)
+            }
+          }
+        })
+      },
+      initData () {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer/get-offer-config',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            // advertiser
+            result.data.ads.map(function (ele) {
+              that.search.advertiserOptions.push({
+                value: ele.id,
+                label: ele.ads
+              })
+            })
+          }
+        })
+      },
+      changeStatus (status, offerID) {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf,
+          status: status,
+          offer_id: offerID
+        }
+        $.ajax({
+          url: '/offer/offer-update-status',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            if (result.status === 1) {
+              that.$message({
+                message: result.info,
+                type: 'success'
+              })
+            } else {
+              that.$message.error(result.info)
+              window.location.reload()
             }
           }
         })

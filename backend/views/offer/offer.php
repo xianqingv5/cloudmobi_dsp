@@ -341,7 +341,7 @@
   var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
   var iOSReg = new RegExp('https://itunes.apple.com/')
   var androidReg = new RegExp('https://play.google.com/')
-  var spaceReg = new RegExp('\\s+')
+  var spaceReg = new RegExp('\\s', 'g')
   // 
   var ruleLanguagePackage = {
     required: '此项必填',
@@ -624,29 +624,13 @@
       spaceShowTrackingUrl () {
         if (this.spaceShowTrackingUrlFlag) {
           var str = this.ruleForm.trackingUrl
-          var arr = []
-          str.split('').map(function (ele, index) {
-            if (spaceReg.test(ele)) {
-              arr.push('<span class="judeUrl-font">&nbsp;</span>')
-            } else {
-              arr.push(ele)
-            }
-          })
-          return arr.join('')
+          return str.replace(spaceReg, '<span class="judeUrl-font">&nbsp;</span>')
         }
       },
       spaceShowStoreUrl () {
         if (this.spaceShowStoreUrlFlag) {
           var str = this.ruleForm.storeUrl
-          var arr = []
-          str.split('').map(function (ele, index) {
-            if (spaceReg.test(ele)) {
-              arr.push('<span class="judeUrl-font">&nbsp;</span>')
-            } else {
-              arr.push(ele)
-            }
-          })
-          return arr.join('')
+          return str.replace(spaceReg, '<span class="judeUrl-font">&nbsp;</span>')
         }
       },
       spaceShowStoreUrlFlag () {

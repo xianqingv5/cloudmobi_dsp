@@ -453,6 +453,8 @@
         }
       }
       return {
+        requestUid: "<?= $this->params['request_uid'] ?>",
+        groupID: "<?= $this->params['group_id'] ?>",
         offerID: "<?php echo $offer_id; ?>",
         pageType: "<?php echo $type; ?>",
         channel: null,

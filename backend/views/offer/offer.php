@@ -25,7 +25,7 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one' :disabled='groupID === "3" || !power.operate'
+              <el-select class='form-one' :disabled='groupID === "3" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -36,7 +36,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Advertiser" prop="advertiser">
-              <el-select class='form-one' :disabled='!power.operate'
+              <el-select class='form-one' :disabled='judePowerOperate'
                 v-model="ruleForm.advertiser" clearable placeholder="">
                 <el-option
                   v-for="item in options.advertiser"
@@ -47,7 +47,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Attribute Provider" prop="attributeProvider">
-              <el-select class='form-one' @change='judeChannel' :disabled='!power.operate'
+              <el-select class='form-one' @change='judeChannel' :disabled='judePowerOperate'
                 v-model="ruleForm.attributeProvider" clearable placeholder="">
                 <el-option
                   v-for="item in options.attributeProvider"
@@ -68,7 +68,7 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Targeting Platform" prop="platform">
-              <el-select class='form-one' @change='changePlatform' :disabled='!power.operate'
+              <el-select class='form-one' @change='changePlatform' :disabled='judePowerOperate'
                 v-model="ruleForm.platform" clearable placeholder="">
                 <el-option
                   v-for="item in options.platform"
@@ -79,7 +79,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input :disabled='!power.operate' class='form-one' @focus='storeUrlFocus' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' @focus='storeUrlFocus' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="">
               <div class='judeUrl-box form-one' v-if='spaceShowStoreUrlFlag'>
@@ -92,16 +92,16 @@
             </div>
             </transition>
             <el-form-item label="Campaign Title" prop="title">
-              <el-input :disabled='!power.operate' class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' v-model="ruleForm.title" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Campaign Description" prop="desc">
-              <el-input :disabled='!power.operate' type='textarea' class='form-one' v-model="ruleForm.desc" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' type='textarea' class='form-one' v-model="ruleForm.desc" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Package Name" prop="name">
-              <el-input :disabled='!power.operate' class='form-one' v-model="ruleForm.name" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' v-model="ruleForm.name" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Campaign Category" prop="category">
-              <el-select class='form-one' :disabled='!judePlatform || !power.operate'
+              <el-select class='form-one' :disabled='!judePlatform || judePowerOperate'
                 v-model="ruleForm.category" clearable placeholder="">
                 <el-option
                   v-for="item in options.category"
@@ -112,7 +112,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Tracking Link" prop="trackingUrl">
-              <el-input :disabled='!power.operate' class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="">
               <div class='judeUrl-box form-one' v-if='spaceShowTrackingUrlFlag'>
@@ -120,14 +120,14 @@
               </div>
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
-              <el-radio-group :disabled='!power.operate' class='form-one' v-model="ruleForm.schedule">
+              <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">
                 <el-radio label="0">OFF</el-radio>
                 <el-radio label="1">ON</el-radio>
               </el-radio-group>
             </el-form-item>
             <template v-if='ruleForm.schedule === "1"'>
               <el-form-item  prop="deliveryDate">
-                <el-date-picker :disabled='!power.operate'
+                <el-date-picker :disabled='judePowerOperate'
                   class='form-one'
                   v-model="ruleForm.deliveryDate"
                   type="daterange"
@@ -141,18 +141,18 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item prop="deliveryWeek">
-                <el-checkbox-group :disabled='!power.operate' class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
+                <el-checkbox-group :disabled='judePowerOperate' class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
                   <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
               <el-form-item prop="deliveryHour">
-                <el-checkbox-group :disabled='!power.operate' class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
+                <el-checkbox-group :disabled='judePowerOperate' class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
                   <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </template>
             <el-form-item label="Comment" prop="comment">
-              <el-input :disabled='!power.operate' class='form-one mt-20' type='textarea' v-model="ruleForm.comment" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one mt-20' type='textarea' v-model="ruleForm.comment" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -164,13 +164,13 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Price($)" prop="payout">
-              <el-input :disabled='!power.operate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
-              <el-input :disabled='!power.operate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Total Cap" prop="totalCap">
-              <el-input :disabled='!power.operate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -182,7 +182,7 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Device Type" prop="deviceType">
-              <el-select class='form-one' :disabled='!judePlatform || !power.operate'
+              <el-select class='form-one' :disabled='!judePlatform || judePowerOperate'
                 v-model="ruleForm.deviceType" @change='changeDeviceType' clearable placeholder="">
                 <el-option
                   v-for="item in options.deviceType"
@@ -193,7 +193,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Specific Device" prop="specificDevice" v-if='judeDeviceType'>
-              <el-select class='form-one' multiple filterable :disabled='ruleForm.deviceType === "" || !power.operate'
+              <el-select class='form-one' multiple filterable :disabled='ruleForm.deviceType === "" || judePowerOperate'
                 v-model="ruleForm.specificDevice" clearable placeholder="">
                 <el-option
                   v-for="item in options.specificDevice"
@@ -205,7 +205,7 @@
             </el-form-item>
             <el-form-item label="Min OS Version" prop="minOSversion">
               <el-select class='form-one'
-                v-model="ruleForm.minOSversion" :disabled='!judePlatform || !power.operate' clearable placeholder="">
+                v-model="ruleForm.minOSversion" :disabled='!judePlatform || judePowerOperate' clearable placeholder="">
                 <el-option
                   v-for="item in options.minOSversion"
                   :key="item.value"
@@ -215,14 +215,14 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Network Status" prop="networkStatus">
-              <el-radio-group :disabled='!power.operate' class='form-one' v-model="ruleForm.networkStatus">
+              <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.networkStatus">
                 <el-radio label="1">WIFI & 4G</el-radio>
                 <el-radio label="2">WIFI</el-radio>
                 <el-radio label="3">4G</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="Targeting Countries" prop="countryType">
-              <el-select :disabled='!power.operate' class='form-one'
+              <el-select :disabled='judePowerOperate' class='form-one'
                 v-model="ruleForm.countryType" @change='changeCountryType' clearable placeholder="">
                 <el-option
                   v-for="item in options.countryType"
@@ -233,7 +233,7 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show='showCountry' label="select Country" prop="country">
-              <el-select :disabled='!power.operate' class='form-one' multiple filterable 
+              <el-select :disabled='judePowerOperate' class='form-one' multiple filterable 
                 v-model="ruleForm.country" clearable placeholder="">
                 <el-option
                   v-for="item in options.country"
@@ -254,7 +254,7 @@
           <div class='content-con'>
             <!-- icon -->
             <el-form-item label="icon" prop="iconList" class='imgDocker'>
-              <div class='flex' v-if='power.operate'>
+              <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("icon")'>Preview</el-button>
@@ -265,7 +265,7 @@
             </el-form-item>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.iconList'>
-                <div v-if='power.operate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.iconList)'></div>
+                <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.iconList)'></div>
                 <div class='showImg flex'>
                   <img src="" alt="" :src='item.url'>
                 </div>
@@ -274,7 +274,7 @@
             </div>
             <!-- image -->
             <el-form-item label="image" prop="imageList" class='imgDocker'>
-              <div class='flex' v-if='power.operate'>
+              <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("image")'>Preview</el-button>
@@ -285,7 +285,7 @@
             </el-form-item>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.imageList'>
-                <div v-if='power.operate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.imageList)'></div>
+                <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.imageList)'></div>
                 <div class='showImg flex'>
                   <img src="" alt="" :src='item.url'>
                 </div>
@@ -293,8 +293,8 @@
               </div>
             </div>
             <!-- video -->
-            <el-form-item label="video" prop="video" class='imgDocker' v-if='power.operate && ruleForm.videoList.length !== 0'>
-              <div class='flex' v-if='power.operate'>
+            <el-form-item label="video" prop="video" class='imgDocker' v-if='!judePowerOperate'>
+              <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("video")'>Preview</el-button>
@@ -305,7 +305,7 @@
             </el-form-item>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.videoList'>
-                <div v-if='power.operate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.videoList)'></div>
+                <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.videoList)'></div>
                 <div class='showImg flex'>
                   <video src="" controls='controls' :src='item.url'></video>
                 </div>
@@ -632,6 +632,10 @@ console.log(power)
       }
     },
     computed: {
+      judePowerOperate () {
+        if (!this.power.operate && this.pageType === 'update') return true
+        return false
+      },
       spaceShowTrackingUrlFlag () {
         if (this.ruleForm.trackingUrl.indexOf(' ') !== -1) return true
         return false

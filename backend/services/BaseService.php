@@ -53,6 +53,9 @@ class BaseService
         Yii::$app->view->params['request_uid'] = $request_uid;
         Yii::$app->view->params['request_email'] = User::findIdentity($request_uid)['email'];
 
+        $group_id = Yii::$app->user->identity->group_id;
+        Yii::$app->view->params['view_group'] = Yii::$app->params['VIEW_GROUP'][$group_id];// 页面按钮权限
+
     }
 
     /**

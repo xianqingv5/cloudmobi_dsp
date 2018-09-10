@@ -324,6 +324,10 @@
   </div>
 </div>
 <script>
+// 权限
+var power = JSON.parse('<?= $this->params['view_group'] ?>')
+console.log(power)
+// s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'
   var IdentityPoolId = 'ap-southeast-1:c0fbf555-2ba8-4dab-8ad2-733d41ef2ae7'

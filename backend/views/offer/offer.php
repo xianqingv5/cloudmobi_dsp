@@ -293,7 +293,7 @@
               </div>
             </div>
             <!-- video -->
-            <el-form-item label="video" prop="video" class='imgDocker' v-if='!judePowerOperate'>
+            <el-form-item label="video" prop="video" class='imgDocker'>
               <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>

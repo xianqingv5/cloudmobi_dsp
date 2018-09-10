@@ -18,7 +18,10 @@ return [
             'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => true],
-        ]
+        ],
+        'user-index' => [
+            
+        ],
     ],
     // admin
     '2' => [

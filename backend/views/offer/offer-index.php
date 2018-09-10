@@ -1,3 +1,4 @@
+<?php echo "<pre>";var_dump($this->params['view_group']);die;?>
 <div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">

@@ -228,8 +228,8 @@ class OfferService extends BaseService
         $data['tracking_url'] = Yii::$app->request->post('tracking_url', '');
         $data['final_url'] = Yii::$app->request->post('final_url', '');
         $data['category_id'] = Yii::$app->request->post('category_id', 0);
-        $data['daily_cap'] = Yii::$app->request->post('daily_cap', -1);
-        $data['total_cap'] = Yii::$app->request->post('total_cap', -1);
+        $data['daily_cap'] = !empty(Yii::$app->request->post('daily_cap', -1)) ? Yii::$app->request->post('daily_cap', -1) : -1;
+        $data['total_cap'] = !empty(Yii::$app->request->post('total_cap', -1)) ? Yii::$app->request->post('total_cap', -1) : -1;
         $data['platform'] = Yii::$app->request->post('platform', 0);
         $data['device_target'] = Yii::$app->request->post('device_target', '');
         $data['min_os_version'] = Yii::$app->request->post('min_os_version', '');
@@ -249,7 +249,7 @@ class OfferService extends BaseService
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));
 
         $data['update_date'] = date('Y-m-d H:i:s');
-
+        echo "<pre>";var_dump($data);die;
         return $data;
     }
 

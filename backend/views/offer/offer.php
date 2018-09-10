@@ -78,7 +78,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input class='form-one' @focus='storeUrlFocus' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input class='form-one' @focus='storeUrlFocus' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <div class='judeUrl-box form-one' v-if='spaceShowStoreUrlFlag'>
+                <span class='judeUrl-span' v-html='spaceShowStoreUrl'></span>
+              </div>
             </el-form-item>
             <transition name='fade'>
               <div class='w100 center mb-30 of-h' v-if='messageVisible'>
@@ -106,7 +111,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Tracking Link" prop="trackingUrl">
-              <el-input class='form-one' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
+              <el-input class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <div class='judeUrl-box form-one' v-if='spaceShowTrackingUrlFlag'>
+                <span class='judeUrl-span' v-html='spaceShowTrackingUrl'></span>
+              </div>
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group class='form-one' v-model="ruleForm.schedule">
@@ -327,6 +337,12 @@
   var baseRatio = 1.9 / 1
   var maxImageSize = 500 * 1024
   var maxVideoSize = 2 * 1024 * 1024
+  // 正则
+  var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
+  var iOSReg = new RegExp('https://itunes.apple.com/')
+  var androidReg = new RegExp('https://play.google.com/')
+  var spaceReg = new RegExp('\\s+')
+  // 
   var ruleLanguagePackage = {
     required: '此项必填',
     shouldNumber: '必须为数字',
@@ -352,11 +368,6 @@
     el: '.app',
     data () {
       var vm = this
-      // 正则
-      var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
-      var iOSReg = new RegExp('https://itunes.apple.com/')
-      var androidReg = new RegExp('https://play.google.com/')
-      var spaceReg = new RegExp('\\s+')
       var validatorStoreUrl = function (rule, value, callback) {
         if (vm.storeUrlFlag) {
           vm.storeUrlFlag = false
@@ -606,6 +617,42 @@
       }
     },
     computed: {
+      spaceShowTrackingUrlFlag () {
+        if (this.ruleForm.trackingUrl.indexOf(' ') !== -1) return true
+        return false
+      },
+      spaceShowTrackingUrl () {
+        if (this.spaceShowTrackingUrlFlag) {
+          var str = this.ruleForm.trackingUrl
+          var arr = []
+          str.split('').map(function (ele, index) {
+            if (spaceReg.test(ele)) {
+              arr.push('<span class="judeUrl-font">&nbsp;</span>')
+            } else {
+              arr.push(ele)
+            }
+          })
+          return arr.join('')
+        }
+      },
+      spaceShowStoreUrl () {
+        if (this.spaceShowStoreUrlFlag) {
+          var str = this.ruleForm.storeUrl
+          var arr = []
+          str.split('').map(function (ele, index) {
+            if (spaceReg.test(ele)) {
+              arr.push('<span class="judeUrl-font">&nbsp;</span>')
+            } else {
+              arr.push(ele)
+            }
+          })
+          return arr.join('')
+        }
+      },
+      spaceShowStoreUrlFlag () {
+        if (this.ruleForm.storeUrl.indexOf(' ') !== -1) return true
+        return false
+      },
       judeOne () {
         return true
         if (this.ruleForm.campaignOwner !== '' && this.ruleForm.advertiser !== '' && this.ruleForm.attributeProvider !== '') {
@@ -1384,5 +1431,16 @@
     margin-top: 20px;
     padding: 20px 0;
     border: 1px solid #dcdfe6;
+    border-radius: 4px;
+  }
+  .judeUrl-box{
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    word-wrap: break-word;
+  }
+  .judeUrl-font{
+    border: 1px solid red;
   }
 </style>

@@ -24,7 +24,7 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one'
+              <el-select class='form-one' :disabled='groupID === "3"'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -740,6 +740,9 @@
     mounted () {
       var that = this
       this.csrf = document.querySelector('#spp_security').value
+      if (this.groupID === '3') {
+        this.ruleForm.campaignOwner = this.requestUid
+      }
       this.$watch('ruleForm.platform', function (newVal, oldVal) {
         this.$refs['ruleForm'].validateField('storeUrl')
       }, {

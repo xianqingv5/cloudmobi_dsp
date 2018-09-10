@@ -773,9 +773,7 @@ console.log(power)
       })
       this.$watch('ruleForm.countryType', function (newVal, oldVal) {
         if (newVal === '1') {
-          that.options.country.map(function (ele) {
-            that.ruleForm.country.push(ele.value)
-          })
+          that.ruleForm.country.push('-1')
         }
       }, {
         deep: false
@@ -1079,9 +1077,9 @@ console.log(power)
                 if (type === 'image') {
                   var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
                   if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
-                    that.$message.error(ruleLanguagePackage.uploadImageSizeError)
-                  } else {
                     callback()
+                  } else {
+                    that.$message.error(ruleLanguagePackage.uploadImageSizeError)
                   }
                 }
               } else {
@@ -1235,9 +1233,9 @@ console.log(power)
             }
             var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
             if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
-              that.$message.error(ruleLanguagePackage.uploadImageSizeError)
-            } else {
               that.uploadCallback(ajaxData, type)
+            } else {
+              that.$message.error(ruleLanguagePackage.uploadImageSizeError)
             }
           })
         }

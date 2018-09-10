@@ -1,8 +1,9 @@
 <div class='app' data-type="<?php echo $type; ?>">
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>
-      <el-breadcrumb-item>Index</el-breadcrumb-item>
+      <el-breadcrumb-item><a href="/offer/offer-index">User</a></el-breadcrumb-item>
+      <el-breadcrumb-item v-if='pageType === "create"'>Create</el-breadcrumb-item>
+      <el-breadcrumb-item v-if='pageType === "update"'>Update</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
   <div class='flex jcsb p30'>

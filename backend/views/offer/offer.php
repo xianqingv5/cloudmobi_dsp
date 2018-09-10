@@ -253,7 +253,7 @@
           </div>
           <div class='content-con flex column'>
             <!-- icon -->
-            <el-form-item label="icon" prop="icon" class='imgDocker'>
+            <el-form-item label="icon" prop="iconList" class='imgDocker'>
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
@@ -273,7 +273,7 @@
               </div>
             </div>
             <!-- image -->
-            <el-form-item label="image" prop="image" class='imgDocker'>
+            <el-form-item label="image" prop="imageList" class='imgDocker'>
               <div class='flex'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
@@ -533,9 +533,9 @@
           deliveryHour: [],
           comment: '',
           // 3
-          payout: '',
-          dailyCap: '',
-          totalCap: '',
+          payout: null,
+          dailyCap: null,
+          totalCap: null,
           // 4
           deviceType: '',
           specificDevice: [],
@@ -616,6 +616,13 @@
           country: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
+          // 5
+          iconList: [
+            { required: true, message: ruleLanguagePackage.required, trigger: 'change' }
+          ],
+          imageList: [
+            { required: true, message: ruleLanguagePackage.required, trigger: 'change' }
+          ]
         }
       }
     },

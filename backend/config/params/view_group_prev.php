@@ -13,7 +13,7 @@ return [
             // 修改
             'offer_update' => ['show' => true,'operate' => true],
             // 查看
-            'offer_see' => ['show' => true,'operate' => true],
+            'offer_see' => ['show' => false,'operate' => false],
             // 状态
             'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
@@ -32,7 +32,7 @@ return [
             // 修改
             'offer_update' => ['show' => true,'operate' => true],
             // 查看
-            'offer_see' => ['show' => true,'operate' => true],
+            'offer_see' => ['show' => false,'operate' => false],
             // 状态
             'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
@@ -46,7 +46,7 @@ return [
             // 创建
             'offer_create' => ['show' => true, 'operate' => true],
             // 修改
-            'offer_update' => ['show' => true,'operate' => true],
+            'offer_update' => ['show' => false,'operate' => false],
             // 查看
             'offer_see' => ['show' => true,'operate' => false],
             // 状态

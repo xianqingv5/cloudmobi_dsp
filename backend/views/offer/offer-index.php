@@ -7,7 +7,7 @@
   </div>
   <div class='flex jcsb p30'>
     <h3>CAMPAIGNS</h3>
-    <a href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
+    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
   </div>
   <div class='content'>
     <div class='contentBox'>
@@ -73,8 +73,9 @@
                   <span v-if='item.status === "1"'>Active</span>
                   <span v-if='item.status === "2"'>Inactive</span>
                   <span v-if='item.status === "3"'>under review</span>
-                  <template v-if='item.status !== "3"'>
+                  <template v-if='item.status !== "3" && power.offer_status.show'>
                     <el-switch
+                      :disabled='!power.offer_status.operate'
                       v-model="item.status"
                       active-value='1'
                       inactive-value='2'
@@ -83,7 +84,7 @@
                     </el-switch>
                   </template>
                   <template v-if='item.status === "3"'>
-                    <el-button type="success" icon="el-icon-check" circle @click='allowOffer(item, item.id)'></el-button>
+                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item, item.id)'></el-button>
                   </template>
                 </div>
               </div>
@@ -95,10 +96,10 @@
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
                 </a>
-                <a :href="'/offer/offer-update-info?offer_id=' + item.id">
+                <a v-if='power.offer_update.show' :href="'/offer/offer-update-info?offer_id=' + item.id">
                   <span class='icon el-icon-edit'></span>
                 </a>
-                <a :href="'/offer/offer-update-info?offer_id=' + item.id">
+                <a v-if='power.offer_see.show' :href="'/offer/offer-update-info?offer_id=' + item.id">
                   <span class='icon el-icon-view'></span>
                 </a>
               </div>
@@ -110,10 +111,13 @@
   </div>
 </div>
 <script>
+var power = JSON.parse('<?= $this->params['view_group'] ?>')
+console.log(power)
   new Vue({
     el: '.app',
     data () {
       return {
+        power: power,
         csrf: '',
         search: {
           campaignID: '',

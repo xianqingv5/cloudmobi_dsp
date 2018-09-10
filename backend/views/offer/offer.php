@@ -453,6 +453,8 @@
         }
       }
       return {
+        requestUid: "<?php echo $request_uid; ?>",
+        groupID: "<?php echo $group_id; ?>",
         offerID: "<?php echo $offer_id; ?>",
         pageType: "<?php echo $type; ?>",
         channel: null,

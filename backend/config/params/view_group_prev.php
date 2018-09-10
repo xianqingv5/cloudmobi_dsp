@@ -20,7 +20,7 @@ return [
             'offer_sh' => ['show' => true,'operate' => true],
         ],
         'user-index' => [
-            
+
         ],
     ],
     // admin

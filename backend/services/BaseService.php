@@ -55,7 +55,7 @@ class BaseService
 
         $group_id = Yii::$app->user->identity->group_id;
         $action_id      = Yii::$app->controller->action->id;
-        Yii::$app->view->params['view_group'] = Yii::$app->params['VIEW_GROUP'][$group_id][$action_id];// 页面按钮权限
+        Yii::$app->view->params['view_group'] = json_encode(Yii::$app->params['VIEW_GROUP'][$group_id][$action_id]);// 页面按钮权限
 
     }
 

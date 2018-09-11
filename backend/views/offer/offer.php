@@ -1039,6 +1039,10 @@ console.log(power)
         }
         filesInput.addEventListener('change', addEventListenerFun, true)
       },
+      uploadRule (ratio) {
+        if ((ratio >= minRatio && ratio <= maxRatio) || ratio === baseRatio || ratio === 1 / baseRatio || ratio === 1) return true
+        return false
+      },
       // 判断上传文件
       judeUploadFile (fileData, type, callback) {
         var that = this
@@ -1080,8 +1084,8 @@ console.log(power)
                   }
                 }
                 if (type === 'image') {
-                  var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
-                  if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
+                  console.log(that.uploadRule(ratio))
+                  if (that.uploadRule(ratio)) {
                     callback()
                   } else {
                     that.$message.error(ruleLanguagePackage.uploadImageSizeError)
@@ -1238,8 +1242,8 @@ console.log(power)
               url: src,
               ratio: ratio
             }
-            var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
-            if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
+            console.log(that.uploadRule(ratio))
+            if (that.uploadRule(ratio)) {
               that.uploadCallback(ajaxData, type)
             } else {
               that.$message.error(ruleLanguagePackage.uploadImageSizeError)

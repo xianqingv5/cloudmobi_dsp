@@ -376,7 +376,7 @@ console.log(power)
       var validatorStoreUrl = function (rule, value, callback) {
         var platform = null
         var vmPlatform = null
-        var judeFlag = spaceReg.test(value)
+        var judeFlag = value.indexOf(' ') !== -1
         if (judeFlag) {
           // 有空格
           console.log('有空格')
@@ -573,7 +573,7 @@ console.log(power)
           // 2
           storeUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorStoreUrl, trigger: ['change'] }
+            { validator: validatorStoreUrl, trigger: 'blur' }
           ],
           platform: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }

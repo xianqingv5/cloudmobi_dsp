@@ -25,6 +25,9 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
     <script src='//at.alicdn.com/t/font_528644_gccuayx5nqp.js'></script>
+    <script>
+        ELEMENT.locale(ELEMENT.lang.en)
+    </script>
 </head>
 <body>
     <?php $this->beginBody() ?>

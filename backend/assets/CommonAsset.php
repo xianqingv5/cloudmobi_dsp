@@ -24,6 +24,7 @@ class CommonAsset extends AssetBundle
 	public $js = [
 		'js/vue.2.5.17.js',
 		'plugin/element-ui@2.4.6/index.js',
+		'plugin/element-ui@2.4.6/locale/en.js',
 		'plugin/aws/aws-sdk-2.283.1.min.js',
 		'plugin/aws/app.js'
 	];

@@ -141,14 +141,26 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item prop="deliveryWeek">
-                <el-checkbox-group :disabled='judePowerOperate' class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
-                  <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
-                </el-checkbox-group>
+                <div class='form-one checkbox-docker'>
+                  <div class='p10-30 flex jcsb'>
+                    <el-button type="primary" @click='addAllDeliveryWeek'>全选</el-button>
+                    <el-button type="primary" @click='delAllDeliveryWeek'>全不选</el-button>
+                  </div>
+                  <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryWeek">
+                    <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
               </el-form-item>
               <el-form-item prop="deliveryHour">
-                <el-checkbox-group :disabled='judePowerOperate' class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
-                  <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
-                </el-checkbox-group>
+                <div class='form-one checkbox-docker'>
+                  <div class='p10-30 flex jcsb'>
+                    <el-button type="primary" @click='addAllDeliveryHour'>全选</el-button>
+                    <el-button type="primary" @click='delAllDeliveryHour'>全不选</el-button>
+                  </div>
+                  <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryHour">
+                    <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
               </el-form-item>
             </template>
             <el-form-item label="Comment" prop="comment">
@@ -784,6 +796,9 @@ console.log(power)
       })
       // initData
       this.initData()
+      // 默认全选
+      this.addAllDeliveryWeek()
+      this.addAllDeliveryHour()
     },
     methods: {
       // 获取已经保存的信息
@@ -978,6 +993,21 @@ console.log(power)
             that.getUpdateInfo()
           }
         })
+      },
+      addAllDeliveryWeek () {
+        var that = this
+        this.options.deliveryWeek.map(function (ele) {
+          that.ruleForm.deliveryWeek.push(ele.value)
+        })
+      },
+      delAllDeliveryWeek () {
+        this.ruleForm.deliveryWeek = []
+      },
+      addAllDeliveryHour () {
+        this.ruleForm.deliveryHour = JSON.parse(JSON.stringify(this.options.deliveryHour))
+      },
+      delAllDeliveryHour  () {
+        this.ruleForm.deliveryHour.splice(0)
       },
       // 判断totalCap
       judeTotalCap () {

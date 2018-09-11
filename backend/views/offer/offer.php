@@ -79,7 +79,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input :disabled='judePowerOperate' class='form-one' @focus='storeUrlFocus' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="">
               <div class='judeUrl-box form-one' v-if='spaceShowStoreUrlFlag'>
@@ -374,15 +374,17 @@ console.log(power)
     data () {
       var vm = this
       var validatorStoreUrl = function (rule, value, callback) {
-        if (vm.storeUrlFlag) {
-          vm.storeUrlFlag = false
-          var platform = null
-          var vmPlatform = null
-          if (spaceReg.test(value)) {
-            // 有空格
-            vm.messageVisible = false
-            callback(new Error(ruleLanguagePackage.notSpace))
-          } else if (regHref.test(value)) {
+        var platform = null
+        var vmPlatform = null
+        var judeFlag = spaceReg.test(value)
+        if (judeFlag) {
+          // 有空格
+          console.log('有空格')
+          vm.messageVisible = false
+          callback(new Error(ruleLanguagePackage.notSpace))
+        } else {
+          console.log('没有空格')
+          if (regHref.test(value)) {
             if (iOSReg.test(value)) {
               // ios
               platform = 'ios'
@@ -403,6 +405,7 @@ console.log(power)
                       callback()
                     } else {
                       // 没有查询到商店
+                      console.log('没有查询到商店')
                       callback(new Error(ruleLanguagePackage.notStore))
                     }
                     vm.dialogVisible = true
@@ -410,18 +413,19 @@ console.log(power)
                 }
               } else {
                 // 与所填平台不符
+                console.log('与所填平台不符')
                 callback(new Error(ruleLanguagePackage.notEqualToPlatform))
               }
             } else {
               // 应该填写平台
+              console.log('应该填写平台')
               callback(new Error(ruleLanguagePackage.shouldInputPlatform))
             }
           } else {
             // 不是网址
+            console.log('不是网址')
             callback(new Error(ruleLanguagePackage.notWWW))
           }
-        } else {
-          callback()
         }
       }
       var validatorTrackingUrl = function (rule, value, callback) {
@@ -466,7 +470,6 @@ console.log(power)
         channel: null,
         messageVisible: false,
         csrf: '',
-        storeUrlFlag: false,
         showCountry: true,
         options: {
           campaignOwner: [],
@@ -570,7 +573,7 @@ console.log(power)
           // 2
           storeUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorStoreUrl, trigger: 'blur' }
+            { validator: validatorStoreUrl, trigger: ['change'] }
           ],
           platform: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
@@ -674,7 +677,7 @@ console.log(power)
         }
         if (this.ruleForm.platform === '2') {
           // ios
-          if (this.ruleForm.deviceType === 'phone') {
+          if (this.ruleForm.deviceType === 'phone' || this.ruleForm.deviceType === 'unlimited') {
             this.options.specificDeviceBase.ios.phone.map(function (ele) {
               that.options.specificDevice.push({
                 value: ele,
@@ -682,7 +685,7 @@ console.log(power)
               })
             })
           }
-          if (this.ruleForm.deviceType === 'ipad') {
+          if (this.ruleForm.deviceType === 'ipad'|| this.ruleForm.deviceType === 'unlimited') {
             this.options.specificDeviceBase.ios.tablet.map(function (ele) {
               that.options.specificDevice.push({
                 value: ele,
@@ -873,9 +876,6 @@ console.log(power)
             that.channel = ele.channel
           }
         })
-      },
-      storeUrlFocus () {
-        this.storeUrlFlag = true
       },
       spiderAgain () {
         // 再次爬虫
@@ -1272,6 +1272,7 @@ console.log(power)
       },
       // 表单提交
       submitForm (formName) {
+        console.log('提交表单')
         var that = this
         this.$refs[formName].validate(function (valid) {
           if (valid) {

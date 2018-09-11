@@ -429,7 +429,7 @@ console.log(power)
         }
       }
       var validatorTrackingUrl = function (rule, value, callback) {
-        if (spaceReg.test(value)) {
+        if (value.match(spaceReg) !== null) {
           callback(new Error(ruleLanguagePackage.notSpace))
         } else if (!regHref.test(value)) {
           callback(new Error(ruleLanguagePackage.notWWW))
@@ -593,7 +593,7 @@ console.log(power)
           ],
           trackingUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorTrackingUrl, trigger: 'blur' }
+            { validator: validatorTrackingUrl, trigger: ['blur', 'change'] }
           ],
           schedule: [
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }

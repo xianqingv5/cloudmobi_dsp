@@ -79,7 +79,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' @change='changeStoreUrl' class='form-one' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="">
               <div class='judeUrl-box form-one' v-if='spaceShowStoreUrlFlag'>
@@ -376,13 +376,9 @@ console.log(power)
       var validatorStoreUrl = function (rule, value, callback) {
         var platform = null
         var vmPlatform = null
-        var judeFlag = value.indexOf(' ') !== -1
-        if (judeFlag) {
-          // 有空格
-          console.log('有空格')
-          vm.messageVisible = false
-          callback(new Error(ruleLanguagePackage.notSpace))
-        } else {
+        var judeFlag = value.match(spaceReg)
+        console.log(judeFlag)
+        if (judeFlag === null) {
           console.log('没有空格')
           if (regHref.test(value)) {
             if (iOSReg.test(value)) {
@@ -426,6 +422,10 @@ console.log(power)
             console.log('不是网址')
             callback(new Error(ruleLanguagePackage.notWWW))
           }
+        } else {
+          console.log('有空格')
+          vm.messageVisible = false
+          callback(new Error(ruleLanguagePackage.notSpace))
         }
       }
       var validatorTrackingUrl = function (rule, value, callback) {
@@ -471,6 +471,7 @@ console.log(power)
         messageVisible: false,
         csrf: '',
         showCountry: true,
+        spiderFlag: false,
         options: {
           campaignOwner: [],
           advertiser: [],
@@ -573,7 +574,7 @@ console.log(power)
           // 2
           storeUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorStoreUrl, trigger: 'blur' }
+            { validator: validatorStoreUrl, trigger: ['blur', 'change'] }
           ],
           platform: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
@@ -844,6 +845,9 @@ console.log(power)
           })
         }
       },
+      changeStoreUrl () {
+        this.spiderFlag = true
+      },
       showCountryFun () {
         this.showCountry = false
         if (this.ruleForm.countryType !== '') {
@@ -888,33 +892,38 @@ console.log(power)
       // 验证商店地址
       judeHref (platform, url, callback) {
         var that = this
-        var ajaxData = {
-          url: url,
-          country: null,
-          platform: platform,
-          dsp_security_param: this.csrf
-        }
-        $.ajax({
-          url: '/offer/get-url-info',
-          data: ajaxData,
-          type: 'post',
-          success: function (result) {
-            var result = JSON.parse(result)
-            if (result.status === 1) {
-              that.ruleForm.title = result.data.offer_title
-              that.ruleForm.name = result.data.pkg_name
-              var category_id = result.data.category_id
-              that.options.category.map(function (ele) {
-                if (result.data.category_id === ele.value) {
-                  that.ruleForm.category = category_id
-                }
-              })
-              callback(true)
-            } else {
-              callback(false)
-            }
+        if (this.spiderFlag) {
+          var ajaxData = {
+            url: url,
+            country: null,
+            platform: platform,
+            dsp_security_param: this.csrf
           }
-        })
+          $.ajax({
+            url: '/offer/get-url-info',
+            data: ajaxData,
+            type: 'post',
+            success: function (result) {
+              var result = JSON.parse(result)
+              if (result.status === 1) {
+                that.ruleForm.title = result.data.offer_title
+                that.ruleForm.name = result.data.pkg_name
+                var category_id = result.data.category_id
+                that.options.category.map(function (ele) {
+                  if (result.data.category_id === ele.value) {
+                    that.ruleForm.category = category_id
+                  }
+                })
+                callback(true)
+              } else {
+                callback(false)
+              }
+            }
+          })
+        } else {
+          callback(true)
+        }
+        
       },
       // 初始化页面
       initData () {
@@ -1274,6 +1283,7 @@ console.log(power)
       submitForm (formName) {
         console.log('提交表单')
         var that = this
+        this.spiderFlag = false
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')

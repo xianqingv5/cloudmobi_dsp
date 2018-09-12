@@ -79,7 +79,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="App Store or Google Play URL" prop="storeUrl">
-              <el-input :disabled='judePowerOperate' class='form-one' @focus='storeUrlFocus' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
+              <el-input :disabled='judePowerOperate' @change='changeStoreUrl' class='form-one' type='textarea' v-model.trim="ruleForm.storeUrl" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="">
               <div class='judeUrl-box form-one' v-if='spaceShowStoreUrlFlag'>
@@ -128,12 +128,13 @@
             <template v-if='ruleForm.schedule === "1"'>
               <el-form-item  prop="deliveryDate">
                 <el-date-picker :disabled='judePowerOperate'
+                  ref='thisDatePicker'
                   class='form-one'
                   v-model="ruleForm.deliveryDate"
                   type="daterange"
                   align="right"
                   unlink-panels
-                  range-separator="至"
+                  range-separator="-"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   value-format="yyyy-MM-dd"
@@ -141,14 +142,26 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item prop="deliveryWeek">
-                <el-checkbox-group :disabled='judePowerOperate' class='form-one checkbox-docker' v-model="ruleForm.deliveryWeek">
-                  <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
-                </el-checkbox-group>
+                <div class='form-one checkbox-docker'>
+                  <div class='p10-30 flex jcsb'>
+                    <el-button type="primary" @click='addAllDeliveryWeek'>全选</el-button>
+                    <el-button type="primary" @click='delAllDeliveryWeek'>全不选</el-button>
+                  </div>
+                  <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryWeek">
+                    <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
               </el-form-item>
               <el-form-item prop="deliveryHour">
-                <el-checkbox-group :disabled='judePowerOperate' class='form-one checkbox-docker' v-model="ruleForm.deliveryHour">
-                  <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
-                </el-checkbox-group>
+                <div class='form-one checkbox-docker'>
+                  <div class='p10-30 flex jcsb'>
+                    <el-button type="primary" @click='addAllDeliveryHour'>全选</el-button>
+                    <el-button type="primary" @click='delAllDeliveryHour'>全不选</el-button>
+                  </div>
+                  <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryHour">
+                    <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
               </el-form-item>
             </template>
             <el-form-item label="Comment" prop="comment">
@@ -324,10 +337,10 @@
   </div>
 </div>
 <script>
-// 权限
-var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
-// s3
+  // 权限
+  var power = JSON.parse('<?= $this->params['view_group'] ?>')
+  console.log(power)
+  // s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'
   var IdentityPoolId = 'ap-southeast-1:c0fbf555-2ba8-4dab-8ad2-733d41ef2ae7'
@@ -374,28 +387,27 @@ console.log(power)
     data () {
       var vm = this
       var validatorStoreUrl = function (rule, value, callback) {
-        if (vm.storeUrlFlag) {
-          vm.storeUrlFlag = false
-          var platform = null
-          var vmPlatform = null
-          if (spaceReg.test(value)) {
-            // 有空格
+        var platform = null
+        var vmPlatform = null
+        var judeFlag = value.match(spaceReg)
+        console.log(judeFlag)
+        if (judeFlag === null) {
+          console.log('没有空格')
+          if (regHref.test(value)) {
             vm.messageVisible = false
-            callback(new Error(ruleLanguagePackage.notSpace))
-          } else if (regHref.test(value)) {
-            if (iOSReg.test(value)) {
-              // ios
-              platform = 'ios'
-              vmPlatform = '2'
-            } else if (androidReg.test(value)) {
-              // android
-              platform = 'android'
-              vmPlatform = '1'
-            } else {
-              vm.messageVisible = true
-              callback()
-            }
             if (vm.ruleForm.platform) {
+              if (iOSReg.test(value)) {
+                // ios
+                platform = 'ios'
+                vmPlatform = '2'
+              } else if (androidReg.test(value)) {
+                // android
+                platform = 'android'
+                vmPlatform = '1'
+              } else {
+                vm.messageVisible = true
+                callback()
+              }
               if (vmPlatform === vm.ruleForm.platform) {
                 if (platform) {
                   vm.judeHref(platform, value, function (flag) {
@@ -403,6 +415,7 @@ console.log(power)
                       callback()
                     } else {
                       // 没有查询到商店
+                      console.log('没有查询到商店')
                       callback(new Error(ruleLanguagePackage.notStore))
                     }
                     vm.dialogVisible = true
@@ -410,22 +423,27 @@ console.log(power)
                 }
               } else {
                 // 与所填平台不符
+                console.log('与所填平台不符')
                 callback(new Error(ruleLanguagePackage.notEqualToPlatform))
               }
             } else {
               // 应该填写平台
+              console.log('应该填写平台')
               callback(new Error(ruleLanguagePackage.shouldInputPlatform))
             }
           } else {
             // 不是网址
+            console.log('不是网址')
             callback(new Error(ruleLanguagePackage.notWWW))
           }
         } else {
-          callback()
+          console.log('有空格')
+          vm.messageVisible = false
+          callback(new Error(ruleLanguagePackage.notSpace))
         }
       }
       var validatorTrackingUrl = function (rule, value, callback) {
-        if (spaceReg.test(value)) {
+        if (value.match(spaceReg) !== null) {
           callback(new Error(ruleLanguagePackage.notSpace))
         } else if (!regHref.test(value)) {
           callback(new Error(ruleLanguagePackage.notWWW))
@@ -466,8 +484,8 @@ console.log(power)
         channel: null,
         messageVisible: false,
         csrf: '',
-        storeUrlFlag: false,
         showCountry: true,
+        spiderFlag: false,
         options: {
           campaignOwner: [],
           advertiser: [],
@@ -570,7 +588,7 @@ console.log(power)
           // 2
           storeUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorStoreUrl, trigger: 'blur' }
+            { validator: validatorStoreUrl, trigger: ['blur', 'change'] }
           ],
           platform: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
@@ -589,7 +607,7 @@ console.log(power)
           ],
           trackingUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorTrackingUrl, trigger: 'blur' }
+            { validator: validatorTrackingUrl, trigger: ['blur', 'change'] }
           ],
           schedule: [
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
@@ -674,7 +692,7 @@ console.log(power)
         }
         if (this.ruleForm.platform === '2') {
           // ios
-          if (this.ruleForm.deviceType === 'phone') {
+          if (this.ruleForm.deviceType === 'phone' || this.ruleForm.deviceType === 'unlimited') {
             this.options.specificDeviceBase.ios.phone.map(function (ele) {
               that.options.specificDevice.push({
                 value: ele,
@@ -682,7 +700,7 @@ console.log(power)
               })
             })
           }
-          if (this.ruleForm.deviceType === 'ipad') {
+          if (this.ruleForm.deviceType === 'ipad'|| this.ruleForm.deviceType === 'unlimited') {
             this.options.specificDeviceBase.ios.tablet.map(function (ele) {
               that.options.specificDevice.push({
                 value: ele,
@@ -780,6 +798,11 @@ console.log(power)
       })
       // initData
       this.initData()
+      // 默认全选
+      this.addAllDeliveryWeek()
+      this.addAllDeliveryHour()
+      // 判断国家select是否显示
+      this.showCountryFun()
     },
     methods: {
       // 获取已经保存的信息
@@ -841,6 +864,9 @@ console.log(power)
           })
         }
       },
+      changeStoreUrl () {
+        this.spiderFlag = true
+      },
       showCountryFun () {
         this.showCountry = false
         if (this.ruleForm.countryType !== '') {
@@ -874,9 +900,6 @@ console.log(power)
           }
         })
       },
-      storeUrlFocus () {
-        this.storeUrlFlag = true
-      },
       spiderAgain () {
         // 再次爬虫
         console.log(1)
@@ -888,33 +911,46 @@ console.log(power)
       // 验证商店地址
       judeHref (platform, url, callback) {
         var that = this
-        var ajaxData = {
-          url: url,
-          country: null,
-          platform: platform,
-          dsp_security_param: this.csrf
-        }
-        $.ajax({
-          url: '/offer/get-url-info',
-          data: ajaxData,
-          type: 'post',
-          success: function (result) {
-            var result = JSON.parse(result)
-            if (result.status === 1) {
-              that.ruleForm.title = result.data.offer_title
-              that.ruleForm.name = result.data.pkg_name
-              var category_id = result.data.category_id
-              that.options.category.map(function (ele) {
-                if (result.data.category_id === ele.value) {
-                  that.ruleForm.category = category_id
-                }
-              })
-              callback(true)
-            } else {
-              callback(false)
-            }
+        if (this.spiderFlag) {
+          var ajaxData = {
+            url: url,
+            country: null,
+            platform: platform,
+            dsp_security_param: this.csrf
           }
-        })
+          $.ajax({
+            url: '/offer/get-url-info',
+            data: ajaxData,
+            type: 'post',
+            success: function (result) {
+              var result = JSON.parse(result)
+              if (result.status === 1) {
+                that.ruleForm.title = result.data.offer_title
+                that.ruleForm.name = result.data.pkg_name
+                var category_id = result.data.category_id
+                that.options.category.map(function (ele) {
+                  if (result.data.category_id === ele.value) {
+                    that.ruleForm.category = category_id
+                  }
+                })
+                callback(true)
+              } else {
+                callback(false)
+              }
+            }
+          })
+        } else {
+          callback(true)
+        }
+        
+      },
+      // 初始化日期
+      initDate () {
+        var end = new Date()
+        var start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
+        end.setTime(start.getTime() + 3600 * 1000 * 24 * 14)
+        this.ruleForm.deliveryDate = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
       },
       // 初始化页面
       initData () {
@@ -965,10 +1001,27 @@ console.log(power)
             that.options.minOSversionBase = result.data.version
             // category
             that.options.categoryBase = result.data.category
+            // initDate
+            that.initDate()
             // 
             that.getUpdateInfo()
           }
         })
+      },
+      addAllDeliveryWeek () {
+        var that = this
+        this.options.deliveryWeek.map(function (ele) {
+          that.ruleForm.deliveryWeek.push(ele.value)
+        })
+      },
+      delAllDeliveryWeek () {
+        this.ruleForm.deliveryWeek = []
+      },
+      addAllDeliveryHour () {
+        this.ruleForm.deliveryHour = JSON.parse(JSON.stringify(this.options.deliveryHour))
+      },
+      delAllDeliveryHour  () {
+        this.ruleForm.deliveryHour.splice(0)
       },
       // 判断totalCap
       judeTotalCap () {
@@ -1039,6 +1092,10 @@ console.log(power)
         }
         filesInput.addEventListener('change', addEventListenerFun, true)
       },
+      uploadRule (ratio) {
+        if ((ratio >= minRatio && ratio <= maxRatio) || ratio === baseRatio || ratio === 1 / baseRatio || ratio === 1) return true
+        return false
+      },
       // 判断上传文件
       judeUploadFile (fileData, type, callback) {
         var that = this
@@ -1080,8 +1137,8 @@ console.log(power)
                   }
                 }
                 if (type === 'image') {
-                  var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
-                  if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
+                  console.log(that.uploadRule(ratio))
+                  if (that.uploadRule(ratio)) {
                     callback()
                   } else {
                     that.$message.error(ruleLanguagePackage.uploadImageSizeError)
@@ -1238,8 +1295,8 @@ console.log(power)
               url: src,
               ratio: ratio
             }
-            var ratioFlag = (ratio >= minRatio && ratio <= maxRatio)
-            if (ratioFlag || ratio === baseRatio || ratio === 1 / baseRatio) {
+            console.log(that.uploadRule(ratio))
+            if (that.uploadRule(ratio)) {
               that.uploadCallback(ajaxData, type)
             } else {
               that.$message.error(ruleLanguagePackage.uploadImageSizeError)
@@ -1268,7 +1325,9 @@ console.log(power)
       },
       // 表单提交
       submitForm (formName) {
+        console.log('提交表单')
         var that = this
+        this.spiderFlag = false
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')

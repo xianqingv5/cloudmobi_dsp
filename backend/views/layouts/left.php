@@ -44,7 +44,7 @@ use yii\helpers\Url;
     </li>
     <li>
       <!-- title -->
-      <a class='sidebar-title flex jcsb'>
+      <a class='sidebar-title flex jcsb' href='<?php echo Url::to('/offer-report/offer-report-index') ?>'>
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">

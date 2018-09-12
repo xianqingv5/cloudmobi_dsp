@@ -23,4 +23,9 @@ return [
     'offer/get-offer-config' => 'offer create 各种信息提供',
     'offer/get-url-info' => 'offer 抓取url信息',
 
+    // offer report
+    'offer-report/offer-report-index' => 'offer report 列表页',
+    'offer-report/offer-report-char' => 'offer report 图表数据获取',
+    'offer-report/offer-report-table' => 'offer report 表格数据获取',
+
 ];

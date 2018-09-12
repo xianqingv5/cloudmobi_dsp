@@ -128,12 +128,13 @@
             <template v-if='ruleForm.schedule === "1"'>
               <el-form-item  prop="deliveryDate">
                 <el-date-picker :disabled='judePowerOperate'
+                  ref='thisDatePicker'
                   class='form-one'
                   v-model="ruleForm.deliveryDate"
                   type="daterange"
                   align="right"
                   unlink-panels
-                  range-separator="至"
+                  range-separator="-"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   value-format="yyyy-MM-dd"
@@ -336,10 +337,10 @@
   </div>
 </div>
 <script>
-// 权限
-var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
-// s3
+  // 权限
+  var power = JSON.parse('<?= $this->params['view_group'] ?>')
+  console.log(power)
+  // s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'
   var IdentityPoolId = 'ap-southeast-1:c0fbf555-2ba8-4dab-8ad2-733d41ef2ae7'
@@ -799,6 +800,8 @@ console.log(power)
       // 默认全选
       this.addAllDeliveryWeek()
       this.addAllDeliveryHour()
+      // 判断国家select是否显示
+      this.showCountryFun()
     },
     methods: {
       // 获取已经保存的信息
@@ -940,6 +943,14 @@ console.log(power)
         }
         
       },
+      // 初始化日期
+      initDate () {
+        var end = new Date()
+        var start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
+        end.setTime(start.getTime() + 3600 * 1000 * 24 * 14)
+        this.ruleForm.deliveryDate = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+      },
       // 初始化页面
       initData () {
         var that = this
@@ -989,6 +1000,8 @@ console.log(power)
             that.options.minOSversionBase = result.data.version
             // category
             that.options.categoryBase = result.data.category
+            // initDate
+            that.initDate()
             // 
             that.getUpdateInfo()
           }

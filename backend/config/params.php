@@ -24,6 +24,13 @@ return [
         '4' => '',
     ],
 
+    //平台类型
+    'PLATFORM_TYPE' => [
+        'Android'   =>1,
+        'iOS'       =>2,
+        'unknown'   =>3
+    ],
+
     // 代理广告商群组
     'AGENT_ADVERTISERS' => 3,
 

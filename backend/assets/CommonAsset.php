@@ -27,7 +27,8 @@ class CommonAsset extends AssetBundle
 		'plugin/element-ui@2.4.6/locale/en.js',
 		'plugin/aws/aws-sdk-2.283.1.min.js',
 		'plugin/aws/app.js',
-		'js/base.js'
+		'js/base.js',
+		'js/echarts.js'
 	];
 
 	/**

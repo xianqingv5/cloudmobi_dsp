@@ -394,19 +394,20 @@
         if (judeFlag === null) {
           console.log('没有空格')
           if (regHref.test(value)) {
-            if (iOSReg.test(value)) {
-              // ios
-              platform = 'ios'
-              vmPlatform = '2'
-            } else if (androidReg.test(value)) {
-              // android
-              platform = 'android'
-              vmPlatform = '1'
-            } else {
-              vm.messageVisible = true
-              callback()
-            }
+            vm.messageVisible = false
             if (vm.ruleForm.platform) {
+              if (iOSReg.test(value)) {
+                // ios
+                platform = 'ios'
+                vmPlatform = '2'
+              } else if (androidReg.test(value)) {
+                // android
+                platform = 'android'
+                vmPlatform = '1'
+              } else {
+                vm.messageVisible = true
+                callback()
+              }
               if (vmPlatform === vm.ruleForm.platform) {
                 if (platform) {
                   vm.judeHref(platform, value, function (flag) {

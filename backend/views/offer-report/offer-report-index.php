@@ -65,13 +65,19 @@
           </el-select>
         </div>
       </div>
-      <div>
+      <div class='chartBox'>
         <div class='tabBox flex'>
           <div class='tab-btn'>Payout</div>
           <div class='tab-btn'>Conversion</div>
           <div class='tab-btn'>Click</div>
           <div class='tab-btn'>CVR</div>
         </div>
+        <div class='conBox'>
+          
+        </div>
+      </div>
+      <div class='reportBox'>
+
       </div>
     </div>
   </div>

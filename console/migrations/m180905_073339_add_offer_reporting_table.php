@@ -20,8 +20,8 @@ class m180905_073339_add_offer_reporting_table extends Migration
 
         $this->createTable('{{%offer_reporting}}', [
             'date' => $this->date()->notNull()->defaultValue('1000-01-01')->comment('日期'),
-            'country' => $this->integer(11)->notNull()->defaultValue(0)->comment('国家'),
             'offer_id' => $this->string(30)->notNull()->defaultValue('')->comment('offer_id'),
+            'country' => $this->integer(11)->notNull()->defaultValue(0)->comment('国家'),
             'platform' => $this->smallInteger(2)->notNull()->defaultValue(0)->comment('平台:1:android,2:IOS,3:unknown'),
             'click' => $this->integer(11)->notNull()->defaultValue(0)->comment('点击数'),
             'conversion' => $this->integer(11)->notNull()->defaultValue(0)->comment('转化数'),

@@ -8,31 +8,38 @@ use yii\console\Controller;
 
 class OfferReportingController extends Controller
 {
-    public function actionGetOfferData($st = '', $offer_id = '', $user_id = '')
+    public function actionGetOfferData($st = '', $et = '', $offer_id = '', $user_id = '')
     {
         echo " ------------------ " . date('Y-m-d H:i:s') . " ------------------ \n";
 
         $start = microtime(true);
 
-        $params['date'] = !empty($st) ? $st : date('Y-m-d', time() - (3600 * 24));
+        $st = !empty($st) ? $st : date('Y-m-d');
+        $et = !empty($et) ? $et : $st;
+
+        $date = OfferReportingServices::getDateFromRange($st,$et);
 
         $offer_data = OfferReportingServices::getOfferId($offer_id,$user_id);
 
         if(!$offer_data){
-
             echo "没有offer数据\n";
-
         }else {
-            $info = [];
-            foreach ($offer_data as $k => $v) {
-                $params['offer_id'] = $v;
-                $res = OfferReportingServices::getData($params);
 
-                if (empty($res)) {
-                    echo $v . "没有拉取到数据\n";
-                } else {
-                    foreach ($res as $key => $value) {
-                        array_push($info, $value);
+            $info = [];
+            foreach ($date as $index => $val) {
+                $params['date'] = $val;
+                foreach ($offer_data as $k => $v) {
+                    $params['offer_id'] = $v;
+                    $res = OfferReportingServices::getData($params);
+
+                    if (empty($res)) {
+                        echo $v . "没有拉取到数据\n";
+                    } else {
+
+                        foreach ($res as $key => $value) {
+                            array_push($info, $value);
+                        }
+
                     }
                 }
             }

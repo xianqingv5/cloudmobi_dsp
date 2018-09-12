@@ -5,6 +5,7 @@ namespace console\services;
 use Yii;
 use common\models\OfferReporting;
 use common\models\DemandOffers;
+use common\models\Country;
 
 class OfferReportingServices
 {
@@ -42,9 +43,10 @@ class OfferReportingServices
         $platform_type = \Yii::$app->params['PLATFORM_TYPE'];
 
         foreach ($data as $k => $v){
+            $country = Country::getData(['id'],["short_name = '" . $v['country'] ."'"]);
             $info[$k]['date'] = $v['date'];
             $info[$k]['offer_id'] = $v['offer_id'];
-            $info[$k]['country'] = $v['country'];
+            $info[$k]['country'] = $country[0]['id'];
             $info[$k]['platform'] = $platform_type[$v['platform']];
             $info[$k]['click'] = $v['click'];
             $info[$k]['conversion'] = $v['conversion'];
@@ -64,17 +66,16 @@ class OfferReportingServices
     public static function getOfferId($offer_id,$user_id){
         $fields = ['id','channel'];
 
-        $where = '';
+        $where = [];
         if($offer_id){
-            $where .= "id = '". $offer_id . "'";
+            $where[] = "id = '". $offer_id . "'";
         }
 
         if($user_id){
-            $where .= " and campaign_owner = '" . $user_id . "'";
+            $where[] = "campaign_owner = '" . $user_id . "'";
         }
 
-
-        $offer = DemandOffers::getData($fields,empty($where) ? [] : [$where]);
+        $offer = DemandOffers::getData($fields,$where);
         if($offer){
             $data = [];
             foreach ($offer as $k => $v) {
@@ -84,6 +85,24 @@ class OfferReportingServices
         }else{
             return false;
         }
+    }
+
+    public static function getDateFromRange($st, $et){
+
+        $stimestamp = strtotime($st);
+        $etimestamp = strtotime($et);
+
+        // 计算日期段内有多少天
+        $days = ($etimestamp-$stimestamp)/86400+1;
+
+        // 保存每天日期
+        $date = array();
+
+        for($i=0; $i<$days; $i++){
+            $date[] = date('Y-m-d', $stimestamp+(86400*$i));
+        }
+
+        return $date;
     }
 
 }

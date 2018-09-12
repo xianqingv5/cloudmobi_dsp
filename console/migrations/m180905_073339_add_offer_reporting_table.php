@@ -19,9 +19,9 @@ class m180905_073339_add_offer_reporting_table extends Migration
         }
 
         $this->createTable('{{%offer_reporting}}', [
-            'date' => $this->dateTime()->notNull()->defaultValue('1000-01-01 00:00:01')->comment('日期'),
-            'country' => $this->string(50)->notNull()->defaultValue('')->comment('国家'),
-            'offer_id' => $this->string(100)->notNull()->defaultValue('')->comment('offer_id'),
+            'date' => $this->date()->notNull()->defaultValue('1000-01-01')->comment('日期'),
+            'country' => $this->integer(11)->notNull()->defaultValue(0)->comment('国家'),
+            'offer_id' => $this->string(30)->notNull()->defaultValue('')->comment('offer_id'),
             'platform' => $this->smallInteger(2)->notNull()->defaultValue(0)->comment('平台:1:android,2:IOS,3:unknown'),
             'click' => $this->integer(11)->notNull()->defaultValue(0)->comment('点击数'),
             'conversion' => $this->integer(11)->notNull()->defaultValue(0)->comment('转化数'),
@@ -29,7 +29,7 @@ class m180905_073339_add_offer_reporting_table extends Migration
             'create_date' => $this->dateTime()->notNull()->defaultValue('1000-01-01 00:00:01')->comment('创建时间'),
         ], $table_options);
 
-        $this->createIndex('reporting', '{{%offer_reporting}}', ['offer_id','date','country','platform'], true);
+        $this->createIndex('reporting', '{{%offer_reporting}}', ['date','offer_id','country','platform'], true);
     }
 
     /**

@@ -14,7 +14,7 @@
       <div class='searchBox flex jcsb mb-20'>
         <div>
           <div class='mb-20'>
-            <span>Date Range</span>
+            <h4>Date Range</h4>
           </div>
           <el-date-picker
             @change='searchFun'
@@ -27,7 +27,7 @@
         </div>
         <div>
           <div class='mb-20'>
-            <span>Campaigns</span>
+            <h4>Campaigns</h4>
           </div>
           <el-select @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
@@ -40,7 +40,7 @@
         </div>
         <div>
           <div class='mb-20'>
-            <span>Countries</span>
+            <h4>Countries</h4>
           </div>
           <el-select @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
@@ -53,7 +53,7 @@
         </div>
         <div>
           <div class='mb-20'>
-            <span>Campaigns Owner</span>
+            <h4>Campaigns Owner</h4>
           </div>
           <el-select @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
@@ -112,8 +112,8 @@
               <div class='tab-btn'>Click</div>
               <div class='tab-btn'>CVR</div>
             </div>
-            <div class=''>
-              <div class='mainReport' id='countrisReport' style='width: 100%;height: 500px;'></div>
+            <div class='pt-20'>
+              <div class='countrisReport' id='countrisReport' style='width: 100%;height: 500px;'></div>
             </div>
           </div>
         </div>
@@ -126,8 +126,8 @@
               <div class='tab-btn'>Payout</div>
               <div class='tab-btn'>CVR</div>
             </div>
-            <div class=''>
-              <div class='mainReport' id='campaignsReport' style='width: 100%;height: 500px;'></div>
+            <div class='pt-20'>
+              <div class='campaignsReport' id='campaignsReport' style='width: 100%;height: 500px;'></div>
             </div>
           </div>
         </div>
@@ -248,9 +248,15 @@ console.log(power)
                 }
             ]
         };
-
-        var mainChart = echarts.init(document.querySelector('#mainReport')) 
-        mainChart.setOption(option)
+        // mainReport
+        var mainReport = echarts.init(document.querySelector('#mainReport')) 
+        mainReport.setOption(option)
+        // mainReport
+        var countrisReport = echarts.init(document.querySelector('#countrisReport')) 
+        countrisReport.setOption(option)
+        // campaignsReport
+        var campaignsReport = echarts.init(document.querySelector('#campaignsReport')) 
+        campaignsReport.setOption(option)
       }
     }
   })

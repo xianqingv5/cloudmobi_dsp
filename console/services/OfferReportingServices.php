@@ -9,7 +9,7 @@ use common\models\Country;
 
 class OfferReportingServices
 {
-    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';
+    CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';
 
     /**
      * 拉取数据

@@ -26,20 +26,21 @@ class OfferReportingController extends Controller
         }else {
 
             $info = [];
-            foreach ($date as $index => $val) {
+            foreach ($date as $index => $val)
+            {
                 $params['date'] = $val;
-                foreach ($offer_data as $k => $v) {
+                foreach ($offer_data as $k => $v)
+                {
                     $params['offer_id'] = $v;
                     $res = OfferReportingServices::getData($params);
 
                     if (empty($res)) {
                         echo $v . "没有拉取到数据\n";
                     } else {
-
-                        foreach ($res as $key => $value) {
+                        foreach ($res as $key => $value)
+                        {
                             array_push($info, $value);
                         }
-
                     }
                 }
             }

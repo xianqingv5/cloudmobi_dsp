@@ -31,14 +31,15 @@ class OfferReportingController extends Controller
                 $params['date'] = $val;
                 foreach ($offer_data as $k => $v)
                 {
-                    $params['offer_id'] = $v;
+                    $params['offer_id'] = $v['offer_id'];
                     $res = OfferReportingServices::getData($params);
 
                     if (empty($res)) {
-                        echo $v . "没有拉取到数据\n";
+                        echo $v['offer_id'] . "没有拉取到数据\n";
                     } else {
                         foreach ($res as $key => $value)
                         {
+                            $value['campaign_owner'] = $v['campaign_owner'];
                             array_push($info, $value);
                         }
                     }

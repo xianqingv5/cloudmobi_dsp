@@ -10,6 +10,7 @@ use common\models\Country;
 class OfferReportingServices
 {
     CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';
+//    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';
 
     /**
      * 拉取数据
@@ -44,9 +45,10 @@ class OfferReportingServices
 
         foreach ($data as $k => $v){
             $country = Country::getData(['id'],["short_name = '" . $v['country'] ."'"]);
-            $info[$k]['date'] = $v['date'];
+            $info[$k]['day'] = $v['date'];
+            $info[$k]['campaign_owner'] = $v['campaign_owner'];
             $info[$k]['offer_id'] = $v['offer_id'];
-            $info[$k]['country'] = $country[0]['id'];
+            $info[$k]['country_id'] = $country[0]['id'];
             $info[$k]['platform'] = $platform_type[$v['platform']];
             $info[$k]['click'] = $v['click'];
             $info[$k]['conversion'] = $v['conversion'];
@@ -64,7 +66,7 @@ class OfferReportingServices
     }
 
     public static function getOfferId($offer_id,$user_id){
-        $fields = ['id','channel'];
+        $fields = ['id','channel','campaign_owner'];
 
         $where = [];
         if($offer_id){
@@ -79,7 +81,8 @@ class OfferReportingServices
         if($offer){
             $data = [];
             foreach ($offer as $k => $v) {
-                $data[$k] = $v['channel'] . '_' . 'offline' . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                $data[$k]['offer_id'] = $v['channel'] . '_' . 'offline' . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                $data[$k]['campaign_owner'] = $v['campaign_owner'];
             }
             return $data;
         }else{

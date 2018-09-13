@@ -200,4 +200,8 @@ table td {
 .inputobj {
   width: 300px;
 }
+
+.border-1 {
+  border: 1px solid #dcdfe6;
+}
 /*# sourceMappingURL=common.css.map */

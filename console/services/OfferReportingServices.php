@@ -48,11 +48,11 @@ class OfferReportingServices
             $info[$k]['day'] = $v['date'];
             $info[$k]['campaign_owner'] = $v['campaign_owner'];
             $info[$k]['offer_id'] = $v['offer_id'];
-            $info[$k]['country_id'] = $country[0]['id'];
-            $info[$k]['platform'] = $platform_type[$v['platform']];
-            $info[$k]['click'] = $v['click'];
-            $info[$k]['conversion'] = $v['conversion'];
-            $info[$k]['payout'] = $v['payout'];
+            $info[$k]['country_id'] = isset($country[0]['id']) ? $country[0]['id'] : 0;
+            $info[$k]['platform'] = isset($platform_type[strtolower($v['platform'])]) ? $platform_type[strtolower($v['platform'])] : 3;
+            $info[$k]['click'] = isset($v['click']) ? $v['click'] : 0;
+            $info[$k]['conversion'] = isset($v['conversion']) ? $v['conversion'] : 0;
+            $info[$k]['payout'] = isset($v['payout']) ? $v['payout'] : 0;
             $info[$k]['create_date'] = $time;
         }
 

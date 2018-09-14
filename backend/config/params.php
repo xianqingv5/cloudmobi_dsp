@@ -26,8 +26,8 @@ return [
 
     //平台类型
     'PLATFORM_TYPE' => [
-        'Android'   =>1,
-        'iOS'       =>2,
+        'android'   =>1,
+        'ios'       =>2,
         'unknown'   =>3
     ],
 

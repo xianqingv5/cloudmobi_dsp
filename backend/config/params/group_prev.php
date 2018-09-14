@@ -25,7 +25,8 @@ return [
 
     // offer report
     'offer-report/offer-report-index' => 'offer report 列表页',
-    'offer-report/offer-report-char' => 'offer report 图表数据获取',
-    'offer-report/offer-report-table' => 'offer report 表格数据获取',
+    'offer-report/offer-line' => 'offer report offer top 数据',
+    'offer-report/country-top-bar' => 'offer report 国家top数据',
+    'offer-report/offer-report-data' => 'offer report 大折线图和表格数据',
 
 ];

@@ -93,4 +93,46 @@ class OfferReporting extends \yii\db\ActiveRecord
 
         return Yii::$app->db->createCommand($sql)->execute();
     }
+
+    /**
+     * 查询数据
+     * @param $fields
+     * @param $where
+     * @param string $group_by
+     * @param string $order_by
+     * @param string $limit
+     * @param bool $is_return_sql
+     * @return array|string
+     */
+    public static function getData($fields, $where = [], $group_by = '', $order_by = '', $limit = null, $is_return_sql = false)
+    {
+        $sql  = "SELECT " . implode(', ', $fields) . " FROM "
+            . self::tableName();
+
+        if (!empty($where)) {
+           $sql .= " WHERE " . implode(' AND ', $where);
+        }
+
+        if ( !empty($group_by) ) {
+            $sql    .= " GROUP BY " . $group_by;
+        }
+
+        if ( !empty($order_by) ) {
+            $sql    .= " ORDER BY " . $order_by;
+        }
+
+        if ( !empty($limit) ) {
+            $sql    .= " LIMIT " . $limit;
+        }
+
+        if ($is_return_sql) return $sql;
+        return Yii::$app->db->createCommand($sql)->queryAll();
+    }
+
+
+    public static function getDataBySql($sql)
+    {
+        return Yii::$app->db->createCommand($sql)->queryAll();
+    }
+
 }

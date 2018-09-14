@@ -69,10 +69,10 @@
       </div>
       <div class='chartBox'>
         <div class='tabBox flex'>
-          <div class='tab-btn' @click='choiceMain(1)' :class='{act:mainChoice == 1}'>Payout</div>
-          <div class='tab-btn' @click='choiceMain(2)' :class='{act:mainChoice == 2}'>Conversion</div>
-          <div class='tab-btn' @click='choiceMain(3)' :class='{act:mainChoice == 3}'>Click</div>
-          <div class='tab-btn' @click='choiceMain(4)' :class='{act:mainChoice == 4}'>CVR</div>
+          <div class='tab-btn' @click='choiceMain("payout")' :class='{act:mainChoice === "payout"}'>Payout</div>
+          <div class='tab-btn' @click='choiceMain("conversion")' :class='{act:mainChoice === "conversion"}'>Conversion</div>
+          <div class='tab-btn' @click='choiceMain("click")' :class='{act:mainChoice === "click"}'>Click</div>
+          <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
         <div class='conBox'>
           <div class='mainReport' id='mainReport' style='width: 100%;height: 500px;'></div>
@@ -82,24 +82,34 @@
       <div class='reportTableBox'>
         <el-table
           class='reportTable'
-          :data="tableData"
+          :data="judeTableData"
           style="width: 100%"
           :default-sort = "{prop: 'date', order: 'descending'}"
           >
           <el-table-column
-            prop="date"
-            label="日期"
+            prop="day"
+            label="Date"
             sortable>
           </el-table-column>
           <el-table-column
-            prop="name"
-            label="姓名"
+            prop="payout"
+            label="Payout"
             sortable>
           </el-table-column>
           <el-table-column
-            prop="address"
-            label="地址"
-            :formatter="formatter">
+            prop="conversion"
+            label="Conversion"
+            sortable>
+          </el-table-column>
+          <el-table-column
+            prop="click"
+            label="Click"
+            sortable>
+          </el-table-column>
+          <el-table-column
+            prop="cvr"
+            label="CVR"
+            sortable>
           </el-table-column>
         </el-table>
       </div>
@@ -109,10 +119,10 @@
           <h4>TOP 10 Countris</h4>
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
-              <div class='tab-btn' @click='choiceCountris(1)' :class='{act:countrisChoice == 1}'>Conversion</div>
-              <div class='tab-btn' @click='choiceCountris(2)' :class='{act:countrisChoice == 2}'>payouot</div>
-              <div class='tab-btn' @click='choiceCountris(3)' :class='{act:countrisChoice == 3}'>Click</div>
-              <div class='tab-btn' @click='choiceCountris(4)' :class='{act:countrisChoice == 4}'>CVR</div>
+              <div class='tab-btn' @click='choiceCountris("conversion")' :class='{act:countrisChoice === "conversion"}'>Conversion</div>
+              <div class='tab-btn' @click='choiceCountris("payout")' :class='{act:countrisChoice === "payout"}'>payout</div>
+              <div class='tab-btn' @click='choiceCountris("click")' :class='{act:countrisChoice === "click"}'>Click</div>
+              <div class='tab-btn' @click='choiceCountris("cvr")' :class='{act:countrisChoice === "cvr"}'>CVR</div>
             </div>
             <div class='pt-20'>
               <div class='countrisReport' id='countrisReport' style='width: 100%;height: 500px;'></div>
@@ -123,10 +133,10 @@
           <h4>TOP 10 Campaigns</h4>
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
-              <div class='tab-btn' @click='choiceCampaigns(1)' :class='{act:campaignsChoice == 1}'>Conversion</div>
-              <div class='tab-btn' @click='choiceCampaigns(2)' :class='{act:campaignsChoice == 2}'>Click</div>
-              <div class='tab-btn' @click='choiceCampaigns(3)' :class='{act:campaignsChoice == 3}'>Payout</div>
-              <div class='tab-btn' @click='choiceCampaigns(4)' :class='{act:campaignsChoice == 4}'>CVR</div>
+              <div class='tab-btn' @click='choiceCampaigns("conversion")' :class='{act:campaignsChoice === "conversion"}'>Conversion</div>
+              <div class='tab-btn' @click='choiceCampaigns("click")' :class='{act:campaignsChoice === "click"}'>Click</div>
+              <div class='tab-btn' @click='choiceCampaigns("payout")' :class='{act:campaignsChoice === "payout"}'>Payout</div>
+              <div class='tab-btn' @click='choiceCampaigns("cvr")' :class='{act:campaignsChoice === "cvr"}'>CVR</div>
             </div>
             <div class='pt-20'>
               <div class='campaignsReport' id='campaignsReport' style='width: 100%;height: 500px;'></div>
@@ -140,15 +150,99 @@
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
 console.log(power)
+  var mainData = {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {},
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+      {
+        type:'line',
+        data:[]
+      }
+    ]
+  }
+  var countryData = {
+    tooltip: {},
+    legend: {},
+    xAxis: {
+        data: []
+    },
+    yAxis: {},
+    series: [{
+        type: 'bar',
+        data: []
+    }]
+  }
+  var campaignsData = {
+    title: {
+      text: '折线图堆叠'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data:['邮件营销']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+      {
+        name:'邮件营销',
+        type:'line',
+        stack: '总量',
+        data:[]
+      }
+    ]
+  }
+  var mainReport, countryReport, campaignsReport
+  // 
   new Vue({
     el: '.app',
     data () {
       return {
         power: power,
         csrf: '',
-        mainChoice:1,
-        countrisChoice: 1,
-        campaignsChoice: 1,
+        mainChoice: 'payout',
+        mainData: {},
+        countrisChoice: 'conversion',
+        campaignsChoice: 'conversion',
         options: {
           campaigns: [],
           country: [],
@@ -160,28 +254,35 @@ console.log(power)
           country: [],
           campaignsOwner: []
         },
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }]
+        tableData: []
       }
     },
     mounted () {
       this.csrf = document.querySelector('#spp_security').value
-      this.getReport()
+      mainReport = echarts.init(document.querySelector('#mainReport'))
+      countryReport = echarts.init(document.querySelector('#countrisReport'))
+      campaignsReport = echarts.init(document.querySelector('#campaignsReport'))
+      this.initData()
+      this.choiceCountris('conversion')
+      this.choiceCampaigns('conversion')
+    },
+    computed: {
+      judeTableData () {
+        var that  = this
+        var arr = []
+        if (this.mainData['day']) {
+          this.mainData.day.map(function (ele, i) {
+            arr.push({
+              day: ele,
+              payout: that.mainData.payout[i],
+              conversion: that.mainData.conversion[i],
+              click: that.mainData.click[i],
+              cvr: that.mainData.cvr[i]
+            })
+          })
+        }
+        return arr
+      }
     },
     methods: {
       searchFun () {
@@ -189,70 +290,66 @@ console.log(power)
       },
       choiceMain (i) {
         this.mainChoice = i
+        mainData.series[0].data = this.mainData[this.mainChoice]
+        this.getReport(mainReport, mainData)
       },
       choiceCountris (i) {
+        var that = this
         this.countrisChoice = i
+        // country
+        $.ajax({
+          url: '/offer-report/country-top-bar',
+          type: 'get',
+          data: {
+            field: that.countrisChoice
+          },
+          success: function (result) {
+            if (result.status === 1) {
+              that.countryData = result.data
+              countryData.xAxis.data = result.data.name
+              countryData.series[0].data = result.data.fields
+              that.getReport(countryReport, countryData)
+            }
+          }
+        })
       },
       choiceCampaigns (i) {
         this.campaignsChoice = i
+        // campaigns
+        $.ajax({
+          url: '/offer-report/offer-line',
+          type: 'get',
+          success: function (result) {
+            console.log(result)
+            // if (result.status === 1) {
+            //   that.campaignsData = result.data
+            //   campaignsData.xAxis.data = result.data.name
+            //   that.choiceCountris('conversion')
+            // }
+          }
+        })
       },
       formatter(row, column) {
         return row.address;
       },
-      getReport () {
-        option = {
-            title: {
-                text: '折线图堆叠'
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {
-                data:['邮件营销','联盟广告']
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            toolbox: {
-                feature: {
-                    saveAsImage: {}
-                }
-            },
-            xAxis: {
-                type: 'category',
-                boundaryGap: false,
-                data: ['周一','周二','周三','周四','周五','周六','周日']
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [
-                {
-                    name:'邮件营销',
-                    type:'line',
-                    stack: '总量',
-                    data:[120, 132, 101, 134, 90, 230, 210]
-                },
-                {
-                    name:'联盟广告',
-                    type:'line',
-                    stack: '总量',
-                    data:[220, 182, 191, 234, 290, 330, 310]
-                }
-            ]
-        };
+      initData () {
+        var that= this
         // mainReport
-        var mainReport = echarts.init(document.querySelector('#mainReport')) 
-        mainReport.setOption(option)
-        // mainReport
-        var countrisReport = echarts.init(document.querySelector('#countrisReport')) 
-        countrisReport.setOption(option)
-        // campaignsReport
-        var campaignsReport = echarts.init(document.querySelector('#campaignsReport')) 
-        campaignsReport.setOption(option)
+        $.ajax({
+          url: '/offer-report/offer-report-data',
+          type: 'get',
+          success: function (result) {
+            // console.log(result)
+            if (result.status === 1) {
+              that.mainData = result.data
+              mainData.xAxis.data = result.data.day
+              that.choiceMain('payout')
+            }
+          }
+        })
+      },
+      getReport (dom, data) {
+        dom.setOption(data)
       }
     }
   })

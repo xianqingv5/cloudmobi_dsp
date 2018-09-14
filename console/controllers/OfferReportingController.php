@@ -10,8 +10,6 @@ class OfferReportingController extends Controller
 {
     public function actionGetOfferData($st = '', $et = '', $offer_id = '', $user_id = '')
     {
-        echo " ------------------ " . date('Y-m-d H:i:s') . " ------------------ \n";
-
         $start = microtime(true);
 
         $st = !empty($st) ? $st : date('Y-m-d');
@@ -24,7 +22,7 @@ $offer_data = ['mn_offline594','mn_offline601','ym_9186915','ym_267920','ym_1258
         if(!$offer_data){
             echo "没有offer数据\n";
         }else {
-
+            echo " ------------------ 正在拉取 ------------------ \n";
             $info = [];
             foreach ($date as $index => $val)
             {
@@ -36,8 +34,8 @@ $offer_data = ['mn_offline594','mn_offline601','ym_9186915','ym_267920','ym_1258
 
                     if (empty($res)) {
                         echo $v . "--$val--没有拉取到数据\n";
+                        echo " ------------------ 正在拉取 ------------------ \n";
                     } else {
-                        echo $v . "--$val--拉取到数据\n";
                         foreach ($res as $key => $value)
                         {
                             $value['campaign_owner'] = 1;
@@ -56,6 +54,5 @@ $offer_data = ['mn_offline594','mn_offline601','ym_9186915','ym_267920','ym_1258
         $end = microtime(true);
 
         echo "耗时:" . ($end - $start) . "\n";
-        echo " ------------------ " . date('Y-m-d H:i:s') . " ------------------ \n";
     }
 }

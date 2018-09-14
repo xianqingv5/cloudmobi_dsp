@@ -14,7 +14,7 @@
       <div class='searchBox flex jcsb mb-20'>
         <div>
           <div class='mb-20'>
-            <span>Date Range</span>
+            <h4>Date Range</h4>
           </div>
           <el-date-picker
             @change='searchFun'
@@ -27,7 +27,7 @@
         </div>
         <div>
           <div class='mb-20'>
-            <span>Campaigns</span>
+            <h4>Campaigns</h4>
           </div>
           <el-select @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
@@ -40,7 +40,7 @@
         </div>
         <div>
           <div class='mb-20'>
-            <span>Countries</span>
+            <h4>Countries</h4>
           </div>
           <el-select @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
@@ -53,7 +53,7 @@
         </div>
         <div>
           <div class='mb-20'>
-            <span>Campaigns Owner</span>
+            <h4>Campaigns Owner</h4>
           </div>
           <el-select @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
@@ -67,10 +67,10 @@
       </div>
       <div class='chartBox'>
         <div class='tabBox flex'>
-          <div class='tab-btn'>Payout</div>
-          <div class='tab-btn'>Conversion</div>
-          <div class='tab-btn'>Click</div>
-          <div class='tab-btn'>CVR</div>
+          <div class='tab-btn' @click='choiceMain(1)' :class='{act:mainChoice == 1}'>Payout</div>
+          <div class='tab-btn' @click='choiceMain(2)' :class='{act:mainChoice == 2}'>Conversion</div>
+          <div class='tab-btn' @click='choiceMain(3)' :class='{act:mainChoice == 3}'>Click</div>
+          <div class='tab-btn' @click='choiceMain(4)' :class='{act:mainChoice == 4}'>CVR</div>
         </div>
         <div class='conBox'>
           <div class='mainReport' id='mainReport' style='width: 100%;height: 500px;'></div>
@@ -107,13 +107,13 @@
           <h4>TOP 10 Countris</h4>
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
-              <div class='tab-btn'>Conversion</div>
-              <div class='tab-btn'>payouot</div>
-              <div class='tab-btn'>Click</div>
-              <div class='tab-btn'>CVR</div>
+              <div class='tab-btn' @click='choiceCountris(1)' :class='{act:countrisChoice == 1}'>Conversion</div>
+              <div class='tab-btn' @click='choiceCountris(2)' :class='{act:countrisChoice == 2}'>payouot</div>
+              <div class='tab-btn' @click='choiceCountris(3)' :class='{act:countrisChoice == 3}'>Click</div>
+              <div class='tab-btn' @click='choiceCountris(4)' :class='{act:countrisChoice == 4}'>CVR</div>
             </div>
-            <div class=''>
-              <div class='mainReport' id='countrisReport' style='width: 100%;height: 500px;'></div>
+            <div class='pt-20'>
+              <div class='countrisReport' id='countrisReport' style='width: 100%;height: 500px;'></div>
             </div>
           </div>
         </div>
@@ -121,13 +121,13 @@
           <h4>TOP 10 Campaigns</h4>
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
-              <div class='tab-btn'>Conversion</div>
-              <div class='tab-btn'>Click</div>
-              <div class='tab-btn'>Payout</div>
-              <div class='tab-btn'>CVR</div>
+              <div class='tab-btn' @click='choiceCampaigns(1)' :class='{act:campaignsChoice == 1}'>Conversion</div>
+              <div class='tab-btn' @click='choiceCampaigns(2)' :class='{act:campaignsChoice == 2}'>Click</div>
+              <div class='tab-btn' @click='choiceCampaigns(3)' :class='{act:campaignsChoice == 3}'>Payout</div>
+              <div class='tab-btn' @click='choiceCampaigns(4)' :class='{act:campaignsChoice == 4}'>CVR</div>
             </div>
-            <div class=''>
-              <div class='mainReport' id='campaignsReport' style='width: 100%;height: 500px;'></div>
+            <div class='pt-20'>
+              <div class='campaignsReport' id='campaignsReport' style='width: 100%;height: 500px;'></div>
             </div>
           </div>
         </div>
@@ -144,6 +144,9 @@ console.log(power)
       return {
         power: power,
         csrf: '',
+        mainChoice:1,
+        countrisChoice: 1,
+        campaignsChoice: 1,
         options: {
           campaigns: [],
           country: [],
@@ -182,6 +185,15 @@ console.log(power)
       searchFun () {
 
       },
+      choiceMain (i) {
+        this.mainChoice = i
+      },
+      choiceCountris (i) {
+        this.countrisChoice = i
+      },
+      choiceCampaigns (i) {
+        this.campaignsChoice = i
+      },
       formatter(row, column) {
         return row.address;
       },
@@ -194,7 +206,7 @@ console.log(power)
                 trigger: 'axis'
             },
             legend: {
-                data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+                data:['邮件营销','联盟广告']
             },
             grid: {
                 left: '3%',
@@ -227,30 +239,18 @@ console.log(power)
                     type:'line',
                     stack: '总量',
                     data:[220, 182, 191, 234, 290, 330, 310]
-                },
-                {
-                    name:'视频广告',
-                    type:'line',
-                    stack: '总量',
-                    data:[150, 232, 201, 154, 190, 330, 410]
-                },
-                {
-                    name:'直接访问',
-                    type:'line',
-                    stack: '总量',
-                    data:[320, 332, 301, 334, 390, 330, 320]
-                },
-                {
-                    name:'搜索引擎',
-                    type:'line',
-                    stack: '总量',
-                    data:[820, 932, 901, 934, 1290, 1330, 1320]
                 }
             ]
         };
-
-        var mainChart = echarts.init(document.querySelector('#mainReport')) 
-        mainChart.setOption(option)
+        // mainReport
+        var mainReport = echarts.init(document.querySelector('#mainReport')) 
+        mainReport.setOption(option)
+        // mainReport
+        var countrisReport = echarts.init(document.querySelector('#countrisReport')) 
+        countrisReport.setOption(option)
+        // campaignsReport
+        var campaignsReport = echarts.init(document.querySelector('#campaignsReport')) 
+        campaignsReport.setOption(option)
       }
     }
   })
@@ -284,5 +284,10 @@ console.log(power)
   }
   .el-table th{
     text-align: center;
+  }
+  .act{
+    background: #409EFF;
+    border-color: #409EFF;
+    color: #fff;
   }
 </style>

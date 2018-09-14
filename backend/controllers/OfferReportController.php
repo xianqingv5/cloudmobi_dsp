@@ -1,8 +1,10 @@
 <?php
 namespace backend\controllers;
 
+use common\models\OfferReporting;
 use Yii;
 use backend\services\OfferReportService;
+use yii\web\Response;
 
 class OfferReportController extends BaseController
 {
@@ -11,13 +13,24 @@ class OfferReportController extends BaseController
         return $this->render('offer-report-index',[]);
     }
 
-    public function actionOfferReportChar()
+    public function actionOfferReportData()
     {
-
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = OfferReportService::getOfferReportData();
+        return $res;
     }
 
-    public function actionOfferReportTable()
+    public function actionCountryTopBar()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = OfferReportService::getCountryTopBar();
+        return $res;
+    }
 
+    public function actionOfferLine()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = OfferReportService::getOfferTopLine();
+        return $res;
     }
 }

@@ -22,7 +22,9 @@
             type="daterange"
             range-separator="-"
             start-placeholder="开始日期"
-            end-placeholder="结束日期">
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
+            >
           </el-date-picker>
         </div>
         <div>

@@ -6,6 +6,7 @@ use yii\log\Logger;
 use common\models\UserGroup;
 use common\models\GroupRelationPriv;
 use common\models\User;
+use common\models\Country;
 use yii\web\ForbiddenHttpException;
 
 class BaseService
@@ -161,6 +162,34 @@ class BaseService
 
         $post_data  = json_encode($post_data);
         return [$post_data];
+    }
+
+    public static function getCountryData($fields = ['*'], $where = [])
+    {
+        $res = Country::getData($fields, $where);
+        return $res;
+    }
+
+    /**
+     * 判断用户是否是 advertiser agent (广告代理商)
+     * @return bool
+     */
+    public static function isAdvertiserAgent()
+    {
+        $group_id = Yii::$app->user->identity->group_id;
+        return ($group_id == 3) ? true : false;
+    }
+
+    public static function isSuperAdmin()
+    {
+        $group_id = Yii::$app->user->identity->group_id;
+        return ($group_id == 1) ? true : false;
+    }
+
+    public static function isAdmin()
+    {
+        $group_id = Yii::$app->user->identity->group_id;
+        return ($group_id == 2) ? true : false;
     }
 
 }

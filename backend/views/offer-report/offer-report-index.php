@@ -73,9 +73,10 @@
           <div class='tab-btn' @click='choiceMain("click")' :class='{act:mainChoice === "click"}'>Click</div>
           <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
-        <div class='conBox'>
+        <div class='conBox' v-show='flag.main'>
           <div class='mainReport' id='mainReport' style='width: 100%;height: 500px;'></div>
         </div>
+        <div  v-show='!flag.main' class='flex m30'>NO Data</div>
       </div>
       <!-- table -->
       <div class='reportTableBox'>
@@ -123,9 +124,10 @@
               <div class='tab-btn' @click='choiceCountris("click")' :class='{act:countrisChoice === "click"}'>Click</div>
               <div class='tab-btn' @click='choiceCountris("cvr")' :class='{act:countrisChoice === "cvr"}'>CVR</div>
             </div>
-            <div class='pt-20'>
+            <div class='pt-20' v-show='flag.country'>
               <div class='countrisReport' id='countrisReport' style='width: 100%;height: 500px;'></div>
             </div>
+            <div v-show='!flag.country' class='flex m30'>NO Data</div>
           </div>
         </div>
         <div class='col-auto-12 ml-10 border-1 p20'>
@@ -137,9 +139,10 @@
               <div class='tab-btn' @click='choiceCampaigns("payout")' :class='{act:campaignsChoice === "payout"}'>Payout</div>
               <div class='tab-btn' @click='choiceCampaigns("cvr")' :class='{act:campaignsChoice === "cvr"}'>CVR</div>
             </div>
-            <div class='pt-20'>
+            <div class='pt-20' v-show='flag.campaigns'>
               <div class='campaignsReport' id='campaignsReport' style='width: 100%;height: 500px;'></div>
             </div>
+            <div v-show='!flag.campaigns' class='flex m30'>NO Data</div>
           </div>
         </div>
       </div>
@@ -260,7 +263,12 @@ console.log(power)
           country: [],
           campaignsOwner: []
         },
-        tableData: []
+        tableData: [],
+        flag: {
+          main: true,
+          country: true,
+          campaigns: true
+        }
       }
     },
     mounted () {
@@ -372,18 +380,18 @@ console.log(power)
           type: 'get',
           data: ajaxData,
           success: function (result) {
+            that.flag.country = false
             countryData.xAxis.data.splice(0)
-            countryData.series[0].data.splice(0)
+            countryData.series.map(function (ele) {
+              return ele.data.splice(0)
+            })
             if (result.status === 1) {
               if (result.data.length !== 0) {
+                that.flag.country = true
                 that.countryData = result.data
                 countryData.xAxis.data = result.data.name
                 countryData.series[0].data = result.data.fields
               }
-            } else {
-              countryData.series.map(function (ele) {
-                return ele.data.splice(0)
-              })
             }
             that.getReport(countryReport, countryData)
           }
@@ -406,26 +414,24 @@ console.log(power)
           data: ajaxData,
           success: function (result) {
             // console.log(result)
+            that.flag.campaigns = false
             campaignsData.xAxis.data.splice(0)
-            campaignsData.series.splice(0)
+            campaignsData.series.map(function (ele) {
+              return ele.data.splice(0)
+            })
             if (result.status === 1) {
               if (result.data.length !== 0) {
+                that.flag.campaigns = true
                 that.campaignsData = result.data
                 campaignsData.xAxis.data = result.data.day
-                if (result.data.data.length !== 0) {
-                  result.data.data.map(function (ele) {
-                    campaignsData.series.push({
-                      name: ele.name,
-                      type: 'line',
-                      data: ele.data
-                    })
+                result.data.data.map(function (ele) {
+                  campaignsData.series.push({
+                    name: ele.name,
+                    type: 'line',
+                    data: ele.data
                   })
-                }
+                })
               }
-            } else {
-              campaignsData.series.map(function (ele) {
-                return ele.data.splice(0)
-              })
             }
             that.getReport(campaignsReport, campaignsData)
           }
@@ -449,10 +455,12 @@ console.log(power)
           data: ajaxData,
           success: function (result) {
             // console.log(result)
+            that.flag.main = false
             mainData.xAxis.data.splice(0)
             mainData.series[0].data.splice(0)
             if (result.status === 1) {
               if (result.data.length !== 0) {
+                that.flag.main = true
                 that.mainData = result.data
                 mainData.xAxis.data = result.data.day
                 that.choiceMain('conversion')

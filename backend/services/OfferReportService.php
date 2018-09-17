@@ -1,9 +1,10 @@
 <?php
 namespace backend\services;
 
-use common\models\DemandOffers;
 use Yii;
+use common\models\DemandOffers;
 use common\models\OfferReporting;
+use common\models\User;
 
 class OfferReportService extends BaseService
 {
@@ -181,24 +182,40 @@ class OfferReportService extends BaseService
 
     }
 
-    public static function getOfferId()
+    public static function getOfferSearch()
     {
         try {
+
+            // offer campaigns
             $where = [];
             // 广告代理商
             if (self::isAdvertiserAgent()) {
                 $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";;
             }
-
             // 查询数据
             $result = DemandOffers::getData(['id', 'channel'], $where);
+            self::$res['data']['campaigns'] = [];
             if ($result) {
                 // offer id 组装
                 self::$res['status'] = 1;
                 foreach ($result as $k=>$v) {
-                    self::$res['data'][] = $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . $v['id'];
+                    self::$res['data']['campaigns'][] = $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . $v['id'];
                 }
             }
+
+            // country
+            self::$res['data']['country'] = array_column(self::getCountryData(['id', 'full_name as country_name'], ['id>0']), 'country_name', 'id');
+
+            // campaigns owner
+            self::$res['data']['campaigns_owner'] = [];
+            if (self::isSuperAdmin() || self::isAdmin()) {
+                $res = User::getData(['email','id'], ['group_id = 3']);
+                if ($res) {
+                    self::$res['data']['campaigns_owner'] = array_column($res, 'email', 'id');
+                }
+            }
+
+            //
         } catch (\Exception $e) {
             self::logs($e->getMessage());
             self::$res['info'] = 'No Data';

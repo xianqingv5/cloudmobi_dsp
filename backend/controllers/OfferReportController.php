@@ -34,10 +34,10 @@ class OfferReportController extends BaseController
         return $res;
     }
 
-    public function actionGetOfferId()
+    public function actionGetOfferSearch()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $res = OfferReportService::getOfferId();
+        $res = OfferReportService::getOfferSearch();
         return $res;
     }
 }

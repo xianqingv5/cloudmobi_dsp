@@ -83,15 +83,18 @@ class OfferReportService extends BaseService
         try {
             $where = self::getWhere();
             $result = OfferReporting::getData($fields, $where, 'country_id', $orderBy, 10, false);
-            self::$res['status'] = 1;
+
             $r = [];
             if ($result) {
+                self::$res['status'] = 1;
                 foreach ($result as $k=>$v) {
                     $r['name'][] = isset($country[$v['country_id']]) ? $country[$v['country_id']] : $country[0];
                     $r['fields'][] = (float)$v[$field];
                 }
 
                 self::$res['data'] = $r;
+            } else {
+                self::$res['info'] = 'No Data';
             }
         } catch (\Exception $e) {
             self::logs($e->getMessage());
@@ -117,8 +120,8 @@ class OfferReportService extends BaseService
 
             // 查询数据
             $where['offer_id'] = " offer_id in('" . implode("','", $top_offer_ids) . "')";
-            $result = OfferReporting::getData(['day', 'offer_id', self::$fieldArr[$field]], $where , 'day,offer_id');
-            self::$res['status'] = 1;
+
+            $result = OfferReporting::getData(['day', 'offer_id', self::$fieldArr[$field]], $where , 'day,offer_id', '', '', false);
 
             // 组装数据
             $r = [];
@@ -137,9 +140,11 @@ class OfferReportService extends BaseService
                         $r[$k]['data'][] = (float)$v;
                     }
                 }
-
+                self::$res['status'] = 1;
                 self::$res['data']['day'] = array_keys($default);
                 self::$res['data']['data'] = array_values($r);
+            } else {
+               self::$res['info'] = 'No Data';
             }
         } catch (\Exception $e) {
             self::logs($e->getMessage());

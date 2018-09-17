@@ -363,7 +363,7 @@ console.log(power)
           date: this.search.date,
           campaigns: this.search.campaigns,
           country: this.search.country,
-          campaigns: this.search.campaignsOwner,
+          campaigns_owner: this.search.campaignsOwner,
           field: this.countrisChoice
         }
         // country
@@ -373,10 +373,12 @@ console.log(power)
           data: ajaxData,
           success: function (result) {
             if (result.status === 1) {
-              countryData.series[0].data.splice(0)
-              that.countryData = result.data
-              countryData.xAxis.data = result.data.name
-              countryData.series[0].data = result.data.fields
+              if (result.data.length !== 0) {
+                countryData.series[0].data.splice(0)
+                that.countryData = result.data
+                countryData.xAxis.data = result.data.name
+                countryData.series[0].data = result.data.fields
+              }
             } else {
               countryData.series.map(function (ele) {
                 return ele.data.splice(0)
@@ -394,7 +396,7 @@ console.log(power)
           date: this.search.date,
           campaigns: this.search.campaigns,
           country: this.search.country,
-          campaigns: this.search.campaignsOwner,
+          campaigns_owner: this.search.campaignsOwner,
           field: this.campaignsChoice
         }
         $.ajax({
@@ -404,17 +406,19 @@ console.log(power)
           success: function (result) {
             // console.log(result)
             if (result.status === 1) {
-              campaignsData.series.splice(0)
-              that.campaignsData = result.data
-              campaignsData.xAxis.data = result.data.day
-              if (result.data.data.length !== 0) {
-                result.data.data.map(function (ele) {
-                  campaignsData.series.push({
-                    name: ele.name,
-                    type: 'line',
-                    data: ele.data
+              if (result.data.length !== 0) {
+                campaignsData.series.splice(0)
+                that.campaignsData = result.data
+                campaignsData.xAxis.data = result.data.day
+                if (result.data.data.length !== 0) {
+                  result.data.data.map(function (ele) {
+                    campaignsData.series.push({
+                      name: ele.name,
+                      type: 'line',
+                      data: ele.data
+                    })
                   })
-                })
+                }
               }
             } else {
               campaignsData.series.map(function (ele) {
@@ -435,7 +439,7 @@ console.log(power)
           date: this.search.date,
           campaigns: this.search.campaigns,
           country: this.search.country,
-          campaigns: this.search.campaignsOwner
+          campaigns_owner: this.search.campaignsOwner
         }
         $.ajax({
           url: '/offer-report/offer-report-data',

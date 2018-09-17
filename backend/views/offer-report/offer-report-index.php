@@ -155,9 +155,6 @@ console.log(power)
     },
     legend: {},
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
       containLabel: true
     },
     toolbox: {
@@ -181,22 +178,26 @@ console.log(power)
     ]
   }
   var countryData = {
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis'
+    },
+    grid: {
+      containLabel: true
+    },
     legend: {},
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
     xAxis: {
       data: [],
       position: 'bottom',
+      axisLabel: {  
+        interval:0,  
+        rotate:40  
+      }, 
     },
-    // axisLabel:{interval:0,
-    // //横轴信息全部显示    
-    // // rotate:-90,
-    // //-30度角倾斜显示
-    // formatter: function (value) {
-    //   //x轴的文字改为竖版显示
-    //   var str = value.split("")
-    //   return str.join("\n")
-    //   }
-    // },
     yAxis: {},
     series: [{
       type: 'bar',
@@ -208,9 +209,6 @@ console.log(power)
       trigger: 'axis'
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
       containLabel: true
     },
     toolbox: {
@@ -221,7 +219,11 @@ console.log(power)
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: []
+      data: [],
+      axisLabel: {  
+        interval:0,  
+        rotate:40  
+      }, 
     },
     yAxis: {
         type: 'value'

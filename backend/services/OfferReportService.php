@@ -164,7 +164,7 @@ class OfferReportService extends BaseService
         if (self::isAdvertiserAgent()) {
             $uid = Yii::$app->user->identity->id;
             $where['campaign_owner'] = "campaign_owner = '" . $uid . "'";
-        } else {
+        } else if (self::isSuperAdmin() || self::isAdmin()) {
             $campaign_owner = Yii::$app->request->get('campaignsOwner', []);
             if ($campaign_owner) {
                 $where['campaign_owner'] = "campaign_owner in ('" . implode(',',$campaign_owner) . "')";

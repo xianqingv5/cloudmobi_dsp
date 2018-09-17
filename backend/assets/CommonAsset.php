@@ -15,7 +15,7 @@ class CommonAsset extends AssetBundle
 
 	//css 文件数组
 	public $css = [
-		'plugin/element-ui@2.4.6/index.css',
+		'plugin/element-ui@2.4.7/index.css',
 		'css/base.css',
 		'css/common.css',
 	];
@@ -23,8 +23,8 @@ class CommonAsset extends AssetBundle
 	//js 文件数组
 	public $js = [
 		'js/vue.2.5.17.js',
-		'plugin/element-ui@2.4.6/index.js',
-		'plugin/element-ui@2.4.6/locale/en.js',
+		'plugin/element-ui@2.4.7/index.js',
+		'plugin/element-ui@2.4.7/locale/en.js',
 		'plugin/aws/aws-sdk-2.283.1.min.js',
 		'plugin/aws/app.js',
 		'js/base.js',

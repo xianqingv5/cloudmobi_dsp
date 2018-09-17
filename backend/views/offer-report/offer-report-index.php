@@ -155,9 +155,6 @@ console.log(power)
     },
     legend: {},
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
       containLabel: true
     },
     toolbox: {
@@ -171,7 +168,7 @@ console.log(power)
       data: []
     },
     yAxis: {
-        type: 'value'
+      type: 'value'
     },
     series: [
       {
@@ -181,15 +178,30 @@ console.log(power)
     ]
   }
   var countryData = {
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis'
+    },
+    grid: {
+      containLabel: true
+    },
     legend: {},
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
     xAxis: {
-        data: []
+      data: [],
+      position: 'bottom',
+      axisLabel: {  
+        interval:0,  
+        rotate:40  
+      }, 
     },
     yAxis: {},
     series: [{
-        type: 'bar',
-        data: []
+      type: 'bar',
+      data: []
     }]
   }
   var campaignsData = {
@@ -197,9 +209,6 @@ console.log(power)
       trigger: 'axis'
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
       containLabel: true
     },
     toolbox: {
@@ -210,7 +219,11 @@ console.log(power)
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: []
+      data: [],
+      axisLabel: {  
+        interval:0,  
+        rotate:40  
+      }, 
     },
     yAxis: {
         type: 'value'
@@ -255,6 +268,7 @@ console.log(power)
       mainReport = echarts.init(document.querySelector('#mainReport'))
       countryReport = echarts.init(document.querySelector('#countrisReport'))
       campaignsReport = echarts.init(document.querySelector('#campaignsReport'))
+      this.getConfig()
       this.initDate()
       this.initMainData()
       this.choiceCountris('conversion')
@@ -279,6 +293,50 @@ console.log(power)
       }
     },
     methods: {
+      // config
+      getConfig () {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer-report/get-offer-search',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            // console.log(result)
+            if (result.status === 1) {
+              var campaigns = result.data.campaigns
+              for (const key in campaigns) {
+                if (campaigns.hasOwnProperty(key)) {
+                  that.options.campaigns.push({
+                    value: key,
+                    label: campaigns[key]
+                  })
+                }
+              }
+              var country = result.data.country
+              for (const key in country) {
+                if (country.hasOwnProperty(key)) {
+                  that.options.country.push({
+                    value: key,
+                    label: country[key]
+                  })
+                }
+              }
+              var campaigns_owner = result.data.campaigns_owner
+              for (const key in campaigns_owner) {
+                if (campaigns_owner.hasOwnProperty(key)) {
+                  that.options.campaignsOwner.push({
+                    value: key,
+                    label: campaigns_owner[key]
+                  })
+                }
+              }
+            }
+          }
+        })
+      },
       // 初始化日期
       initDate () {
         var end = new Date()
@@ -288,6 +346,7 @@ console.log(power)
         this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
       },
       searchFun () {
+        console.log('search')
         this.initMainData()
         this.choiceCountris('conversion')
         this.choiceCampaigns('conversion')
@@ -314,11 +373,16 @@ console.log(power)
           data: ajaxData,
           success: function (result) {
             if (result.status === 1) {
+              countryData.series[0].data.splice(0)
               that.countryData = result.data
               countryData.xAxis.data = result.data.name
               countryData.series[0].data = result.data.fields
-              that.getReport(countryReport, countryData)
+            } else {
+              countryData.series.map(function (ele) {
+                return ele.data.splice(0)
+              })
             }
+            that.getReport(countryReport, countryData)
           }
         })
       },
@@ -338,20 +402,26 @@ console.log(power)
           type: 'get',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
+            // console.log(result)
             if (result.status === 1) {
+              campaignsData.series.splice(0)
               that.campaignsData = result.data
               campaignsData.xAxis.data = result.data.day
-              campaignsData.series.splice(0)
-              result.data.data.map(function (ele) {
-                campaignsData.series.push({
-                  name: ele.name,
-                  type: 'line',
-                  data: ele.data
+              if (result.data.data.length !== 0) {
+                result.data.data.map(function (ele) {
+                  campaignsData.series.push({
+                    name: ele.name,
+                    type: 'line',
+                    data: ele.data
+                  })
                 })
+              }
+            } else {
+              campaignsData.series.map(function (ele) {
+                return ele.data.splice(0)
               })
-              that.getReport(campaignsReport, campaignsData)
             }
+            that.getReport(campaignsReport, campaignsData)
           }
         })
       },
@@ -372,13 +442,15 @@ console.log(power)
           type: 'get',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
+            // console.log(result)
             if (result.status === 1) {
               if (result.data.length !== 0) {
                 that.mainData = result.data
                 mainData.xAxis.data = result.data.day
                 that.choiceMain('conversion')
               }
+            } else {
+              mainData.series[0].data.splice(0)
             }
           }
         })

@@ -314,18 +314,29 @@ console.log(power)
         })
       },
       choiceCampaigns (i) {
+        var that = this
         this.campaignsChoice = i
         // campaigns
         $.ajax({
           url: '/offer-report/offer-line',
           type: 'get',
+          data: {
+            field: that.campaignsChoice
+          },
           success: function (result) {
             console.log(result)
-            // if (result.status === 1) {
-            //   that.campaignsData = result.data
-            //   campaignsData.xAxis.data = result.data.name
-            //   that.choiceCountris('conversion')
-            // }
+             if (result.status === 1) {
+               that.campaignsData = result.data
+               campaignsData.xAxis.data = result.data.name
+               result.data.data.map(function (ele) {
+                 countryData.series.push({
+                   name: ele.name,
+                   type: 'line',
+                   data: ele.data
+                 })
+               })
+               that.getReport(campaignsReport, campaignsData)
+             }
           }
         })
       },

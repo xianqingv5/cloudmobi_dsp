@@ -66,7 +66,9 @@
               :filter-method="filterMethod"
               filter-placeholder="请输入权限名称"
               v-model="dialogData.choiceList"
-              :data="dialogData.list">
+              :data="dialogData.list"
+              :titles="['Source', 'Target']"
+              >
             </el-transfer>
           </div>
         </div>

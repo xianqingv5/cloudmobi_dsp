@@ -1,6 +1,7 @@
 <?php
 namespace backend\services;
 
+use common\models\DemandOffers;
 use Yii;
 use common\models\OfferReporting;
 
@@ -74,7 +75,7 @@ class OfferReportService extends BaseService
      */
     public static function getCountryTopBar()
     {
-        $field = Yii::$app->request->get('field', 'click');
+        $field = Yii::$app->request->get('field', 'conversion');
 
         $fields = ['country_id', self::$fieldArr[$field]];
         $orderBy = $field . ' DESC ';
@@ -105,7 +106,7 @@ class OfferReportService extends BaseService
     public static function getOfferTopLine()
     {
         try {
-            $field = Yii::$app->request->get('field', 'click');
+            $field = Yii::$app->request->get('field', 'conversion');
             $where = self::getWhere();
 
             // top 10 offer_id
@@ -178,6 +179,32 @@ class OfferReportService extends BaseService
 
         return $where;
 
+    }
+
+    public static function getOfferId()
+    {
+        try {
+            $where = [];
+            // 广告代理商
+            if (self::isAdvertiserAgent()) {
+                $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";;
+            }
+
+            // 查询数据
+            $result = DemandOffers::getData(['id', 'channel'], $where);
+            if ($result) {
+                // offer id 组装
+                self::$res['status'] = 1;
+                foreach ($result as $k=>$v) {
+                    self::$res['data'][] = $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . $v['id'];
+                }
+            }
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = 'No Data';
+        }
+
+        return self::$res;
     }
 
     /**

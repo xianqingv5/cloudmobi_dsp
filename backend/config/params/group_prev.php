@@ -28,5 +28,6 @@ return [
     'offer-report/offer-line' => 'offer report offer top 数据',
     'offer-report/country-top-bar' => 'offer report 国家top数据',
     'offer-report/offer-report-data' => 'offer report 大折线图和表格数据',
+    'offer-report/get-offer-id' => 'offer report 搜索下拉框中的offer id 获取',
 
 ];

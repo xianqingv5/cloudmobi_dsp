@@ -7,7 +7,6 @@
   </div>
   <div class='flex jcsb p30'>
     <h3>REPORT</h3>
-    <a href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
   </div>
   <div class='content'>
     <div class='contentBox'>
@@ -69,8 +68,8 @@
       </div>
       <div class='chartBox'>
         <div class='tabBox flex'>
-          <div class='tab-btn' @click='choiceMain("payout")' :class='{act:mainChoice === "payout"}'>Payout</div>
           <div class='tab-btn' @click='choiceMain("conversion")' :class='{act:mainChoice === "conversion"}'>Conversion</div>
+          <div class='tab-btn' @click='choiceMain("payout")' :class='{act:mainChoice === "payout"}'>Payout</div>
           <div class='tab-btn' @click='choiceMain("click")' :class='{act:mainChoice === "click"}'>Click</div>
           <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
@@ -81,7 +80,7 @@
       <!-- table -->
       <div class='reportTableBox'>
         <el-table
-          class='reportTable'
+          class='reportTable table-bordered'
           :data="judeTableData"
           style="width: 100%"
           :default-sort = "{prop: 'date', order: 'descending'}"
@@ -194,14 +193,8 @@ console.log(power)
     }]
   }
   var campaignsData = {
-    title: {
-      text: '折线图堆叠'
-    },
     tooltip: {
       trigger: 'axis'
-    },
-    legend: {
-      data:['邮件营销']
     },
     grid: {
       left: '3%',
@@ -239,7 +232,7 @@ console.log(power)
       return {
         power: power,
         csrf: '',
-        mainChoice: 'payout',
+        mainChoice: 'conversion',
         mainData: {},
         countrisChoice: 'conversion',
         campaignsChoice: 'conversion',
@@ -249,7 +242,7 @@ console.log(power)
           campaignsOwner: []
         },
         search: {
-          date: '',
+          date: [],
           campaigns: [],
           country: [],
           campaignsOwner: []
@@ -262,7 +255,8 @@ console.log(power)
       mainReport = echarts.init(document.querySelector('#mainReport'))
       countryReport = echarts.init(document.querySelector('#countrisReport'))
       campaignsReport = echarts.init(document.querySelector('#campaignsReport'))
-      this.initData()
+      this.initDate()
+      this.initMainData()
       this.choiceCountris('conversion')
       this.choiceCampaigns('conversion')
     },
@@ -285,8 +279,18 @@ console.log(power)
       }
     },
     methods: {
+      // 初始化日期
+      initDate () {
+        var end = new Date()
+        var start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
+        end.setTime(end.getTime())
+        this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+      },
       searchFun () {
-
+        this.initMainData()
+        this.choiceCountris('conversion')
+        this.choiceCampaigns('conversion')
       },
       choiceMain (i) {
         this.mainChoice = i
@@ -296,13 +300,18 @@ console.log(power)
       choiceCountris (i) {
         var that = this
         this.countrisChoice = i
+        var ajaxData = {
+          date: this.search.date,
+          campaigns: this.search.campaigns,
+          country: this.search.country,
+          campaigns: this.search.campaignsOwner,
+          field: this.countrisChoice
+        }
         // country
         $.ajax({
           url: '/offer-report/country-top-bar',
           type: 'get',
-          data: {
-            field: that.countrisChoice
-          },
+          data: ajaxData,
           success: function (result) {
             if (result.status === 1) {
               that.countryData = result.data
@@ -317,44 +326,59 @@ console.log(power)
         var that = this
         this.campaignsChoice = i
         // campaigns
+        var ajaxData = {
+          date: this.search.date,
+          campaigns: this.search.campaigns,
+          country: this.search.country,
+          campaigns: this.search.campaignsOwner,
+          field: this.campaignsChoice
+        }
         $.ajax({
           url: '/offer-report/offer-line',
           type: 'get',
-          data: {
-            field: that.campaignsChoice
-          },
+          data: ajaxData,
           success: function (result) {
             console.log(result)
-             if (result.status === 1) {
-               that.campaignsData = result.data
-               campaignsData.xAxis.data = result.data.name
-               result.data.data.map(function (ele) {
-                 countryData.series.push({
-                   name: ele.name,
-                   type: 'line',
-                   data: ele.data
-                 })
-               })
-               that.getReport(campaignsReport, campaignsData)
-             }
+            if (result.status === 1) {
+              that.campaignsData = result.data
+              campaignsData.xAxis.data = result.data.day
+              campaignsData.series.splice(0)
+              result.data.data.map(function (ele) {
+                campaignsData.series.push({
+                  name: ele.name,
+                  type: 'line',
+                  data: ele.data
+                })
+              })
+              that.getReport(campaignsReport, campaignsData)
+            }
           }
         })
       },
       formatter(row, column) {
         return row.address;
       },
-      initData () {
+      initMainData () {
         var that= this
         // mainReport
+        var ajaxData = {
+          date: this.search.date,
+          campaigns: this.search.campaigns,
+          country: this.search.country,
+          campaigns: this.search.campaignsOwner
+        }
         $.ajax({
           url: '/offer-report/offer-report-data',
           type: 'get',
+          data: ajaxData,
           success: function (result) {
-            // console.log(result)
+            console.log(result)
             if (result.status === 1) {
-              that.mainData = result.data
-              mainData.xAxis.data = result.data.day
-              that.choiceMain('payout')
+              if (result.data.length !== 0) {
+                that.mainData = result.data
+                mainData.xAxis.data = result.data.day
+                that.choiceMain('conversion')
+              }
             }
           }
         })

@@ -35,16 +35,16 @@ $offer_data = ['mn_offline594','mn_offline601','ym_9186915','ym_267920','ym_1258
                     $params['offer_id'] = $v;
                     $res = OfferReportingServices::getData($params);
 
-//                    if (empty($res)) {
-//                        echo $v . "--$val--没有拉取到数据\n";
-//                        echo " ------------------ 正在拉取 ------------------ \n";
-//                    } else {
-//                        foreach ($res as $key => $value)
-//                        {
-//                            $value['campaign_owner'] = 1;
-//                            array_push($info, $value);
-//                        }
-//                    }
+                    if (empty($res)) {
+                        echo $v . "--$val--没有拉取到数据\n";
+                        echo " ------------------ 正在拉取 ------------------ \n";
+                    } else {
+                        foreach ($res as $key => $value)
+                        {
+                            $value['campaign_owner'] = 1;
+                            array_push($info, $value);
+                        }
+                    }
                     $et = microtime(true);
                     echo "-耗时:" . ($et - $st) . "\n";
                 }

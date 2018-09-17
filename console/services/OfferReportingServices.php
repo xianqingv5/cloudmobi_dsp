@@ -6,6 +6,7 @@ use Yii;
 use common\models\OfferReporting;
 use common\models\DemandOffers;
 use common\models\Country;
+use yii\log\Logger;
 
 class OfferReportingServices
 {
@@ -33,7 +34,24 @@ class OfferReportingServices
      */
     public static function sendRequest($url)
     {
-        return file_get_contents($url);
+        $content = '';
+        //设置超时时间和方法
+        $opts = [
+            'http'  =>  [
+                'method'=>"GET",
+                'timeout'=>30,//单位秒
+            ],
+        ];
+
+        //设置尝试次数
+        $cnt=0;
+        while($cnt<3 && ($content=@file_get_contents($url, 0, stream_context_create($opts)))===FALSE)
+        {
+            echo "拉取数据失败。url:" . $url . "\n";
+            $cnt++;
+        }
+
+        return $content;
     }
 
     public static function insertData($data){
@@ -43,25 +61,27 @@ class OfferReportingServices
 
         $platform_type = \Yii::$app->params['PLATFORM_TYPE'];
 
-        foreach ($data as $k => $v){
-            $country = Country::getData(['id'],["short_name = '" . $v['country'] ."'"]);
-            $info[$k]['day'] = $v['date'];
-            $info[$k]['campaign_owner'] = $v['campaign_owner'];
-            $info[$k]['offer_id'] = $v['offer_id'];
-            $info[$k]['country_id'] = isset($country[0]['id']) ? $country[0]['id'] : 0;
-            $info[$k]['platform'] = isset($platform_type[strtolower($v['platform'])]) ? $platform_type[strtolower($v['platform'])] : 3;
-            $info[$k]['click'] = isset($v['click']) ? $v['click'] : 0;
-            $info[$k]['conversion'] = isset($v['conversion']) ? $v['conversion'] : 0;
-            $info[$k]['payout'] = isset($v['payout']) ? $v['payout'] : 0;
-            $info[$k]['create_date'] = $time;
-        }
+        try {
+            foreach ($data as $k => $v) {
+                $country = Country::getData(['id'], ["short_name = '" . $v['country'] . "'"]);
+                $info[$k]['day'] = $v['date'];
+                $info[$k]['campaign_owner'] = $v['campaign_owner'];
+                $info[$k]['offer_id'] = $v['offer_id'];
+                $info[$k]['country_id'] = isset($country[0]['id']) ? $country[0]['id'] : 0;
+                $info[$k]['platform'] = isset($platform_type[strtolower($v['platform'])]) ? $platform_type[strtolower($v['platform'])] : 3;
+                $info[$k]['click'] = isset($v['click']) ? $v['click'] : 0;
+                $info[$k]['conversion'] = isset($v['conversion']) ? $v['conversion'] : 0;
+                $info[$k]['payout'] = isset($v['payout']) ? $v['payout'] : 0;
+                $info[$k]['create_date'] = $time;
+            }
 
-        $data_chunk = array_chunk($info, 100);
-        foreach ($data_chunk as $key=>$val) {
-            $start = microtime(true);
-            $result = OfferReporting::batchInsertAndUpdate($val);
-            $end   = microtime(true);
-            echo ($result != false) ? " 第 " . ($key + 1) . " 页数据插入成功---耗时:" . ($end - $start) . "\n" : " 第 " . $key . " 页数据插入失败耗时:" . ($end - $start) . "\n";
+            $data_chunk = array_chunk($info, 100);
+            foreach ($data_chunk as $key => $val) {
+                $result = OfferReporting::batchInsertAndUpdate($val);
+            }
+        } catch (\Exception $e) {
+            echo $e . "\n";
+            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
         }
     }
 

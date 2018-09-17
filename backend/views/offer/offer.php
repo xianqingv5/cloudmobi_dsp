@@ -135,8 +135,8 @@
                   align="right"
                   unlink-panels
                   range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
+                  start-placeholder="Start"
+                  end-placeholder="End"
                   value-format="yyyy-MM-dd"
                   >
                 </el-date-picker>

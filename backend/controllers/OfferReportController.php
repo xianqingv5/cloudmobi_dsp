@@ -5,6 +5,7 @@ use common\models\OfferReporting;
 use Yii;
 use backend\services\OfferReportService;
 use yii\web\Response;
+use yii\web\ForbiddenHttpException;
 
 class OfferReportController extends BaseController
 {
@@ -31,6 +32,17 @@ class OfferReportController extends BaseController
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $res = OfferReportService::getOfferTopLine();
+        return $res;
+    }
+
+    public function actionGetOfferSearch()
+    {
+        if (!Yii::$app->request->isPost || !Yii::$app->request->isAjax) {
+            throw new ForbiddenHttpException();
+        }
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = OfferReportService::getOfferSearch();
         return $res;
     }
 }

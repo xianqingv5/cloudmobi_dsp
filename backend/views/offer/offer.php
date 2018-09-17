@@ -135,8 +135,8 @@
                   align="right"
                   unlink-panels
                   range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
+                  start-placeholder="Start"
+                  end-placeholder="End"
                   value-format="yyyy-MM-dd"
                   >
                 </el-date-picker>
@@ -949,7 +949,7 @@
         var end = new Date()
         var start = new Date()
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
-        end.setTime(start.getTime() + 3600 * 1000 * 24 * 14)
+        end.setTime(end.getTime() + 3600 * 1000 * 24 * 14)
         this.ruleForm.deliveryDate = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
       },
       // 初始化页面

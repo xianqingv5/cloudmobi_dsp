@@ -46,7 +46,7 @@ class OfferService extends BaseService
         // search campaign id
         $offer_id = Yii::$app->request->post('offer_id', '');
         if ($offer_id) {
-            $id =  (int)trim(strstr($offer_id, 'offline'), 'offline');
+            $id =  (int)trim(strstr($offer_id, Yii::$app->params['OFFER_ID_STRING']), Yii::$app->params['OFFER_ID_STRING']);
             $where['offer'] = "id = '" . $id . "'";
         }
         // search advertiser

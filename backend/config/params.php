@@ -31,6 +31,9 @@ return [
         'unknown'   =>3
     ],
 
+    // offer id 组装字符串
+    'OFFER_ID_STRING' => 'offlined',
+
     // 代理广告商群组
     'AGENT_ADVERTISERS' => 3,
 

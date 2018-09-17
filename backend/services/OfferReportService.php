@@ -11,9 +11,6 @@ class OfferReportService extends BaseService
     // 返回结果数组
     public static $res = ['status'=>0, 'info'=>'', 'data'=>[]];
 
-    // 查询分组
-    private static $groupBy = 'day';
-
     // 图表查询字段配置
     private static $fieldArr = [
         'click' => 'sum(click) as click',
@@ -40,7 +37,7 @@ class OfferReportService extends BaseService
                 'sum(payout) as payout',
                 'sum(conversion) / sum(click) as cvr'
             ];
-            $result = OfferReporting::getData($fields, $where, self::$groupBy);
+            $result = OfferReporting::getData($fields, $where, 'day');
             self::$res['status'] = 1;
 
             // 默认值填充
@@ -104,6 +101,10 @@ class OfferReportService extends BaseService
         return self::$res;
     }
 
+    /**
+     * offer top 10 折线图数据提供
+     * @return array
+     */
     public static function getOfferTopLine()
     {
         try {
@@ -111,16 +112,16 @@ class OfferReportService extends BaseService
             $where = self::getWhere();
 
             // top 10 offer_id
-            $offer_res = OfferReporting::getData(['offer_id', 'sum(' . $field . ') as f'], $where, 'offer_id', ' f desc', 10);
+            $offer_res = OfferReporting::getData(['offer_id', self::$fieldArr[$field]], $where, 'offer_id', $field . ' desc', 10);
             $top_offer_ids = !empty($offer_res) ? array_column($offer_res, 'offer_id') : [0];
 
             // 查询数据
             $where['offer_id'] = " offer_id in('" . implode("','", $top_offer_ids) . "')";
-            $result = OfferReporting::getData(['day', 'offer_id', 'sum(' . $field . ') as '. $field], $where , 'day,offer_id');
+            $result = OfferReporting::getData(['day', 'offer_id', self::$fieldArr[$field]], $where , 'day,offer_id');
             self::$res['status'] = 1;
 
             // 组装数据
-            $r = [];$day = [];
+            $r = [];
             if ($result) {
                 $offer_ids = array_unique(array_column($result, 'offer_id'));
                 $default = self::dataFillEmpty($offer_ids);
@@ -148,6 +149,10 @@ class OfferReportService extends BaseService
         return self::$res;
     }
 
+    /**
+     * 搜索条件
+     * @return mixed
+     */
     public static function getWhere()
     {
         // day
@@ -182,6 +187,10 @@ class OfferReportService extends BaseService
 
     }
 
+    /**
+     * offer report 搜索框数据获取
+     * @return array
+     */
     public static function getOfferSearch()
     {
         try {

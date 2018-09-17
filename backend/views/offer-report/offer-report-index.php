@@ -372,9 +372,10 @@ console.log(power)
           type: 'get',
           data: ajaxData,
           success: function (result) {
+            countryData.xAxis.data.splice(0)
+            countryData.series[0].data.splice(0)
             if (result.status === 1) {
               if (result.data.length !== 0) {
-                countryData.series[0].data.splice(0)
                 that.countryData = result.data
                 countryData.xAxis.data = result.data.name
                 countryData.series[0].data = result.data.fields
@@ -405,9 +406,10 @@ console.log(power)
           data: ajaxData,
           success: function (result) {
             // console.log(result)
+            campaignsData.xAxis.data.splice(0)
+            campaignsData.series.splice(0)
             if (result.status === 1) {
               if (result.data.length !== 0) {
-                campaignsData.series.splice(0)
                 that.campaignsData = result.data
                 campaignsData.xAxis.data = result.data.day
                 if (result.data.data.length !== 0) {
@@ -447,14 +449,14 @@ console.log(power)
           data: ajaxData,
           success: function (result) {
             // console.log(result)
+            mainData.xAxis.data.splice(0)
+            mainData.series[0].data.splice(0)
             if (result.status === 1) {
               if (result.data.length !== 0) {
                 that.mainData = result.data
                 mainData.xAxis.data = result.data.day
                 that.choiceMain('conversion')
               }
-            } else {
-              mainData.series[0].data.splice(0)
             }
           }
         })

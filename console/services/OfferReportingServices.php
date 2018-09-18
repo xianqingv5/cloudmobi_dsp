@@ -62,6 +62,7 @@ class OfferReportingServices
         $platform_type = \Yii::$app->params['PLATFORM_TYPE'];
 
         try {
+            $s = microtime(true);
             foreach ($data as $k => $v) {
                 $country = Country::getData(['id'], ["short_name = '" . $v['country'] . "'"]);
                 $info[$k]['day'] = $v['date'];
@@ -74,11 +75,16 @@ class OfferReportingServices
                 $info[$k]['payout'] = isset($v['payout']) ? $v['payout'] : 0;
                 $info[$k]['create_date'] = $time;
             }
+            $e = microtime(true);
+            echo "-------耗时:" . ($e - $s) . "\n";
 
+            $st = microtime(true);
             $data_chunk = array_chunk($info, 100);
             foreach ($data_chunk as $key => $val) {
                 $result = OfferReporting::batchInsertAndUpdate($val);
             }
+            $et = microtime(true);
+            echo "-------耗时:" . ($et - $st) . "\n";
         } catch (\Exception $e) {
             echo $e . "\n";
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);

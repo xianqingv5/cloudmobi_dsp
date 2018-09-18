@@ -41,6 +41,11 @@ class Advertiser extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function getDataById($id)
+    {
+        return static::findOne(['id' => $id]);
+    }
+
     /**
      * 查询数据
      * @param $fields

@@ -1,6 +1,5 @@
 <?php
 return [
-    'adminEmail' => 'admin@example.com',
-    'supportEmail' => 'support@example.com',
-    'user.passwordResetTokenExpire' => 3600,
+    // offer id 组装字符串
+    'OFFER_ID_STRING' => 'offlined',
 ];

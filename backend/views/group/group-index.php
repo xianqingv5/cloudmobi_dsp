@@ -5,10 +5,7 @@
       <el-breadcrumb-item>Index</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='p30 left'>
-    <h3>GROUP LIST</h3>
-  </div>
-  <div class='content'>
+  <div class='content mt-30'>
     <div class='contentBox'>
       <div class='flex jc-end mb-20'>
         <!-- <el-button type="primary" @click='showDialog("create")'>Create Group</el-button> -->

@@ -1,14 +1,12 @@
 <div class='app' data-type="<?php echo $type; ?>">
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item><a href="/offer/offer-index">User</a></el-breadcrumb-item>
-      <el-breadcrumb-item v-if='pageType === "create"'>Create</el-breadcrumb-item>
-      <el-breadcrumb-item v-if='pageType === "update"'>Update</el-breadcrumb-item>
+      <el-breadcrumb-item><a href="/offer/offer-index">Campaigns</a></el-breadcrumb-item>
+      <el-breadcrumb-item v-if='pageType === "create"'>Create New Campaigns</el-breadcrumb-item>
+      <el-breadcrumb-item v-if='pageType === "update"'>Edit Campaigns</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='flex jcsb p30'>
-    <h3 v-if='pageType === "create"'>New Campaign</h3>
-    <h3 v-if='pageType === "update"'>Edit Campaign</h3>
+  <div class='flex jc-end p30'>
     <div>
       <!-- <el-button  @click='resetForm("ruleForm")'>Reset</el-button> -->
       <el-button type="primary" @click='submitForm("ruleForm")'>Save</el-button>
@@ -24,6 +22,9 @@
             <h5>Campaign Basic Info</h5>
           </div>
           <div class='content-con flex column'>
+            <el-form-item v-if='pageType === "update"' label="Offer ID:" prop="offerID">
+              <div class='form-one' v-text='offerID'></div>
+            </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
               <el-select class='form-one' :disabled='groupID === "3" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
@@ -245,7 +246,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-show='showCountry' label="select Country" prop="country">
+            <el-form-item vs-show='showCountry' label="select Country" prop="country">
               <el-select :disabled='judePowerOperate' class='form-one' multiple filterable 
                 v-model="ruleForm.country" clearable placeholder="">
                 <el-option
@@ -362,7 +363,7 @@
   var spaceReg = new RegExp('\\s', 'g')
   // 
   var ruleLanguagePackage = {
-    required: '此项必填',
+    required: "This can't be empty",
     shouldNumber: '必须为数字',
     notWWW: '不是正确的网址',
     notSpace: '网址有空格',
@@ -391,6 +392,7 @@
         var vmPlatform = null
         var judeFlag = value.match(spaceReg)
         console.log(judeFlag)
+        callback()
         if (judeFlag === null) {
           console.log('没有空格')
           if (regHref.test(value)) {
@@ -408,31 +410,32 @@
                 vm.messageVisible = true
                 callback()
               }
-              if (vmPlatform === vm.ruleForm.platform) {
-                if (platform) {
-                  vm.judeHref(platform, value, function (flag) {
-                    if (flag) {
-                      callback()
-                    } else {
-                      // 没有查询到商店
-                      console.log('没有查询到商店')
-                      callback(new Error(ruleLanguagePackage.notStore))
-                    }
-                    vm.dialogVisible = true
-                  })
+              if (vmPlatform) {
+                if (vmPlatform === vm.ruleForm.platform) {
+                  if (platform) {
+                    vm.judeHref(platform, value, function (flag) {
+                      if (flag) {
+                        callback()
+                      } else {
+                        console.log('没有查询到商店')
+                        callback(new Error(ruleLanguagePackage.notStore))
+                      }
+                      vm.dialogVisible = true
+                    })
+                  }
+                } else {
+                  console.log('与所填平台不符')
+                  callback(new Error(ruleLanguagePackage.notEqualToPlatform))
                 }
               } else {
-                // 与所填平台不符
-                console.log('与所填平台不符')
-                callback(new Error(ruleLanguagePackage.notEqualToPlatform))
+                console.log('是网址但不是苹果或者安卓')
+                callback()
               }
             } else {
-              // 应该填写平台
               console.log('应该填写平台')
               callback(new Error(ruleLanguagePackage.shouldInputPlatform))
             }
           } else {
-            // 不是网址
             console.log('不是网址')
             callback(new Error(ruleLanguagePackage.notWWW))
           }
@@ -1377,7 +1380,8 @@
           min_os_version: that.ruleForm.minOSversion,
           network_environment: that.ruleForm.networkStatus,
           country_type: that.ruleForm.countryType,
-          country: that.ruleForm.country,
+          // 这里是个坑
+          country: JSON.parse(JSON.stringify(that.ruleForm.country)),
           // 5
           icon: that.ruleForm.iconList,
           image: that.ruleForm.imageList,

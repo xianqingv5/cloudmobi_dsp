@@ -42,7 +42,7 @@ use yii\helpers\Url;
         </div>
       </div> -->
     </li>
-    <li>
+    <li class="<?php echo $this->context->id == 'report' ? 'act' : ''; ?>">
       <!-- title -->
       <a class='sidebar-title flex jcsb' href='<?php echo Url::to('/offer-report/offer-report-index') ?>'>
         <div class='flex'>

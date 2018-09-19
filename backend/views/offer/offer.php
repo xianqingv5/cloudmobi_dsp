@@ -122,7 +122,7 @@
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">
-                <el-radio label="0">OFF</el-radio>
+                <el-radio label="2">OFF</el-radio>
                 <el-radio label="1">ON</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -554,7 +554,7 @@
           name: '',
           category: '',
           trackingUrl: '',
-          schedule: '0',
+          schedule: '2',
           deliveryDate: [],
           deliveryWeek: [],
           deliveryHour: [],

@@ -66,6 +66,7 @@ class OfferReportingServices
 
         try {
 //            $s = microtime(true);
+            $info = [];
             foreach ($data as $k => $v) {
                 $country = Country::getData(['id'], ["short_name = '" . $v['country'] . "'"]);
                 $info[$k]['day'] = $v['date'];

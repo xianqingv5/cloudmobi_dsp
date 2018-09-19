@@ -150,11 +150,11 @@ class BaseService
         $post_data  = Yii::$app->request->post();
 
         // 去掉敏感信息
-        if ( isset($post_data['User']['new_password']) ) {
-            unset($post_data['User']['new_password']);
+        if ( isset($post_data['password']) ) {
+            unset($post_data['password']);
         }
-        if ( isset($post_data['User']['password']) ) {
-            unset($post_data['User']['password']);
+        if ( isset($post_data['check_password']) ) {
+            unset($post_data['check_password']);
         }
         if ( isset($post_data['LoginForm']['password']) ) {
             unset($post_data['LoginForm']['password']);

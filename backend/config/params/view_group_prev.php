@@ -22,9 +22,11 @@ return [
         // offer update 页面
         'offer-update-info' => ['show' => true,'operate' => true],
 
-        // 报表页面 查询用户数据
-        'offer-report' => [
+        // 报表页面
+        'offer-report->index' => [
+            // 用户搜索
             'campaigns_owner' => ['show' => true,'operate' => true],
+            // 是否显示收入
             'payout' => ['show' => true,'operate' => true],
         ],
     ],
@@ -46,8 +48,8 @@ return [
         // offer update 页面
         'offer-update-info' => ['show' => true,'operate' => true],
 
-        // 报表页面 查询用户数据
-        'offer-report' => [
+        // 报表页面
+        'offer-report->index' => [
             'campaigns_owner' => ['show' => true,'operate' => true],
             'payout' => ['show' => true,'operate' => true],
         ],
@@ -70,8 +72,8 @@ return [
         // offer update 页面
         'offer-update-info' => ['show' => true,'operate' => false],
 
-        // 报表页面 查询用户数据
-        'offer-report' => [
+        // 报表页面
+        'offer-report-index' => [
             'campaigns_owner' => ['show' => false,'operate' => false],
             'payout' => ['show' => false,'operate' => false],
         ],

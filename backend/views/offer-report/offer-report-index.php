@@ -149,8 +149,9 @@
   </div>
 </div>
 <script>
-var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
+  var power = JSON.parse('<?= $this->params['view_group'] ?>')
+  console.log(power)
+  var colorArr = ['#6cb8ff', '#161616', '#65e100', '#cf23de', '#ffc000']
   var mainData = {
     tooltip: {
       trigger: 'axis'
@@ -255,7 +256,7 @@ console.log(power)
       bottom: '35'
     },
     legend: {
-      data:[]
+      
     },
     toolbox: {
       feature: {
@@ -283,14 +284,7 @@ console.log(power)
         }
       },
     },
-    series: [
-      {
-        name:'邮件营销',
-        type:'line',
-        stack: '总量',
-        data:[]
-      }
-    ]
+    series: []
   }
   var mainReport, countryReport, campaignsReport
   // 
@@ -484,7 +478,6 @@ console.log(power)
             // console.log(result)
             that.flag.campaigns = false
             campaignsData.xAxis.data.splice(0)
-            campaignsData.legend.data.splice(0)
             campaignsData.series.map(function (ele) {
               return ele.data.splice(0)
             })
@@ -493,13 +486,16 @@ console.log(power)
                 that.flag.campaigns = true
                 that.campaignsData = result.data
                 campaignsData.xAxis.data = result.data.day
-                result.data.data.map(function (ele) {
+                result.data.data.map(function (ele, i) {
                   campaignsData.series.push({
                     name: ele.name,
                     type: 'line',
-                    data: ele.data
+                    data: ele.data,
+                    lineStyle: {
+                      color: colorArr[i]
+                    },
+                    color: colorArr[i],
                   })
-                  campaignsData.legend.data.push(ele.name)
                 })
               }
             }

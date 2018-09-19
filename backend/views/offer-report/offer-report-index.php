@@ -78,6 +78,7 @@
       <div class='reportTableBox'>
         <el-table
           border
+          height='500'
           class='reportTable'
           :data="judeTableData"
           style="width: 100%"
@@ -156,7 +157,11 @@ console.log(power)
     },
     legend: {},
     grid: {
-      containLabel: true
+      containLabel: true,
+      left: '2%',
+      top: '10',
+      right: '5%',
+      bottom: '10'
     },
     toolbox: {
       feature: {
@@ -188,8 +193,14 @@ console.log(power)
     },
     grid: {
       containLabel: true,
+      left: '2%',
+      top: '60',
+      right: '5%',
+      bottom: '0'
     },
-    legend: {},
+    legend: {
+      data:[]
+    },
     toolbox: {
       feature: {
         // saveAsImage: {}
@@ -218,6 +229,12 @@ console.log(power)
     },
     grid: {
       containLabel: true,
+      left: '2%',
+      right: '5%',
+      bottom: '35'
+    },
+    legend: {
+      data:[]
     },
     toolbox: {
       feature: {
@@ -436,6 +453,7 @@ console.log(power)
             // console.log(result)
             that.flag.campaigns = false
             campaignsData.xAxis.data.splice(0)
+            campaignsData.legend.data.splice(0)
             campaignsData.series.map(function (ele) {
               return ele.data.splice(0)
             })
@@ -450,6 +468,7 @@ console.log(power)
                     type: 'line',
                     data: ele.data
                   })
+                  campaignsData.legend.data.push(ele.name)
                 })
               }
             }
@@ -511,7 +530,7 @@ console.log(power)
   }
   .conBox{
     width:  100%;
-    padding: 20px;
+    padding: 20px 0;
     border: 1px solid #dcdfe6;
     border-top: 0;
   }

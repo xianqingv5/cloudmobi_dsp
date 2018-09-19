@@ -7,7 +7,7 @@ use yii\helpers\Url;
     <img src="/images/new_login_logo.png" alt="">
   </a>
   <div class='flex'>
-    <a class='flex' href="">
+    <a class='flex'>
       <span><?php echo Yii::$app->user->identity->email?></span>
       <span class='userIcon'>
         <svg class="icon" aria-hidden="true">

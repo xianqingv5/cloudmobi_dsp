@@ -6,7 +6,7 @@
   </div>
   <div class='content mt-30'>
     <div class='contentBox'>
-      <div class='searchBox flex jcsb mb-20'>
+      <div class='searchBox w100 flex jcsb mb-20'>
         <div>
           <div class='mb-20'>
             <h4>Date Range</h4>
@@ -48,7 +48,7 @@
             </el-option>
           </el-select>
         </div>
-        <div>
+        <div v-if='power.campaigns_owner.show'>
           <div class='mb-20'>
             <h4>Campaigns Owner</h4>
           </div>
@@ -65,7 +65,7 @@
       <div class='chartBox'>
         <div class='tabBox flex'>
           <div class='tab-btn' @click='choiceMain("conversion")' :class='{act:mainChoice === "conversion"}'>Conversion</div>
-          <div class='tab-btn' @click='choiceMain("payout")' :class='{act:mainChoice === "payout"}'>Payout</div>
+          <div class='tab-btn' v-if='power.payout.show' @click='choiceMain("payout")' :class='{act:mainChoice === "payout"}'>Payout</div>
           <div class='tab-btn' @click='choiceMain("click")' :class='{act:mainChoice === "click"}'>Click</div>
           <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
@@ -77,7 +77,8 @@
       <!-- table -->
       <div class='reportTableBox'>
         <el-table
-          class='reportTable table-bordered'
+          border
+          class='reportTable'
           :data="judeTableData"
           style="width: 100%"
           :default-sort = "{prop: 'date', order: 'descending'}"
@@ -88,6 +89,7 @@
             sortable>
           </el-table-column>
           <el-table-column
+            v-if='power.payout.show'
             prop="payout"
             label="Payout"
             sortable>
@@ -116,7 +118,7 @@
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
               <div class='tab-btn' @click='choiceCountris("conversion")' :class='{act:countrisChoice === "conversion"}'>Conversion</div>
-              <div class='tab-btn' @click='choiceCountris("payout")' :class='{act:countrisChoice === "payout"}'>payout</div>
+              <div class='tab-btn' v-if='power.payout.show' @click='choiceCountris("payout")' :class='{act:countrisChoice === "payout"}'>payout</div>
               <div class='tab-btn' @click='choiceCountris("click")' :class='{act:countrisChoice === "click"}'>Click</div>
               <div class='tab-btn' @click='choiceCountris("cvr")' :class='{act:countrisChoice === "cvr"}'>CVR</div>
             </div>
@@ -131,8 +133,8 @@
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
               <div class='tab-btn' @click='choiceCampaigns("conversion")' :class='{act:campaignsChoice === "conversion"}'>Conversion</div>
+              <div class='tab-btn' v-if='power.payout.show' @click='choiceCampaigns("payout")' :class='{act:campaignsChoice === "payout"}'>Payout</div>
               <div class='tab-btn' @click='choiceCampaigns("click")' :class='{act:campaignsChoice === "click"}'>Click</div>
-              <div class='tab-btn' @click='choiceCampaigns("payout")' :class='{act:campaignsChoice === "payout"}'>Payout</div>
               <div class='tab-btn' @click='choiceCampaigns("cvr")' :class='{act:campaignsChoice === "cvr"}'>CVR</div>
             </div>
             <div class='pt-20' v-show='flag.campaigns'>

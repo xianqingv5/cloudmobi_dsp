@@ -783,7 +783,16 @@
       }
       this.$watch('ruleForm.platform', function (newVal, oldVal) {
         this.$refs['ruleForm'].validateField('storeUrl')
-        
+        // android
+        if (newVal === '1') {
+          that.ruleForm.deviceType = 'unlimited'
+          that.ruleForm.minOSversion = '4.1'
+        }
+        // ios
+        if (newVal === '2') {
+          that.ruleForm.deviceType = 'unlimited'
+          that.ruleForm.minOSversion = '6.0'
+        }
       }, {
         deep: false
       })

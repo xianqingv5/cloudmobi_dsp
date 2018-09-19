@@ -23,7 +23,7 @@
           </div>
           <div class='content-con flex column'>
             <el-form-item v-if='pageType === "update"' label="Offer ID:" prop="offerID">
-              <div class='form-one' v-text='offerID'></div>
+              <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
               <el-select class='form-one' :disabled='groupID === "3" || judePowerOperate'
@@ -483,6 +483,7 @@
         requestUid: "<?= $this->params['request_uid'] ?>",
         groupID: "<?= $this->params['group_id'] ?>",
         offerID: "<?php echo $offer_id; ?>",
+        showOfferID: null,
         pageType: "<?php echo $type; ?>",
         channel: null,
         messageVisible: false,
@@ -820,6 +821,7 @@
             data: ajaxData,
             type: 'post',
             success: function (result) {
+              that.showOfferID = result.data.show_offer_id
               that.channel = result.data.channel
               // 1
               that.ruleForm.campaignOwner = result.data.campaign_owner

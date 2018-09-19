@@ -85,6 +85,8 @@ class OfferService extends BaseService
         }
 
         self::$res['data'] = $offer[0];
+        // 页面显示offer id 组装
+        self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
 
         // 获取offer 素材
         $offer_file = DemandOffersCreatives::getData(['id', 'url', 'mime_type', 'width', 'height', 'size', 'type'], ["demand_offer_id='" . $offer_id . "'"]);

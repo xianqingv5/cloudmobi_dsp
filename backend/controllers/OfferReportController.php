@@ -58,9 +58,9 @@ class OfferReportController extends BaseController
      */
     public function actionGetOfferSearch()
     {
-        if (!Yii::$app->request->isPost || !Yii::$app->request->isAjax) {
-            throw new ForbiddenHttpException();
-        }
+//        if (!Yii::$app->request->isPost || !Yii::$app->request->isAjax) {
+//            throw new ForbiddenHttpException();
+//        }
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         $res = OfferReportService::getOfferSearch();

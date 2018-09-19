@@ -114,8 +114,8 @@ class OfferReportService extends BaseService
             $field = Yii::$app->request->get('field', 'conversion');
             $where = self::getWhere();
 
-            // top 10 offer_id
-            $offer_res = OfferReporting::getData(['offer_id', self::$fieldArr[$field]], $where, 'offer_id', $field . ' desc', 10);
+            // top 5 offer_id
+            $offer_res = OfferReporting::getData(['offer_id', self::$fieldArr[$field]], $where, 'offer_id', $field . ' desc', 5);
             $top_offer_ids = !empty($offer_res) ? array_column($offer_res, 'offer_id') : [0];
 
             // 查询数据

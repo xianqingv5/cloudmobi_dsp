@@ -187,7 +187,8 @@ class OfferService extends BaseService
 
         } catch (\Exception $e) {
             self::logs($e->getMessage());
-            self::$res['info'] = 'offer update fail.';
+            //self::$res['info'] = 'offer update fail.';
+            self::$res['info'] = $e->getMessage();
             $transaction->rollBack();
         }
 

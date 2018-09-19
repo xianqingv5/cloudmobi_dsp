@@ -2,18 +2,18 @@
 return [
     // 权限组
     'GROUP_CONF' => [
-        '1' => 'super_admin',
-        '2' => 'admin',
-        '3' => 'ad_dl', // 广告位代理商
-        '4' => 'advs', // 广告主
+        '1' => 'dev',
+        '2' => 'operation manager',
+        '3' => 'advertiser agent', // 广告位代理商
+        '4' => 'advertiser', // 广告主
     ],
 
     // 权限组名映射id
     'MAPPING_NAME_TO_GROUP_ID' => [
-        'super_admin'   => 1,
-        'admin'         => 2,
-        'ad_dl'         => 3,
-        'advs'          => 4,
+        'dev'               => 1,
+        'operation manager' => 2,
+        'advertiser agent'  => 3,
+        'advertiser'        => 4,
     ],
 
     // 区分不同的组的home_url

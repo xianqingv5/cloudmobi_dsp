@@ -23,7 +23,7 @@ return [
         'offer-update-info' => ['show' => true,'operate' => true],
 
         // 报表页面
-        'offer-report->index' => [
+        'offer-report-index' => [
             // 用户搜索
             'campaigns_owner' => ['show' => true,'operate' => true],
             // 是否显示收入
@@ -49,7 +49,7 @@ return [
         'offer-update-info' => ['show' => true,'operate' => true],
 
         // 报表页面
-        'offer-report->index' => [
+        'offer-report-index' => [
             'campaigns_owner' => ['show' => true,'operate' => true],
             'payout' => ['show' => true,'operate' => true],
         ],

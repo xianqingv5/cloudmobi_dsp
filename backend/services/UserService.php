@@ -220,10 +220,9 @@ class UserService extends BaseService
         $where = ['1=1'];
         switch ($group_id) {
             case 1:// 群组id
-               $where['id'] = 'id !=1';
+               $where['id'] = 'id in(2,3)';
                 break;
             case 2:
-               //$where['id'] = 'id not in(1,2)';
                $where['id'] = 'id in(3)';
                 break;
             case 3:

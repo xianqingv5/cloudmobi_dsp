@@ -21,8 +21,10 @@ return [
         ],
         // offer update 页面
         'offer-update-info' => ['show' => true,'operate' => true],
-        'user-index' => [
 
+        // 报表页面 查询用户数据
+        'offer-report' => [
+            'campaigns_owner' => ['show' => true,'operate' => true],
         ],
     ],
     // admin
@@ -42,6 +44,11 @@ return [
         ],
         // offer update 页面
         'offer-update-info' => ['show' => true,'operate' => true],
+
+        // 报表页面 查询用户数据
+        'offer-report' => [
+            'campaigns_owner' => ['show' => true,'operate' => true],
+        ],
     ],
     // advertiser agent
     '3' => [
@@ -60,5 +67,10 @@ return [
         ],
         // offer update 页面
         'offer-update-info' => ['show' => true,'operate' => false],
+
+        // 报表页面 查询用户数据
+        'offer-report' => [
+            'campaigns_owner' => ['show' => false,'operate' => false],
+        ],
     ]
 ];

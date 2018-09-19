@@ -10,8 +10,8 @@ use yii\log\Logger;
 
 class OfferReportingServices
 {
-//    CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';
-    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';
+    CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';//内网
+//    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';//外网
 
     /**
      * 拉取数据
@@ -43,6 +43,7 @@ class OfferReportingServices
             ],
         ];
 
+        $st = microtime(true);
         //设置尝试次数
         $cnt=0;
         while($cnt<3 && ($content=@file_get_contents($url, 0, stream_context_create($opts)))===FALSE)
@@ -50,6 +51,8 @@ class OfferReportingServices
             echo "拉取数据失败。url:" . $url . "\n";
             $cnt++;
         }
+        $et = microtime(true);
+        echo "-耗时:" . ($et - $st) . "\n";
 
         return $content;
     }
@@ -62,7 +65,7 @@ class OfferReportingServices
         $platform_type = \Yii::$app->params['PLATFORM_TYPE'];
 
         try {
-            $s = microtime(true);
+//            $s = microtime(true);
             foreach ($data as $k => $v) {
                 $country = Country::getData(['id'], ["short_name = '" . $v['country'] . "'"]);
                 $info[$k]['day'] = $v['date'];
@@ -75,16 +78,16 @@ class OfferReportingServices
                 $info[$k]['payout'] = isset($v['payout']) ? $v['payout'] : 0;
                 $info[$k]['create_date'] = $time;
             }
-            $e = microtime(true);
-            echo "-------耗时:" . ($e - $s) . "\n";
+//            $e = microtime(true);
+//            echo "-------耗时:" . ($e - $s) . "\n";
 
-            $st = microtime(true);
+//            $st = microtime(true);
             $data_chunk = array_chunk($info, 100);
             foreach ($data_chunk as $key => $val) {
                 $result = OfferReporting::batchInsertAndUpdate($val);
             }
-            $et = microtime(true);
-            echo "-------耗时:" . ($et - $st) . "\n";
+//            $et = microtime(true);
+//            echo "-------耗时:" . ($et - $st) . "\n";
         } catch (\Exception $e) {
             echo $e . "\n";
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
@@ -93,7 +96,7 @@ class OfferReportingServices
 
     public static function getOfferId($offer_id,$user_id){
         $fields = ['id','channel','campaign_owner'];
-
+        $offer_str = Yii::$app->params['OFFER_ID_STRING'];
         $where = [];
         if($offer_id){
             $where[] = "id = '". $offer_id . "'";

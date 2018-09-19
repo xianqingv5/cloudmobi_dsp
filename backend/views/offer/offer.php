@@ -554,7 +554,7 @@
           name: '',
           category: '',
           trackingUrl: '',
-          schedule: '',
+          schedule: '0',
           deliveryDate: [],
           deliveryWeek: [],
           deliveryHour: [],
@@ -567,7 +567,7 @@
           deviceType: '',
           specificDevice: [],
           minOSversion: '',
-          networkStatus: '',
+          networkStatus: '1',
           countryType: '',
           country: [],
           // 5
@@ -783,6 +783,7 @@
       }
       this.$watch('ruleForm.platform', function (newVal, oldVal) {
         this.$refs['ruleForm'].validateField('storeUrl')
+        
       }, {
         deep: false
       })
@@ -840,8 +841,12 @@
               deliveryDate.push(result.data.delivery_start_day)
               deliveryDate.push(result.data.delivery_end_day)
               that.ruleForm.deliveryDate = deliveryDate
-              that.ruleForm.deliveryWeek = JSON.parse(result.data.delivery_week)
-              that.ruleForm.deliveryHour = JSON.parse(result.data.delivery_hour)
+              if (result.data.delivery_week !== '""') {
+                that.ruleForm.deliveryWeek = JSON.parse(result.data.delivery_week)
+              }
+              if (result.data.delivery_hour !== '""') {
+                that.ruleForm.deliveryHour = JSON.parse(result.data.delivery_hour)
+              }
               that.ruleForm.comment = result.data.comment
               // 3
               that.ruleForm.payout = Number(result.data.payout)

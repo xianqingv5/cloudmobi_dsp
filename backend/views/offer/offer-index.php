@@ -63,7 +63,7 @@
         </thead>
         <tbody is='transition-group' name='list'>
           <tr v-for='(item, index) in list' :key='index'>
-            <td v-text='item.channel+"_offlined"+item.id'></td>
+            <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
             <td>
@@ -90,15 +90,15 @@
             </td>
             <td>
               <div class='flex jc-around'>
-                <a :href="'/offer-report/offer-report-index?offer_id=' + item.id">
+                <a :href="'/offer-report/offer-report-index?offer_id=' + item.show_offer_id">
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
                 </a>
-                <a v-if='power.offer_update.show' :href="'/offer/offer-update-info?offer_id=' + item.id">
+                <a v-if='power.offer_update.show' :href="'/offer/offer-update-info?offer_id=' + item.show_offer_id">
                   <span class='icon el-icon-edit'></span>
                 </a>
-                <a v-if='power.offer_see.show' :href="'/offer/offer-update-info?offer_id=' + item.id">
+                <a v-if='power.offer_see.show' :href="'/offer/offer-update-info?offer_id=' + item.show_offer_id">
                   <span class='icon el-icon-view'></span>
                 </a>
               </div>

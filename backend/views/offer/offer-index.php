@@ -1,12 +1,11 @@
 <div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item><a href="/offer/offer-index">Offer</a></el-breadcrumb-item>
-      <el-breadcrumb-item>Index</el-breadcrumb-item>
+      <el-breadcrumb-item><a href="/offer/offer-index">Campaigns</a></el-breadcrumb-item>
+      <el-breadcrumb-item>Campaign List</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='flex jcsb p30'>
-    <h3>CAMPAIGNS</h3>
+  <div class='flex jc-end p30'>
     <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
   </div>
   <div class='content'>
@@ -64,7 +63,7 @@
         </thead>
         <tbody is='transition-group' name='list'>
           <tr v-for='(item, index) in list' :key='index'>
-            <td v-text='item.channel+"_offline"+item.id'></td>
+            <td v-text='item.channel+"_offlined"+item.id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
             <td>
@@ -146,7 +145,7 @@ console.log(power)
         this.changeStatus(item.status, offerID)
       },
       searchFun () {
-
+        console.log('search')
         this.getList()
       },
       getList () {

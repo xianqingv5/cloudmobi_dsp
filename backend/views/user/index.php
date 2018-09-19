@@ -1,14 +1,10 @@
 <div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/user/user-index' }">User</el-breadcrumb-item>
       <el-breadcrumb-item>Account Management</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='p30 left'>
-    <h3>Account Management</h3>
-  </div>
-  <div class='content'>
+  <div class='content mt-30'>
     <div class='contentBox'>
       <div class='flex jc-btween mb-20'>
         <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
@@ -56,6 +52,7 @@
       </table>
       <!-- dialog -->
       <el-dialog
+      :close-on-click-modal='false'
       :title='dialogBus.title'
       :visible.sync="dialogVisible">
         <div class='flex column'>
@@ -170,8 +167,8 @@
         },
         rules: {
           email: [
-            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] },
+            { required: true, message: "This can't be empty", trigger: 'blur' },
+            { type: 'email', message: 'Please enter a valid email address', trigger: ['blur', 'change'] },
             { required: true, validator: validateEmail, trigger: ['blur', 'change'] }
           ],
           name: [

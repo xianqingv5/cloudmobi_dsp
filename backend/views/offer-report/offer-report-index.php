@@ -1,14 +1,10 @@
 <div class='app'>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item><a href="/offer/offer-index">Offer</a></el-breadcrumb-item>
-      <el-breadcrumb-item>Index</el-breadcrumb-item>
+      <el-breadcrumb-item>Report</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='flex jcsb p30'>
-    <h3>REPORT</h3>
-  </div>
-  <div class='content'>
+  <div class='content mt-30'>
     <div class='contentBox'>
       <div class='searchBox flex jcsb mb-20'>
         <div>
@@ -131,7 +127,7 @@
           </div>
         </div>
         <div class='col-auto-12 ml-10 border-1 p20'>
-          <h4>TOP 10 Campaigns</h4>
+          <h4>TOP 5 Campaigns</h4>
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
               <div class='tab-btn' @click='choiceCampaigns("conversion")' :class='{act:campaignsChoice === "conversion"}'>Conversion</div>
@@ -162,7 +158,7 @@ console.log(power)
     },
     toolbox: {
       feature: {
-        saveAsImage: {}
+        // saveAsImage: {}
       }
     },
     xAxis: {
@@ -176,7 +172,11 @@ console.log(power)
     series: [
       {
         type:'line',
-        data:[]
+        data:[],
+        color: "#409EFF",
+        lineStyle:{
+          color:'#409EFF'
+        }
       }
     ]
   }
@@ -185,26 +185,29 @@ console.log(power)
       trigger: 'axis'
     },
     grid: {
-      containLabel: true
+      containLabel: true,
     },
     legend: {},
     toolbox: {
       feature: {
-        saveAsImage: {}
+        // saveAsImage: {}
       }
     },
     xAxis: {
       data: [],
       position: 'bottom',
-      axisLabel: {  
-        interval:0,  
+      axisLabel: { 
         rotate:40  
       }, 
     },
     yAxis: {},
     series: [{
       type: 'bar',
-      data: []
+      data: [],
+      color: "#409EFF",
+      lineStyle:{
+        color:'#409EFF'
+      }
     }]
   }
   var campaignsData = {
@@ -212,19 +215,18 @@ console.log(power)
       trigger: 'axis'
     },
     grid: {
-      containLabel: true
+      containLabel: true,
     },
     toolbox: {
       feature: {
-        saveAsImage: {}
+        // saveAsImage: {}
       }
     },
     xAxis: {
       type: 'category',
       boundaryGap: false,
       data: [],
-      axisLabel: {  
-        interval:0,  
+      axisLabel: { 
         rotate:40  
       }, 
     },

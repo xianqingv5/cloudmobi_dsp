@@ -209,9 +209,7 @@
       right: '5%',
       bottom: '0',
     },
-    legend: {
-      data:[]
-    },
+    legend: {},
     toolbox: {
       feature: {
         // saveAsImage: {}
@@ -255,9 +253,7 @@
       right: '5%',
       bottom: '35'
     },
-    legend: {
-      
-    },
+    legend: {},
     toolbox: {
       feature: {
         // saveAsImage: {}
@@ -478,9 +474,7 @@
             // console.log(result)
             that.flag.campaigns = false
             campaignsData.xAxis.data.splice(0)
-            campaignsData.series.map(function (ele) {
-              return ele.data.splice(0)
-            })
+            campaignsData.series.splice(0)
             if (result.status === 1) {
               if (result.data.length !== 0) {
                 that.flag.campaigns = true

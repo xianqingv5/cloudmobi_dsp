@@ -242,8 +242,14 @@ class OfferService extends BaseService
         $data['delivery_status'] = Yii::$app->request->post('delivery_status', 2);
         $data['delivery_start_day'] = Yii::$app->request->post('delivery_start_data', date('Y-m-d'));
         $data['delivery_end_day'] = Yii::$app->request->post('delivery_end_data', date('Y-m-d', strtotime('+14 days')));
-        $data['delivery_week'] = json_encode(Yii::$app->request->post('delivery_week', ''));
-        $data['delivery_hour'] = json_encode(Yii::$app->request->post('delivery_hour', ''));
+        $delivery_week = array_map(function ($n) {
+            return (int)$n;
+        }, Yii::$app->request->post('delivery_week', []) );
+        $delivery_hour = array_map(function ($n) {
+            return (int)$n;
+        }, Yii::$app->request->post('delivery_hour', []) );
+        $data['delivery_week'] = json_encode($delivery_week);
+        $data['delivery_hour'] = json_encode($delivery_hour);
 
         // 设备机型
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));

@@ -10,8 +10,8 @@ use yii\log\Logger;
 
 class OfferReportingServices
 {
-//    CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';
-    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';
+    CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';//内网
+//    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';//外网
 
     /**
      * 拉取数据

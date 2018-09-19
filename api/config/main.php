@@ -30,14 +30,14 @@ return [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
-                    'logFile' => '@runtime/logs/dsp/api/error' . date('Ymd') . '.log',// 错误日志目录
+                    'logFile' => '@runtime/logs/api/error_' . date('Ymd') . '.log',// 错误日志目录
                     'logVars' => [],
                 ],
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['info'],
                     'categories' => ['dsp'],
-                    'logFile' => '@runtime/logs/dsp/api/info' . date('Ymd') . '.log',// 操作日志目录
+                    'logFile' => '@runtime/logs/api/info_' . date('Ymd') . '.log',// 操作日志目录
                     'logVars' => [],
                 ],
             ],

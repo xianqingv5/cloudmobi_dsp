@@ -23,17 +23,19 @@ $offer_data = ['mn_offline594','mn_offline601','ym_9186915','ym_267920','ym_1258
             echo "没有offer数据\n";
         }else {
             echo " ------------------ 正在拉取 ------------------ \n";
-            $info = [];
             $all_data = [];
             foreach ($date as $index => $val)
             {
+                $info = [];
                 $params['date'] = $val;
-                $s = microtime(true);
+//                $s = microtime(true);
                 foreach ($offer_data as $k => $v)
                 {
-                    $st = microtime(true);
                     $params['offer_id'] = $v;
+//                    $st = microtime(true);
                     $res = OfferReportingServices::getData($params);
+//                    $et = microtime(true);
+//                    echo "-耗时:" . ($et - $st) . "\n";
 
                     if (empty($res)) {
                         echo $v . "--$val--没有拉取到数据\n";
@@ -45,16 +47,15 @@ $offer_data = ['mn_offline594','mn_offline601','ym_9186915','ym_267920','ym_1258
                             array_push($info, $value);
                         }
                     }
-                    $et = microtime(true);
-                    echo "-耗时:" . ($et - $st) . "\n";
                 }
-                $e = microtime(true);
-                echo "---耗时:" . ($e - $s) . "\n";
+                if($info) {
+                    OfferReportingServices::insertData($info);
+                }
+//                $e = microtime(true);
+//                echo "---耗时:" . ($e - $s) . "\n";
             }
 
-            if($info) {
-                OfferReportingServices::insertData($info);
-            }
+
 
         }
 

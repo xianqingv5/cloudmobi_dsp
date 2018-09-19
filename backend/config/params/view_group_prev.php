@@ -25,6 +25,7 @@ return [
         // 报表页面 查询用户数据
         'offer-report' => [
             'campaigns_owner' => ['show' => true,'operate' => true],
+            'payout' => ['show' => true,'operate' => true],
         ],
     ],
     // admin
@@ -48,6 +49,7 @@ return [
         // 报表页面 查询用户数据
         'offer-report' => [
             'campaigns_owner' => ['show' => true,'operate' => true],
+            'payout' => ['show' => true,'operate' => true],
         ],
     ],
     // advertiser agent
@@ -71,6 +73,7 @@ return [
         // 报表页面 查询用户数据
         'offer-report' => [
             'campaigns_owner' => ['show' => false,'operate' => false],
+            'payout' => ['show' => false,'operate' => false],
         ],
     ]
 ];

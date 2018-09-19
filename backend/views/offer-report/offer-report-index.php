@@ -161,7 +161,7 @@ console.log(power)
       left: '2%',
       top: '10',
       right: '5%',
-      bottom: '10'
+      bottom: '10',
     },
     toolbox: {
       feature: {
@@ -171,10 +171,20 @@ console.log(power)
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: []
+      data: [],
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      }
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
     },
     series: [
       {
@@ -196,7 +206,7 @@ console.log(power)
       left: '2%',
       top: '60',
       right: '5%',
-      bottom: '0'
+      bottom: '0',
     },
     legend: {
       data:[]
@@ -211,16 +221,27 @@ console.log(power)
       position: 'bottom',
       axisLabel: { 
         rotate:40  
-      }, 
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
     },
-    yAxis: {},
+    yAxis: {
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
+    },
     series: [{
       type: 'bar',
       data: [],
       color: "#409EFF",
       lineStyle:{
         color:'#409EFF'
-      }
+      },
     }]
   }
   var campaignsData = {
@@ -247,10 +268,20 @@ console.log(power)
       data: [],
       axisLabel: { 
         rotate:40  
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
       }, 
     },
     yAxis: {
-        type: 'value'
+        type: 'value',
+        axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
     },
     series: [
       {

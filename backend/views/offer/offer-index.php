@@ -90,15 +90,15 @@
             </td>
             <td>
               <div class='flex jc-around'>
-                <a :href="'/offer-report/offer-report-index?offer_id=' + item.show_offer_id">
+                <a :href="'/offer-report/offer-report-index?offer_id=' + item.id">
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
                 </a>
-                <a v-if='power.offer_update.show' :href="'/offer/offer-update-info?offer_id=' + item.show_offer_id">
+                <a v-if='power.offer_update.show' :href="'/offer/offer-update-info?offer_id=' + item.id">
                   <span class='icon el-icon-edit'></span>
                 </a>
-                <a v-if='power.offer_see.show' :href="'/offer/offer-update-info?offer_id=' + item.show_offer_id">
+                <a v-if='power.offer_see.show' :href="'/offer/offer-update-info?offer_id=' + item.id">
                   <span class='icon el-icon-view'></span>
                 </a>
               </div>

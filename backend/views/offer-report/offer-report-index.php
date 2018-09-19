@@ -336,8 +336,8 @@ console.log(power)
               for (const key in campaigns) {
                 if (campaigns.hasOwnProperty(key)) {
                   that.options.campaigns.push({
-                    value: campaigns[key],
-                    label: campaigns[key]
+                    value: campaigns[key].id,
+                    label: campaigns[key].name
                   })
                 }
               }

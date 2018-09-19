@@ -246,7 +246,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item vs-show='showCountry' label="select Country" prop="country">
+            <el-form-item v-show='showCountry' label="select Country" prop="country">
               <el-select :disabled='judePowerOperate' class='form-one' multiple filterable 
                 v-model="ruleForm.country" clearable placeholder="">
                 <el-option
@@ -678,7 +678,6 @@
         return false
       },
       judeOne () {
-        return true
         if (this.ruleForm.campaignOwner !== '' && this.ruleForm.advertiser !== '' && this.ruleForm.attributeProvider !== '') {
           return true
         }

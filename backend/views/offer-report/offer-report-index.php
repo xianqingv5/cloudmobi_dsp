@@ -26,7 +26,7 @@
           <div class='mb-20'>
             <h4>Campaigns</h4>
           </div>
-          <el-select @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
+          <el-select filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
               v-for="item in options.campaigns"
               :key="item.value"
@@ -39,7 +39,7 @@
           <div class='mb-20'>
             <h4>Countries</h4>
           </div>
-          <el-select @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
+          <el-select filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
               v-for="item in options.country"
               :key="item.value"
@@ -52,7 +52,7 @@
           <div class='mb-20'>
             <h4>Campaigns Owner</h4>
           </div>
-          <el-select @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
+          <el-select filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
               v-for="item in options.campaignsOwner"
               :key="item.value"
@@ -273,6 +273,9 @@ console.log(power)
         }
       }
     },
+    created () {
+      this.getParams()
+    },
     mounted () {
       this.csrf = document.querySelector('#spp_security').value
       mainReport = echarts.init(document.querySelector('#mainReport'))
@@ -303,6 +306,19 @@ console.log(power)
       }
     },
     methods: {
+      // 获取链接参数
+      getParams () {
+        var url = window.location.href
+        var offerId
+        var searchParams = url.split('?')
+        for (var iterator of searchParams) {
+          if (iterator.indexOf('offer_id') !== -1) {
+            offerId = iterator.split('=')[1]
+            break
+          }
+        }
+        if (offerId) this.search.campaigns.push(offerId)
+      },
       // config
       getConfig () {
         var that = this

@@ -18,7 +18,7 @@
           placeholder="Campaign ID"
           prefix-icon="el-icon-search">
         </el-input>
-        <el-select 
+        <el-select filterable
           @change='searchFun'
           v-model="search.advertiser" clearable placeholder="Advertiser">
           <el-option
@@ -35,7 +35,7 @@
           placeholder="Campaigns Owner"
           prefix-icon="el-icon-search">
         </el-input> -->
-        <el-select 
+        <el-select filterable
           @change='searchFun'
           v-model="search.status" clearable placeholder="Status">
           <el-option
@@ -90,7 +90,7 @@
             </td>
             <td>
               <div class='flex jc-around'>
-                <a href>
+                <a :href="'/offer-report/offer-report-index?offer_id=' + item.id">
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>

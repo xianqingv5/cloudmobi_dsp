@@ -58,6 +58,7 @@ use yii\helpers\Url;
         <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
       </a>
     </li>
+    <?php if ( in_array($this->params['group_id'], [1,2]) ) { ?>
     <li class="<?php echo $this->context->id == 'user' ? 'act' : ''; ?>">
       <!-- title -->
       <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/user/user-index') ?>">
@@ -72,5 +73,6 @@ use yii\helpers\Url;
         <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
       </a>
     </li>
+    <?php } ?>
   </ul>
 </div>

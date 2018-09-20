@@ -145,8 +145,8 @@
               <el-form-item prop="deliveryWeek">
                 <div class='form-one checkbox-docker'>
                   <div class='p10-30 flex jcsb'>
-                    <el-button type="primary" @click='addAllDeliveryWeek'>全选</el-button>
-                    <el-button type="primary" @click='delAllDeliveryWeek'>全不选</el-button>
+                    <el-button type="primary" @click='addAllDeliveryWeek'>Total selection</el-button>
+                    <el-button type="primary" @click='delAllDeliveryWeek'>No choice</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryWeek">
                     <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
@@ -156,8 +156,8 @@
               <el-form-item prop="deliveryHour">
                 <div class='form-one checkbox-docker'>
                   <div class='p10-30 flex jcsb'>
-                    <el-button type="primary" @click='addAllDeliveryHour'>全选</el-button>
-                    <el-button type="primary" @click='delAllDeliveryHour'>全不选</el-button>
+                    <el-button type="primary" @click='addAllDeliveryHour'>Total selection</el-button>
+                    <el-button type="primary" @click='delAllDeliveryHour'>No choice</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryHour">
                     <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
@@ -230,9 +230,9 @@
             </el-form-item>
             <el-form-item label="Network Status" prop="networkStatus">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.networkStatus">
-                <el-radio label="1">WIFI & 4G</el-radio>
-                <el-radio label="2">WIFI</el-radio>
-                <el-radio label="3">4G</el-radio>
+                <el-radio label="3">WIFI & 4G</el-radio>
+                <el-radio label="1">WIFI</el-radio>
+                <el-radio label="2">4G</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="Targeting Countries" prop="countryType">
@@ -364,23 +364,23 @@
   // 
   var ruleLanguagePackage = {
     required: "This can't be empty.",
-    shouldNumber: '必须为数字',
-    notWWW: '不是正确的网址',
-    notSpace: '网址有空格',
+    shouldNumber: 'This must be numbers.',
+    notWWW: 'Please enter a valid url.',
+    notSpace: 'There are spaces in the url, please enter a valid url.',
     notStore: 'APP Apple Store or Google Play URL may be wrong.',
-    notEqualToPlatform: '所填链接与所选平台不符',
-    shouldInputPlatform: '请先填写平台后再试',
-    uploadImageError: '图片上传失败',
-    uploadVideoError: '视频上传失败',
-    fileTypeError: '文件类型不符',
-    uploadImageSizeMax: '图片大小应小于500KB',
-    uploadVideoSizeMax: '视频大小应小于2M',
-    uploadIconSizeError: '图片尺寸不是1：1',
-    uploadImageSizeError: '图片尺寸不符',
-    uploadVideoSizeError: '视频尺寸不符',
-    s3UploadFile: '图片上传成功',
-    s3DeleteFile: '图片删除失败',
-    shouldChoiceOne: '至少选择一项',
+    notEqualToPlatform: 'Please enter a valid url, which matches to the platform.',
+    shouldInputPlatform: 'Please select platform first.',
+    uploadImageError: 'Upload pictures failed.',
+    uploadVideoError: 'Upload videos failed.',
+    fileTypeError: 'The type of file can not be accepted.',
+    uploadImageSizeMax: 'Size of picture must be less than 500kb.',
+    uploadVideoSizeMax: 'Size of video must be less than 2M.',
+    uploadIconSizeError: 'The width-length ratio of picture must be 1:1.',
+    uploadImageSizeError: 'The width-length ratio of picture only can be 1:1.9/1.9:1/1:1.',
+    uploadVideoSizeError: 'The width-length ratio of video only can be 16:9/9:16.',
+    s3UploadFile: 'Upload pictures success.',
+    s3DeleteFile: 'Delete pictures failed.',
+    shouldChoiceOne: 'This can not be empty.',
     clickPreview: 'Please enter a valid url, and click preview to add the creative.'
   }
   // 初始化vue对象
@@ -567,7 +567,7 @@
           deviceType: '',
           specificDevice: [],
           minOSversion: '',
-          networkStatus: '1',
+          networkStatus: '3',
           countryType: '',
           country: [],
           // 5
@@ -831,6 +831,7 @@
             data: ajaxData,
             type: 'post',
             success: function (result) {
+              console.log(result)
               that.showOfferID = result.data.show_offer_id
               that.channel = result.data.channel
               // 1
@@ -852,12 +853,14 @@
               that.ruleForm.deliveryDate = deliveryDate
               if (result.data.delivery_week !== '""') {
                 var weekarr = JSON.parse(result.data.delivery_week)
+                that.ruleForm.deliveryWeek.splice(0)
                 weekarr.map(function (ele) {
                   that.ruleForm.deliveryWeek.push(ele.toString())
                 })
               }
               if (result.data.delivery_hour !== '""') {
                 var hourArr = JSON.parse(result.data.delivery_hour)
+                that.ruleForm.deliveryHour.splice(0)
                 hourArr.map(function (ele) {
                   that.ruleForm.deliveryHour.push(ele.toString())
                 })
@@ -1038,7 +1041,7 @@
         })
       },
       delAllDeliveryWeek () {
-        this.ruleForm.deliveryWeek = []
+        this.ruleForm.deliveryWeek.splice(0)
       },
       addAllDeliveryHour () {
         this.ruleForm.deliveryHour.splice(0)
@@ -1414,6 +1417,7 @@
           ajaxData.country.splice(0)
         }
         console.log(ajaxData)
+        // that.pageType = 'test'
         if (that.pageType === 'create') {
           $.ajax({
             url: '/offer/offer-create',

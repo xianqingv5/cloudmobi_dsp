@@ -12,6 +12,7 @@ class OfferReportingServices
 {
     CONST OFFER_URL = 'http://10.17.6.37:9987/get/dsp_offers';//内网
 //    CONST OFFER_URL = 'http://dash.cloudmobi.net:9987/get/dsp_offers';//外网
+    CONST SIZE = 100;
 
     /**
      * 拉取数据
@@ -65,7 +66,6 @@ class OfferReportingServices
         $platform_type = \Yii::$app->params['PLATFORM_TYPE'];
 
         try {
-//            $s = microtime(true);
             $info = [];
             foreach ($data as $k => $v) {
                 $country = Country::getData(['id'], ["short_name = '" . $v['country'] . "'"]);
@@ -79,24 +79,20 @@ class OfferReportingServices
                 $info[$k]['payout'] = isset($v['payout']) ? $v['payout'] : 0;
                 $info[$k]['create_date'] = $time;
             }
-//            $e = microtime(true);
-//            echo "-------耗时:" . ($e - $s) . "\n";
 
-//            $st = microtime(true);
             $data_chunk = array_chunk($info, 100);
             foreach ($data_chunk as $key => $val) {
                 $result = OfferReporting::batchInsertAndUpdate($val);
             }
-//            $et = microtime(true);
-//            echo "-------耗时:" . ($et - $st) . "\n";
         } catch (\Exception $e) {
             echo $e . "\n";
-            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR);
         }
     }
 
     public static function getOfferId($offer_id,$user_id){
         $fields = ['id','channel','campaign_owner'];
+
         $offer_str = Yii::$app->params['OFFER_ID_STRING'];
         $where = [];
         if($offer_id){
@@ -111,7 +107,8 @@ class OfferReportingServices
         if($offer){
             $data = [];
             foreach ($offer as $k => $v) {
-                $data[$k]['offer_id'] = $v['channel'] . '_' . 'offline' . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+//                $data[$k]['offer_id'] = $v['channel'] . '_' . 'offline' . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                $data[$k]['offer_id'] = $v['channel'] . '_' . $offer_str . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
                 $data[$k]['campaign_owner'] = $v['campaign_owner'];
             }
             return $data;

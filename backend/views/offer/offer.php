@@ -145,8 +145,8 @@
               <el-form-item prop="deliveryWeek">
                 <div class='form-one checkbox-docker'>
                   <div class='p10-30 flex jcsb'>
-                    <el-button type="primary" @click='addAllDeliveryWeek'>Total selection</el-button>
-                    <el-button type="primary" @click='delAllDeliveryWeek'>No choice</el-button>
+                    <el-button type="primary" @click='addAllDeliveryWeek'>Select all</el-button>
+                    <el-button type="primary" @click='delAllDeliveryWeek'>Deselect all</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryWeek">
                     <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
@@ -156,11 +156,11 @@
               <el-form-item prop="deliveryHour">
                 <div class='form-one checkbox-docker'>
                   <div class='p10-30 flex jcsb'>
-                    <el-button type="primary" @click='addAllDeliveryHour'>Total selection</el-button>
-                    <el-button type="primary" @click='delAllDeliveryHour'>No choice</el-button>
+                    <el-button type="primary" @click='addAllDeliveryHour'>Select all</el-button>
+                    <el-button type="primary" @click='delAllDeliveryHour'>Deselect all</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryHour">
-                    <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
+                    <el-checkbox :label="item" :key='item' v-for='(item, index) in options.deliveryHour'>{{item}}</el-checkbox>
                   </el-checkbox-group>
                 </div>
               </el-form-item>
@@ -859,7 +859,7 @@
                 })
               }
               if (result.data.delivery_hour !== '""') {
-                var hourArr = JSON.parse(result.data.delivery_hour)
+                var hourArr = result.data.delivery_hour
                 that.ruleForm.deliveryHour.splice(0)
                 hourArr.map(function (ele) {
                   that.ruleForm.deliveryHour.push(ele.toString())
@@ -876,7 +876,10 @@
               that.ruleForm.totalCap = total_cap
               // 4
               that.ruleForm.deviceType = result.data.device_target.toString()
-              that.ruleForm.specificDevice = JSON.parse(result.data.specific_device)
+              var specificDevice = JSON.parse(result.data.specific_device)
+              if (specificDevice !== null) {
+                that.ruleForm.specificDevice = specificDevice
+              }
               that.ruleForm.minOSversion = result.data.min_os_version
               that.ruleForm.networkStatus = result.data.network_environment
               that.ruleForm.countryType = result.data.country_type.toString()

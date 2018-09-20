@@ -67,7 +67,7 @@ class DemandOfferService extends BaseService
     public static function formatData($data)
     {
         $res = [];
-        $platform = ['1'=>'ios', '2'=>'Android'];
+        $platform = ['1'=>'Android', '2'=>'ios'];
         $category = self::getCategoryInfo(); // 类型信息
 
         foreach ($data as $k=>$v) {

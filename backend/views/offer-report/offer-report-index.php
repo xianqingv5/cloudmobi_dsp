@@ -150,7 +150,7 @@
 </div>
 <script>
   var power = JSON.parse('<?= $this->params['view_group'] ?>')
-  console.log(power)
+  // console.log(power)
   var colorArr = ['#6cb8ff', '#161616', '#65e100', '#cf23de', '#ffc000']
   var mainData = {
     tooltip: {
@@ -412,7 +412,7 @@
         this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
       },
       searchFun () {
-        console.log('search')
+        // console.log('search')
         this.initMainData()
         this.choiceCountris('conversion')
         this.choiceCampaigns('conversion')

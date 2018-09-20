@@ -160,7 +160,7 @@
                     <el-button type="primary" @click='delAllDeliveryHour'>No choice</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryHour">
-                    <el-checkbox :label="item" :key='item' v-for='item in options.deliveryHour'>{{item}}</el-checkbox>
+                    <el-checkbox :label="item" :key='item' v-for='(item, index) in options.deliveryHour'>{{item}}</el-checkbox>
                   </el-checkbox-group>
                 </div>
               </el-form-item>
@@ -830,7 +830,8 @@
             url: '/offer/offer-update-info',
             data: ajaxData,
             type: 'post',
-            success: function (result) {
+            success: function (results) {
+              var result = {"status":0,"info":"","data":{"id":"1","channel":"mn","campaign_owner":"3","title":"WeChat","pkg_name":"414478124","desc":"WeChat is a messaging and calling app that allows you to easily connect with family & friends across countries. It's the all-in-one communications app for text (SMS/MMS), voice and video calls, Moments, photo sharing, and games.\n\nWHY USE WECHAT:\n• MULTIMEDIA MESSAGING: Send video, image, text, and voice messages.\n• GROUP CHAT & CALLS: Create group chats with up to 500 peop","payout":"22.000","price_way":"0","tracking_url":"https://itunes.apple.com/us/app/wechat/id414478124?mt=8","final_url":"https://itunes.apple.com/us/app/wechat/id414478124?mt=8","category_id":"18","daily_cap":"-1","total_cap":"-1","platform":"2","device_target":"unlimited","min_os_version":"6.0","sponsor":"1","att_pro":"4","network_environment":"1","delivery_status":"1","delivery_start_day":"2018-09-18","delivery_end_day":"2018-10-04","delivery_week":"[0,1,2,3,4,5,6]","delivery_hour":"[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]","url_schema":"","specific_device":"null","status":"1","comment":"","open_type":"0","create_date":"2018-09-20 04:00:50","update_date":"2018-09-20 09:01:47","show_offer_id":"mn_dc001","icon":{"id":"52","url":"https://cloudmobi-resource.s3.ap-southeast-1.amazonaws.com/851cf7035aafa40f7b0fb1eca664034f79f01927.jpg","mime_type":"icon","width":"240","height":"240","size":"0","type":"1"},"image":[{"id":"53","url":"https://cloudmobi-resource.s3.ap-southeast-1.amazonaws.com/3a92b05bfebe031800e1b939a81509be.jpeg","mime_type":"image","width":"720","height":"1280","size":"0","type":"2"}],"country_type":"2","country":["1"]}}
               console.log(result)
               that.showOfferID = result.data.show_offer_id
               that.channel = result.data.channel
@@ -876,7 +877,10 @@
               that.ruleForm.totalCap = total_cap
               // 4
               that.ruleForm.deviceType = result.data.device_target.toString()
-              that.ruleForm.specificDevice = JSON.parse(result.data.specific_device)
+              var specificDevice = JSON.parse(result.data.specific_device)
+              if (specificDevice !== null) {
+                that.ruleForm.specificDevice = specificDevice
+              }
               that.ruleForm.minOSversion = result.data.min_os_version
               that.ruleForm.networkStatus = result.data.network_environment
               that.ruleForm.countryType = result.data.country_type.toString()

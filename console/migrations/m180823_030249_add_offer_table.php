@@ -40,7 +40,7 @@ class m180823_030249_add_offer_table extends Migration
             'delivery_status' => $this->smallInteger(4)->notNull()->defaultValue(2)->comment('投放时间开关。1:open; 2:close'),
             'delivery_start_day' => $this->date()->notNull()->defaultValue('1000-00-01')->comment('投放开始时间'),
             'delivery_end_day' => $this->date()->notNull()->defaultValue('1000-00-01')->comment('投放结束时间'),
-            'delivery_week' => $this->string(20)->notNull()->defaultValue('')->comment('投放周'),
+            'delivery_week' => $this->string(40)->notNull()->defaultValue('')->comment('投放周'),
             'delivery_hour' => $this->string(100)->notNull()->defaultValue('')->comment('投放小时'),
             'url_schema' => $this->string(2000)->notNull()->defaultValue('')->comment('图形url'),
             'specific_device' => $this->text()->comment('设备机型'),

@@ -363,7 +363,7 @@
   var spaceReg = new RegExp('\\s', 'g')
   // 
   var ruleLanguagePackage = {
-    required: "This can't be empty",
+    required: "This can't be empty.",
     shouldNumber: '必须为数字',
     notWWW: '不是正确的网址',
     notSpace: '网址有空格',
@@ -381,7 +381,7 @@
     s3UploadFile: '图片上传成功',
     s3DeleteFile: '图片删除失败',
     shouldChoiceOne: '至少选择一项',
-    clickPreview: '请确保链接添加正确后，点击Preview按钮添加资源'
+    clickPreview: 'Please enter a valid url, and click preview to add the creative.'
   }
   // 初始化vue对象
   new Vue({
@@ -1032,6 +1032,7 @@
       },
       addAllDeliveryWeek () {
         var that = this
+        this.ruleForm.deliveryWeek.splice(0)
         this.options.deliveryWeek.map(function (ele) {
           that.ruleForm.deliveryWeek.push(ele.value)
         })
@@ -1040,6 +1041,7 @@
         this.ruleForm.deliveryWeek = []
       },
       addAllDeliveryHour () {
+        this.ruleForm.deliveryHour.splice(0)
         this.ruleForm.deliveryHour = JSON.parse(JSON.stringify(this.options.deliveryHour))
       },
       delAllDeliveryHour  () {
@@ -1117,6 +1119,10 @@
         if ((ratio >= minRatio && ratio <= maxRatio) || ratio === baseRatio || ratio === 1 / baseRatio || ratio === 1) return true
         return false
       },
+      uploadRule1 (ratio) {
+        if (((1 / ratio) >= minRatio && (1 / ratio) <= maxRatio)) return true
+        return false
+      },
       // 判断上传文件
       judeUploadFile (fileData, type, callback) {
         var that = this
@@ -1158,7 +1164,7 @@
                   }
                 }
                 if (type === 'image') {
-                  if (that.uploadRule(ratio)) {
+                  if (that.uploadRule(ratio) || that.uploadRule1(ratio)) {
                     callback()
                   } else {
                     that.$message.error(ruleLanguagePackage.uploadImageSizeError)
@@ -1315,7 +1321,7 @@
               url: src,
               ratio: ratio
             }
-            if (that.uploadRule(ratio)) {
+            if (that.uploadRule(ratio) || that.uploadRule1(ratio)) {
               that.uploadCallback(ajaxData, type)
             } else {
               that.$message.error(ruleLanguagePackage.uploadImageSizeError)
@@ -1347,6 +1353,7 @@
         // console.log('提交表单')
         var that = this
         this.spiderFlag = false
+        // that.submitAjax()
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
@@ -1406,7 +1413,7 @@
         if (that.ruleForm.countryType === '1') {
           ajaxData.country.splice(0)
         }
-        // console.log(ajaxData)
+        console.log(ajaxData)
         if (that.pageType === 'create') {
           $.ajax({
             url: '/offer/offer-create',

@@ -70,7 +70,7 @@
           <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
         <div class='conBox' v-show='flag.main'>
-          <div class='mainReport' id='mainReport' style='width: 100%;height: 500px;'></div>
+          <div class='mainReport' id='mainReport' style='width: 100%;height: 400px;'></div>
         </div>
         <div  v-show='!flag.main' class='flex m30'>NO Data</div>
       </div>

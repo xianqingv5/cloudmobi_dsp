@@ -1041,6 +1041,7 @@
         this.ruleForm.deliveryWeek = []
       },
       addAllDeliveryHour () {
+        this.ruleForm.deliveryHour.splice(0)
         this.ruleForm.deliveryHour = JSON.parse(JSON.stringify(this.options.deliveryHour))
       },
       delAllDeliveryHour  () {
@@ -1352,6 +1353,7 @@
         // console.log('提交表单')
         var that = this
         this.spiderFlag = false
+        // that.submitAjax()
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')

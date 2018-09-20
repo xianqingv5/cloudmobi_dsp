@@ -40,7 +40,7 @@
             <td>
               <div class='flex'>
                 <span class='icon el-icon-edit-outline mr-25' @click='showDialog("edit", item)'></span>
-                <a class='ml-25' href>
+                <a class='ml-25' href='/offer-report/offer-report-index'>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>

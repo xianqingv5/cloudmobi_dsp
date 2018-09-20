@@ -111,7 +111,7 @@
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
+// console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -145,7 +145,7 @@ console.log(power)
         this.changeStatus(item.status, offerID)
       },
       searchFun () {
-        console.log('search')
+        // console.log('search')
         this.getList()
       },
       getList () {

@@ -149,8 +149,9 @@
   </div>
 </div>
 <script>
-var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
+  var power = JSON.parse('<?= $this->params['view_group'] ?>')
+  // console.log(power)
+  var colorArr = ['#6cb8ff', '#161616', '#65e100', '#cf23de', '#ffc000']
   var mainData = {
     tooltip: {
       trigger: 'axis'
@@ -161,7 +162,7 @@ console.log(power)
       left: '2%',
       top: '10',
       right: '5%',
-      bottom: '10'
+      bottom: '10',
     },
     toolbox: {
       feature: {
@@ -171,10 +172,20 @@ console.log(power)
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: []
+      data: [],
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      }
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
     },
     series: [
       {
@@ -196,11 +207,9 @@ console.log(power)
       left: '2%',
       top: '60',
       right: '5%',
-      bottom: '0'
+      bottom: '0',
     },
-    legend: {
-      data:[]
-    },
+    legend: {},
     toolbox: {
       feature: {
         // saveAsImage: {}
@@ -211,16 +220,27 @@ console.log(power)
       position: 'bottom',
       axisLabel: { 
         rotate:40  
-      }, 
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
     },
-    yAxis: {},
+    yAxis: {
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
+    },
     series: [{
       type: 'bar',
       data: [],
       color: "#409EFF",
       lineStyle:{
         color:'#409EFF'
-      }
+      },
     }]
   }
   var campaignsData = {
@@ -233,9 +253,7 @@ console.log(power)
       right: '5%',
       bottom: '35'
     },
-    legend: {
-      data:[]
-    },
+    legend: {},
     toolbox: {
       feature: {
         // saveAsImage: {}
@@ -247,19 +265,22 @@ console.log(power)
       data: [],
       axisLabel: { 
         rotate:40  
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
       }, 
     },
     yAxis: {
-        type: 'value'
+        type: 'value',
+        axisLine: {
+        lineStyle: {
+          color: '#aaa'
+        }
+      },
     },
-    series: [
-      {
-        name:'邮件营销',
-        type:'line',
-        stack: '总量',
-        data:[]
-      }
-    ]
+    series: []
   }
   var mainReport, countryReport, campaignsReport
   // 
@@ -391,7 +412,7 @@ console.log(power)
         this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
       },
       searchFun () {
-        console.log('search')
+        // console.log('search')
         this.initMainData()
         this.choiceCountris('conversion')
         this.choiceCampaigns('conversion')
@@ -453,22 +474,22 @@ console.log(power)
             // console.log(result)
             that.flag.campaigns = false
             campaignsData.xAxis.data.splice(0)
-            campaignsData.legend.data.splice(0)
-            campaignsData.series.map(function (ele) {
-              return ele.data.splice(0)
-            })
+            campaignsData.series.splice(0)
             if (result.status === 1) {
               if (result.data.length !== 0) {
                 that.flag.campaigns = true
                 that.campaignsData = result.data
                 campaignsData.xAxis.data = result.data.day
-                result.data.data.map(function (ele) {
+                result.data.data.map(function (ele, i) {
                   campaignsData.series.push({
                     name: ele.name,
                     type: 'line',
-                    data: ele.data
+                    data: ele.data,
+                    lineStyle: {
+                      color: colorArr[i]
+                    },
+                    color: colorArr[i],
                   })
-                  campaignsData.legend.data.push(ele.name)
                 })
               }
             }

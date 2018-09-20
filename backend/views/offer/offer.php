@@ -340,7 +340,7 @@
 <script>
   // 权限
   var power = JSON.parse('<?= $this->params['view_group'] ?>')
-  console.log(power)
+  // console.log(power)
   // s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'
@@ -391,10 +391,9 @@
         var platform = null
         var vmPlatform = null
         var judeFlag = value.match(spaceReg)
-        console.log(judeFlag)
         callback()
         if (judeFlag === null) {
-          console.log('没有空格')
+          // console.log('没有空格')
           if (regHref.test(value)) {
             vm.messageVisible = false
             if (vm.ruleForm.platform) {
@@ -417,30 +416,30 @@
                       if (flag) {
                         callback()
                       } else {
-                        console.log('没有查询到商店')
+                        // console.log('没有查询到商店')
                         callback(new Error(ruleLanguagePackage.notStore))
                       }
                       vm.dialogVisible = true
                     })
                   }
                 } else {
-                  console.log('与所填平台不符')
+                  // console.log('与所填平台不符')
                   callback(new Error(ruleLanguagePackage.notEqualToPlatform))
                 }
               } else {
-                console.log('是网址但不是苹果或者安卓')
+                // console.log('是网址但不是苹果或者安卓')
                 callback()
               }
             } else {
-              console.log('应该填写平台')
+              // console.log('应该填写平台')
               callback(new Error(ruleLanguagePackage.shouldInputPlatform))
             }
           } else {
-            console.log('不是网址')
+            // console.log('不是网址')
             callback(new Error(ruleLanguagePackage.notWWW))
           }
         } else {
-          console.log('有空格')
+          // console.log('有空格')
           vm.messageVisible = false
           callback(new Error(ruleLanguagePackage.notSpace))
         }
@@ -851,10 +850,16 @@
               deliveryDate.push(result.data.delivery_end_day)
               that.ruleForm.deliveryDate = deliveryDate
               if (result.data.delivery_week !== '""') {
-                that.ruleForm.deliveryWeek = JSON.parse(result.data.delivery_week)
+                var weekarr = JSON.parse(result.data.delivery_week)
+                weekarr.map(function (ele) {
+                  that.ruleForm.deliveryWeek.push(ele.toString())
+                })
               }
               if (result.data.delivery_hour !== '""') {
-                that.ruleForm.deliveryHour = JSON.parse(result.data.delivery_hour)
+                var hourArr = JSON.parse(result.data.delivery_hour)
+                hourArr.map(function (ele) {
+                  that.ruleForm.deliveryHour.push(ele.toString())
+                })
               }
               that.ruleForm.comment = result.data.comment
               // 3
@@ -920,11 +925,9 @@
       },
       spiderAgain () {
         // 再次爬虫
-        console.log(1)
       },
       spiderUse () {
         // 手动添加name和category
-        console.log(2)
       },
       // 验证商店地址
       judeHref (platform, url, callback) {
@@ -1057,7 +1060,6 @@
         filesInput.click()
         var addEventListenerFun = function () {
           filesInput.removeEventListener('change', addEventListenerFun, true)
-          console.log('addEventListenerFun')
           // 那么开始上传
           var files = filesInput.files
           var file = files[0]
@@ -1071,10 +1073,10 @@
               height: null
             }
             that.judeUploadFile(fileData, type, function () {
-              console.log('judeUploadFile')
+              // console.log('judeUploadFile')
               // 上传函数
               that.uploadFun(fileData, type, function (err, result) {
-                console.log('uploadFun')
+                // console.log('uploadFun')
                 // 总是清空input file
                 filesInput.value = ''
                 if (err) {
@@ -1082,7 +1084,7 @@
                   that.$message.error(ruleLanguagePackage.uploadImageError)
                   return
                 } else {
-                  console.log(result)
+                  // console.log(result)
                   var downData = {
                     url: result.Location,
                     width: fileData.width,
@@ -1120,7 +1122,7 @@
         if (type === 'video') {
           if (fileData.type.indexOf(type) !== -1) {
             that.getOnlineFile(fileData, type, function (bob) {
-              console.log('getOnlineFile')
+              // console.log('getOnlineFile')
               var w = bob.videoWidth
               var h = bob.videoHeight
               var ratio = w / h
@@ -1139,7 +1141,7 @@
         } else {
           if (fileData.type.indexOf('image') !== -1) {
             that.getOnlineFile(fileData, type, function (bob) {
-              console.log('getOnlineFile')
+              // console.log('getOnlineFile')
               var w = bob.width
               var h = bob.height
               var ratio = w / h
@@ -1155,7 +1157,6 @@
                   }
                 }
                 if (type === 'image') {
-                  console.log(that.uploadRule(ratio))
                   if (that.uploadRule(ratio)) {
                     callback()
                   } else {
@@ -1173,7 +1174,7 @@
       },
       // 上传s3函数
       uploadFun (data, type, callback) {
-        console.log('开始上传')
+        // console.log('开始上传')
         var that = this
         // 上传状态
         s3.upload({
@@ -1217,7 +1218,7 @@
       },
       // 去重函数
       duplicateRemoval (list, data) {
-        console.log('duplicateRemoval')
+        // console.log('duplicateRemoval')
         var flag = true
         list.map(function (ele) {
           if (ele.url === data.url) {
@@ -1313,7 +1314,6 @@
               url: src,
               ratio: ratio
             }
-            console.log(that.uploadRule(ratio))
             if (that.uploadRule(ratio)) {
               that.uploadCallback(ajaxData, type)
             } else {
@@ -1343,7 +1343,7 @@
       },
       // 表单提交
       submitForm (formName) {
-        console.log('提交表单')
+        // console.log('提交表单')
         var that = this
         this.spiderFlag = false
         this.$refs[formName].validate(function (valid) {
@@ -1405,7 +1405,7 @@
         if (that.ruleForm.countryType === '1') {
           ajaxData.country.splice(0)
         }
-        console.log(ajaxData)
+        // console.log(ajaxData)
         if (that.pageType === 'create') {
           $.ajax({
             url: '/offer/offer-create',
@@ -1419,7 +1419,7 @@
               }
             },
             error: function (result) {
-              console.log(result)
+              // console.log(result)
             }
           })
         }
@@ -1436,7 +1436,7 @@
               }
             },
             error: function (result) {
-              console.log(result)
+              // console.log(result)
             }
           })
         }

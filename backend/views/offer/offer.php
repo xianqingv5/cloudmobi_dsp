@@ -22,7 +22,7 @@
             <h5>Campaign Basic Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item v-if='pageType === "update"' label="Offer ID:" prop="offerID">
+            <el-form-item v-if='pageType === "update"' label="Campaign ID:" prop="offerID">
               <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
@@ -380,7 +380,8 @@
     uploadVideoSizeError: '视频尺寸不符',
     s3UploadFile: '图片上传成功',
     s3DeleteFile: '图片删除失败',
-    shouldChoiceOne: '至少选择一项'
+    shouldChoiceOne: '至少选择一项',
+    clickPreview: '请确保链接添加正确后，点击Preview按钮添加资源'
   }
   // 初始化vue对象
   new Vue({
@@ -644,10 +645,10 @@
           ],
           // 5
           iconList: [
-            { required: true, message: ruleLanguagePackage.required, trigger: 'change' }
+            { required: true, message: ruleLanguagePackage.clickPreview, trigger: 'change' }
           ],
           imageList: [
-            { required: true, message: ruleLanguagePackage.required, trigger: 'change' }
+            { required: true, message: ruleLanguagePackage.clickPreview, trigger: 'change' }
           ]
         }
       }
@@ -1207,7 +1208,7 @@
       },
       // 上传s3成功之后的回调
       uploadCallback (data, type) {
-        console.log('uploadCallback')
+        // console.log('uploadCallback')
         var flag = this.duplicateRemoval(this.ruleForm[type + 'List'], data)
         if (type === 'icon' && this.ruleForm[type + 'List'].length !== 1) {
           var icon0 = this.ruleForm[type + 'List'][0]

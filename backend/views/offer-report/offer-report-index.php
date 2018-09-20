@@ -115,7 +115,7 @@
       <!-- report -->
       <div class='mt-20 flex'>
         <div class='col-auto-12 mr-10 border-1 p20'>
-          <h4>TOP 10 Countris</h4>
+          <h4>TOP 10 Countries</h4>
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
               <div class='tab-btn' @click='choiceCountris("conversion")' :class='{act:countrisChoice === "conversion"}'>Conversion</div>

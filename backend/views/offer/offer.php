@@ -145,8 +145,8 @@
               <el-form-item prop="deliveryWeek">
                 <div class='form-one checkbox-docker'>
                   <div class='p10-30 flex jcsb'>
-                    <el-button type="primary" @click='addAllDeliveryWeek'>Total selection</el-button>
-                    <el-button type="primary" @click='delAllDeliveryWeek'>No choice</el-button>
+                    <el-button type="primary" @click='addAllDeliveryWeek'>Select all</el-button>
+                    <el-button type="primary" @click='delAllDeliveryWeek'>Deselect all</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryWeek">
                     <el-checkbox :label="item.value" :key=item.value v-for='item in options.deliveryWeek'>{{item.label}}</el-checkbox>
@@ -156,8 +156,8 @@
               <el-form-item prop="deliveryHour">
                 <div class='form-one checkbox-docker'>
                   <div class='p10-30 flex jcsb'>
-                    <el-button type="primary" @click='addAllDeliveryHour'>Total selection</el-button>
-                    <el-button type="primary" @click='delAllDeliveryHour'>No choice</el-button>
+                    <el-button type="primary" @click='addAllDeliveryHour'>Select all</el-button>
+                    <el-button type="primary" @click='delAllDeliveryHour'>Deselect all</el-button>
                   </div>
                   <el-checkbox-group :disabled='judePowerOperate' v-model="ruleForm.deliveryHour">
                     <el-checkbox :label="item" :key='item' v-for='(item, index) in options.deliveryHour'>{{item}}</el-checkbox>

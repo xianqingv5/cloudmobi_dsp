@@ -170,22 +170,22 @@ class OfferReportService extends BaseService
             $uid = Yii::$app->user->identity->id;
             $where['campaign_owner'] = "campaign_owner = '" . $uid . "'";
         } else if (self::isSuperAdmin() || self::isAdmin()) {
-            $campaign_owner = Yii::$app->request->get('campaignsOwner', []);
+            $campaign_owner = Yii::$app->request->get('campaigns_owner', []);
             if ($campaign_owner) {
-                $where['campaign_owner'] = "campaign_owner in ('" . implode(',',$campaign_owner) . "')";
+                $where['campaign_owner'] = "campaign_owner in ('" . ( is_array($campaign_owner) ? implode(',',$campaign_owner) : [0] ) . "')";
             }
         }
 
         // campaign
         $offer_ids = Yii::$app->request->get('campaigns', []);
         if ($offer_ids) {
-            $where['offer_id'] = "offer_id in('" . implode("','", $offer_ids) ."')";
+            $where['offer_id'] = "offer_id in('" . ( is_array($offer_ids) ? implode("','", $offer_ids) : [0] ) ."')";
         }
 
         // country
         $country_ids = Yii::$app->request->get('country', []);
         if ($country_ids) {
-            $where['country_id'] = "country_id in(" . implode(',', $country_ids) . ")";
+            $where['country_id'] = "country_id in(" . ( is_array($country_ids) ? implode(',', $country_ids) : [0] ) . ")";
         }
 
         return $where;

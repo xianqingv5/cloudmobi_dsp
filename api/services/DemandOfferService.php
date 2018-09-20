@@ -226,7 +226,7 @@ class DemandOfferService extends BaseService
         $delivery_where[]   = 'delivery_start_day <= "' . date('Y-m-d') . '"';// 投放开始时间
         $delivery_where[]   = 'delivery_end_day >= "' . date('Y-m-d') . '"';// 投放结束时间
         $delivery_where[]   = 'delivery_week like "%' . date('w') . '%"';// 投放周
-        $delivery_where[]   = 'delivery_hour like "%' . date('H') . '%"';// 投放放小时
+        $delivery_where[]   = 'delivery_hour like "%' . (int)date('H') . '%"';// 投放放小时
         $search['where'][]    = '( delivery_status = 2 OR ( delivery_status = 1 AND ' . implode(' AND ', $delivery_where ) . ' ) )';
 
         return $search;

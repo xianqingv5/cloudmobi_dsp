@@ -851,10 +851,16 @@
               deliveryDate.push(result.data.delivery_end_day)
               that.ruleForm.deliveryDate = deliveryDate
               if (result.data.delivery_week !== '""') {
-                that.ruleForm.deliveryWeek = JSON.parse(result.data.delivery_week)
+                var weekarr = JSON.parse(result.data.delivery_week)
+                weekarr.map(function (ele) {
+                  that.ruleForm.deliveryWeek.push(ele.toString())
+                })
               }
               if (result.data.delivery_hour !== '""') {
-                that.ruleForm.deliveryHour = JSON.parse(result.data.delivery_hour)
+                var hourArr = JSON.parse(result.data.delivery_hour)
+                hourArr.map(function (ele) {
+                  that.ruleForm.deliveryHour.push(ele.toString())
+                })
               }
               that.ruleForm.comment = result.data.comment
               // 3

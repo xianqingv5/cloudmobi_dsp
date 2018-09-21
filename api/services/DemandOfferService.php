@@ -91,7 +91,10 @@ class DemandOfferService extends BaseService
             $res[$k]['min_osv'] = $v['min_os_version'];
             $res[$k]['att_pro'] = (int)$v['att_pro'];
             $res[$k]['network_environment'] = (int)$v['network_environment'];
-            $res[$k]['specific_device'] = ( !empty($v['specific_device']) && $v['specific_device'] != 'null' ) ? json_decode($v['specific_device'], true) : [];
+
+            // specific device
+            $specific_device =  ( !empty($v['specific_device']) && $v['specific_device'] != 'null' ) ? json_decode($v['specific_device'], true) : [];
+            $res[$k]['specific_device'] = is_array($specific_device) ? $specific_device : [];
 
             // 获取广告主信息
             $adv = Advertiser::getDataById($v['sponsor']);

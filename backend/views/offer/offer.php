@@ -361,26 +361,45 @@
   var iOSReg = new RegExp('https://itunes.apple.com/')
   var androidReg = new RegExp('https://play.google.com/')
   var spaceReg = new RegExp('\\s', 'g')
-  // 
+  // issues #989
   var ruleLanguagePackage = {
+    // 必填
     required: "This can't be empty.",
+    // 必须是数字
     shouldNumber: 'This must be numbers.',
+    // 不是网址
     notWWW: 'Please enter a valid url.',
+    // 不能有空格
     notSpace: 'There are spaces in the url, please enter a valid url.',
+    // 不是商店地址
     notStore: 'APP Apple Store or Google Play URL may be wrong.',
+    // 平台不符
     notEqualToPlatform: 'Please enter a valid url, which matches to the platform.',
+    // 应输入商店地址
     shouldInputPlatform: 'Please select platform first.',
+    // 上传图片错误
     uploadImageError: 'Upload pictures failed.',
+    // 上传视频错误
     uploadVideoError: 'Upload videos failed.',
+    // 文件类型错误
     fileTypeError: 'The type of file can not be accepted.',
+    // 图片小于500k
     uploadImageSizeMax: 'Size of picture must be less than 500kb.',
+    // 视频小于2M
     uploadVideoSizeMax: 'Size of video must be less than 2M.',
+    // icon不是一比一
     uploadIconSizeError: 'The width-length ratio of picture must be 1:1.',
+    // 图片尺寸不对
     uploadImageSizeError: 'The width-length ratio of picture only can be 1:1.9/1.9:1/1:1.',
+    // 视频尺寸不对
     uploadVideoSizeError: 'The width-length ratio of video only can be 16:9/9:16.',
+    // s3上传成功
     s3UploadFile: 'Upload pictures success.',
+    // s3上传失败
     s3DeleteFile: 'Delete pictures failed.',
+    // 必须选择一个
     shouldChoiceOne: 'This can not be empty.',
+    // 点击preview按钮
     clickPreview: 'Please enter a valid url, and click preview to add the creative.'
   }
   // 初始化vue对象
@@ -994,9 +1013,10 @@
           data: ajaxData,
           success: function (result) {
             // Campaign Owner
+            console.log(result.data.user)
             if (that.pageType === 'create') {
               result.data.user.map(function (ele) {
-                if (ele.status === 1) {
+                if (ele.status === '1') {
                   that.options.campaignOwner.push({
                     value: ele.id,
                     label: ele.email

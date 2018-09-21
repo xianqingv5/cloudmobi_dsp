@@ -39,8 +39,8 @@
             </td>
             <td>
               <div class='flex'>
-                <span class='icon el-icon-edit-outline mr-25' @click='showDialog("edit", item)'></span>
-                <a class='ml-25' href='/offer-report/offer-report-index'>
+                <span class='icon el-icon-edit-outline' :class='{"mr-25":item.group_id==="3"}' @click='showDialog("edit", item)'></span>
+                <a v-if='item.group_id === "3"' class='ml-25' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.group_id'>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
@@ -71,7 +71,7 @@
               <el-input type='password' auto-complete="off" v-model="ruleForm.checkPass" class='inputobj'></el-input>
             </el-form-item>
             <el-form-item label="Role" prop='role'>
-              <el-select :disabled='dialogBus.type === "edit"' v-model="ruleForm.role" class='inputobj' placeholder="请选择">
+              <el-select :disabled='dialogBus.type === "edit"' v-model="ruleForm.role" class='inputobj' placeholder="Choice">
                 <el-option
                   v-for="item in ruleForm.roleOptions"
                   :key="item.value"
@@ -102,9 +102,11 @@
       var reg = new RegExp('[\u4e00-\u9fa5]')
       var validateEmail = function (rule, value, callback) {
         if (value.indexOf(' ') !== -1) {
-          callback(new Error('不得输入空格'))
+          // callback(new Error('不得输入空格'))
+          callback(new Error('Please enter a valid email address.'))
         } else if (reg.test(value)) {
-          callback(new Error('不得输入中文'))
+          // callback(new Error('不得输入中文'))
+          callback(new Error('Please enter a valid email address.'))
         } else {
           vm.judeEmail(value, function (type, info) {
             if (type) {
@@ -118,12 +120,15 @@
       // 密码
       var validatePass = function (rule, value, callback) {
         if (value === '') {
-          callback(new Error('请输入密码'))
+          // callback(new Error("密码不能为空"))
+          callback(new Error("Password can't be empty."))
         } else if (value.indexOf(' ') !== -1) {
-          callback(new Error('不得输入空格'))
+          // callback(new Error('不得输入空格'))
+          callback(new Error("please don't enter space."))
         } else {
           if (value.length < 8) {
-            callback(new Error('密码长度不得小于八位'))
+            // callback(new Error('密码长度不得小于八位'))
+            callback(new Error('Passwords must be at least 8 characters.'))
           } else {
             if (vm.ruleForm.checkPass !== '') {
               vm.$refs.ruleForm.validateField('checkPass')
@@ -135,11 +140,14 @@
       // 再次输入密码
       var validatePass2 = function (rule, value, callback) {
         if (value === '') {
-          callback(new Error('请再次输入密码'))
+          // callback(new Error('请再次输入密码'))
+          callback(new Error('Please enter the password again.'))
         } else if (value.indexOf(' ') !== -1) {
-          callback(new Error('不得输入空格'))
+          // callback(new Error('不得输入空格'))
+          callback(new Error("please don't enter space."))
         } else if (value !== vm.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'))
+          // callback(new Error('两次输入密码不一致!'))
+          callback(new Error('Your passwords did not match.'))
         } else {
           callback()
         }
@@ -172,7 +180,7 @@
             { required: true, validator: validateEmail, trigger: ['blur', 'change'] }
           ],
           name: [
-            { required: true, message: '请输入用户名', trigger: 'blur' }
+            { required: true, message: "User Name can't be empty.", trigger: 'blur' }
 
           ],
           pass: [
@@ -182,7 +190,7 @@
             { required: true, validator: validatePass2, trigger: 'blur' }
           ],
           role: [
-            { required: true, message: 'role必填', trigger: 'blur' }
+            { required: true, message: "Role can't be empty.", trigger: 'blur' }
           ]
         }
       }

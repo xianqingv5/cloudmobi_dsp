@@ -314,7 +314,13 @@
       }
     },
     created () {
-      this.getParams()
+      var that = this
+      this.getParams('offer_id', function (data) {
+        if (data) that.search.campaigns.push(data)
+      })
+      this.getParams('campaigns_owner', function (data) {
+        if (data) that.search.campaignsOwner.push(data)
+      })
     },
     mounted () {
       this.csrf = document.querySelector('#spp_security').value
@@ -347,17 +353,17 @@
     },
     methods: {
       // 获取链接参数
-      getParams () {
+      getParams (key, callback) {
         var url = window.location.href
-        var offerId
+        var data
         var searchParams = url.split('?')
         for (var iterator of searchParams) {
-          if (iterator.indexOf('offer_id') !== -1) {
-            offerId = iterator.split('=')[1]
+          if (iterator.indexOf(key) !== -1) {
+            data = iterator.split('=')[1]
             break
           }
         }
-        if (offerId) this.search.campaigns.push(offerId)
+        callback(data)
       },
       // config
       getConfig () {

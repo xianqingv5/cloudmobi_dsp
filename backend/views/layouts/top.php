@@ -3,7 +3,7 @@ use yii\helpers\Url;
 ?>
 <input name="dsp_security_param" id="spp_security" type="hidden"  value="<?= Yii::$app->request->csrfToken ?>">
 <div class='flex jc-btween h100'>
-  <a href='index' class='navLeft flex'>
+  <a href='/offer/offer-index' class='navLeft flex'>
     <img src="/images/new_login_logo.png" alt="">
   </a>
   <div class='flex'>

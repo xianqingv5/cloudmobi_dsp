@@ -10,7 +10,7 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class='check_language'>
+<div class='check_language dn'>
         <a id='en_us' href="<?php echo Yii::$app->urlManager->createUrl(['/base/language','lang'=>'en']);?>">English</a>
         <span>|</span>
         <a id='ja' href="<?php echo Yii::$app->urlManager->createUrl(['/base/language','lang'=>'ja-JP']);?>">日本語</a>

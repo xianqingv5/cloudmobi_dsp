@@ -271,9 +271,9 @@
               <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
-                  <el-button type="primary" @click='previewAddFile("icon")'>Preview</el-button>
+                  <el-button type="primary" @click='previewAddFile("icon")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("icon")'/>upload creatives</el-button>
+                <el-button type="primary" @click='uploadFile("icon")'/>Upload creatives</el-button>
                 <input class='iconfile dn' type="file" name="iconfile">
               </div>
             </el-form-item>
@@ -291,9 +291,9 @@
               <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
-                  <el-button type="primary" @click='previewAddFile("image")'>Preview</el-button>
+                  <el-button type="primary" @click='previewAddFile("image")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("image")'>upload creatives</el-button>
+                <el-button type="primary" @click='uploadFile("image")'>Upload creatives</el-button>
                 <input class='imagefile dn' type="file" name="imagefile">
               </div>
             </el-form-item>
@@ -311,9 +311,9 @@
               <div class='flex' v-if='!judePowerOperate'>
                 <div class='flex flex-start mr-20'>
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>
-                  <el-button type="primary" @click='previewAddFile("video")'>Preview</el-button>
+                  <el-button type="primary" @click='previewAddFile("video")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("video")'>upload creatives</el-button>
+                <el-button type="primary" @click='uploadFile("video")'>Upload creatives</el-button>
                 <input class='videofile dn' type="file" name="videofile">
               </div>
             </el-form-item>
@@ -908,7 +908,10 @@
               // 5
               that.ruleForm.iconList.push(result.data.icon)
               that.ruleForm.imageList = result.data.image
-              that.ruleForm.videoList = result.data.video
+              var videoList = result.data.video
+              if (videoList) {
+                that.ruleForm.videoList = videoList
+              }
               // 
               that.showCountryFun()
             }

@@ -119,7 +119,7 @@
           <div class='chartBox'>
             <div class='tabBox flex mt-20'>
               <div class='tab-btn' @click='choiceCountris("conversion")' :class='{act:countrisChoice === "conversion"}'>Conversion</div>
-              <div class='tab-btn' v-if='power.payout.show' @click='choiceCountris("payout")' :class='{act:countrisChoice === "payout"}'>payout</div>
+              <div class='tab-btn' v-if='power.payout.show' @click='choiceCountris("payout")' :class='{act:countrisChoice === "payout"}'>Payout</div>
               <div class='tab-btn' @click='choiceCountris("click")' :class='{act:countrisChoice === "click"}'>Click</div>
               <div class='tab-btn' @click='choiceCountris("cvr")' :class='{act:countrisChoice === "cvr"}'>CVR</div>
             </div>

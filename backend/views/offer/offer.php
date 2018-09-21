@@ -992,12 +992,24 @@
           data: ajaxData,
           success: function (result) {
             // Campaign Owner
-            result.data.user.map(function (ele) {
-              that.options.campaignOwner.push({
-                value: ele.id,
-                label: ele.email
+            if (that.pageType === 'create') {
+              result.data.user.map(function (ele) {
+                if (ele.status === 1) {
+                  that.options.campaignOwner.push({
+                    value: ele.id,
+                    label: ele.email
+                  })
+                }
               })
-            })
+            }
+            if (that.pageType === 'update') {
+              result.data.user.map(function (ele) {
+                that.options.campaignOwner.push({
+                  value: ele.id,
+                  label: ele.email
+                })
+              })
+            }
             // advertiser
             result.data.ads.map(function (ele) {
               that.options.advertiser.push({

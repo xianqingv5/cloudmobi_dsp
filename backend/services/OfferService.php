@@ -67,7 +67,7 @@ class OfferService extends BaseService
         // search title
         $title = Yii::$app->request->post('title', '');
         if ($title) {
-            $where['title'] = "title = '" . $title . "'";
+            $where['title'] = "title like '%" . $title . "%'";
         }
 
         return $where;

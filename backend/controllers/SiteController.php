@@ -1,16 +1,17 @@
 <?php
 namespace backend\controllers;
 
+use backend\services\BaseService;
 use Yii;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use backend\services\SiteService;
 
 /**
  * Site controller
  */
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -60,7 +61,14 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if (!Yii::$app->user->isGuest)
+        {
+            BaseService::redirectHomeUrl();
+        }
+        else
+        {
+            Yii::$app->getResponse()->redirect('/site/login');
+        }
     }
 
     /**
@@ -71,12 +79,12 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            BaseService::redirectHomeUrl();
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            BaseService::redirectHomeUrl();
         } else {
             $model->password = '';
 

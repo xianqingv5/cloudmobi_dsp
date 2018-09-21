@@ -59,7 +59,7 @@ return [
         // offer list页面
         'offer-index' => [
             // 创建
-            'offer_create' => ['show' => true, 'operate' => true],
+            'offer_create' => ['show' => false, 'operate' => false],
             // 修改
             'offer_update' => ['show' => false,'operate' => false],
             // 查看

@@ -428,7 +428,7 @@ class OfferService extends BaseService
     public static function getOfferConfig()
     {
         // 获取offer所属者
-        self::$res['data']['user'] = User::getData(['id', 'email'], ['group_id = 3', 'status = 1']);
+        self::$res['data']['user'] = User::getData(['id', 'email', 'status'], ['group_id = 3']);
 
         // 获取第三方检测平台
         self::$res['data']['tpm'] = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['1=1']);

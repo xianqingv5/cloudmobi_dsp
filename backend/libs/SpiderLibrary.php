@@ -31,7 +31,7 @@ class SpiderLibrary
                 if ($type) {
                     $return['type'] = $type[0];
                     if ($android_title) {
-                        $return['offer_title'] = filter_var($android_title[0], FILTER_SANITIZE_STRING);
+                        $return['offer_title'] = htmlspecialchars_decode(filter_var($android_title[0], FILTER_SANITIZE_STRING));
                     }
                     // 获取包名
                     $parse_url = explode('/', parse_url($url)['query']);
@@ -54,7 +54,8 @@ class SpiderLibrary
                 $category = !empty($category_arr) ? $category_arr[1] : '';
                 $title = !empty($title_arr) ? explode(' ',trim(filter_var($title_arr[0], FILTER_SANITIZE_STRING)))[0] : '';
                 $return['type'] = $category;
-                $return['offer_title'] = trim($title);
+
+                $return['offer_title'] = htmlspecialchars_decode(trim($title));
 
                 // 获取数据库中的标签id
                 $return['category_id'] = '';
@@ -72,6 +73,7 @@ class SpiderLibrary
             self::$res['status'] = 0;
             self::$res['info'] = $e->getMessage();
         }
+
         return self::$res;
     }
 

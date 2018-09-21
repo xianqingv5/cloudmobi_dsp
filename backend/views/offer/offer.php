@@ -483,6 +483,7 @@
         requestUid: "<?= $this->params['request_uid'] ?>",
         groupID: "<?= $this->params['group_id'] ?>",
         offerID: "<?php echo $offer_id; ?>",
+        offerStatus: null,
         showOfferID: null,
         pageType: "<?php echo $type; ?>",
         channel: null,
@@ -832,6 +833,7 @@
             type: 'post',
             success: function (result) {
               console.log(result)
+              that.offerStatus = result.data.status
               that.showOfferID = result.data.show_offer_id
               that.channel = result.data.channel
               // 1
@@ -1390,6 +1392,7 @@
       submitAjax () {
         var that = this
         var ajaxData = {
+          status: that.offerStatus,
           offer_id: that.offerID,
           channel: that.channel,
           dsp_security_param: that.csrf,

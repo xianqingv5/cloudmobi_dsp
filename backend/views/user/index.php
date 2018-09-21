@@ -272,18 +272,41 @@
           type: 'get',
           success: function (result) {
             if (result.status === 1) {
-              result.data.map(function (ele) {
-                vm.ruleForm.roleOptions.push({
-                  label: ele.group_name,
-                  value: ele.id
-                })
-              })
+              vm.ruleForm.roleOptionsBase = result.data
+              // result.data.map(function (ele) {
+              //   vm.ruleForm.roleOptions.push({
+              //     label: ele.group_name,
+              //     value: ele.id
+              //   })
+              // })
               if (result.data.length === 1) {
                 vm.ruleForm.role = result.data[0].id
               }
             }
           }
         })
+      },
+      setRoleOptions (type) {
+        var that = this
+        this.ruleForm.roleOptions.splice(0)
+        if (type === 'create') {
+          this.ruleForm.roleOptionsBase.map(function (ele) {
+            if (ele.status === 1) {
+              that.ruleForm.roleOptions.push({
+                label: ele.group_name,
+                value: ele.id
+              })
+            }
+          })
+        }
+        if (type === 'edit') {
+          this.ruleForm.roleOptionsBase.map(function (ele) {
+            that.ruleForm.roleOptions.push({
+              label: ele.group_name,
+              value: ele.id
+            })
+          })
+        }
       },
       resetForm(formName) {
         if (this.$refs[formName] !== undefined) {
@@ -296,6 +319,7 @@
         }
       },
       showDialog (type,  item) {
+        this.setRoleOptions(type)
         this.dialogVisible = true
         this.dialogBus.type = type
         if (type === 'create') {

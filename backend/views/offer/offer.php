@@ -851,7 +851,7 @@
             data: ajaxData,
             type: 'post',
             success: function (result) {
-              console.log(result)
+              // console.log(result)
               that.offerStatus = result.data.status
               that.showOfferID = result.data.show_offer_id
               that.channel = result.data.channel
@@ -1016,7 +1016,6 @@
           data: ajaxData,
           success: function (result) {
             // Campaign Owner
-            console.log(result.data.user)
             if (that.pageType === 'create') {
               result.data.user.map(function (ele) {
                 if (ele.status === '1') {

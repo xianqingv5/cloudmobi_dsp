@@ -483,6 +483,7 @@
         requestUid: "<?= $this->params['request_uid'] ?>",
         groupID: "<?= $this->params['group_id'] ?>",
         offerID: "<?php echo $offer_id; ?>",
+        offerStatus: null,
         showOfferID: null,
         pageType: "<?php echo $type; ?>",
         channel: null,
@@ -832,6 +833,7 @@
             type: 'post',
             success: function (result) {
               console.log(result)
+              that.offerStatus = result.data.status
               that.showOfferID = result.data.show_offer_id
               that.channel = result.data.channel
               // 1
@@ -992,12 +994,24 @@
           data: ajaxData,
           success: function (result) {
             // Campaign Owner
-            result.data.user.map(function (ele) {
-              that.options.campaignOwner.push({
-                value: ele.id,
-                label: ele.email
+            if (that.pageType === 'create') {
+              result.data.user.map(function (ele) {
+                if (ele.status === 1) {
+                  that.options.campaignOwner.push({
+                    value: ele.id,
+                    label: ele.email
+                  })
+                }
               })
-            })
+            }
+            if (that.pageType === 'update') {
+              result.data.user.map(function (ele) {
+                that.options.campaignOwner.push({
+                  value: ele.id,
+                  label: ele.email
+                })
+              })
+            }
             // advertiser
             result.data.ads.map(function (ele) {
               that.options.advertiser.push({
@@ -1378,6 +1392,7 @@
       submitAjax () {
         var that = this
         var ajaxData = {
+          status: that.offerStatus,
           offer_id: that.offerID,
           channel: that.channel,
           dsp_security_param: that.csrf,

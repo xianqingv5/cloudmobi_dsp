@@ -5,10 +5,10 @@
       <el-breadcrumb-item>Campaign List</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='flex jc-end p30'>
-    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
+  <div class='flex jc-end p0-30'>
+    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color mt-30'><el-button type="primary">New Campaign</el-button></a>
   </div>
-  <div class='content'>
+  <div class='content mt-30'>
     <div class='contentBox'>
       <div class='searchBox flex jcsb mb-20'>
         <el-input

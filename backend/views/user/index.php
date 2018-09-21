@@ -272,6 +272,7 @@
           type: 'get',
           success: function (result) {
             if (result.status === 1) {
+              vm.ruleForm.roleOptionsBase = result.data
               result.data.map(function (ele) {
                 vm.ruleForm.roleOptions.push({
                   label: ele.group_name,

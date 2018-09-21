@@ -40,7 +40,7 @@
             <td>
               <div class='flex'>
                 <span class='icon el-icon-edit-outline' :class='{"mr-25":item.group_id==="3"}' @click='showDialog("edit", item)'></span>
-                <a v-if='item.group_id === "3"' class='ml-25' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.group_id'>
+                <a v-if='item.group_id === "3"' class='ml-25' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.id'>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>

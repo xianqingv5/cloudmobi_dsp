@@ -106,6 +106,18 @@
           </tr>
         </tbody>
       </table>
+      <!-- 分页 -->
+      <div class='flex'>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[50, 100, 200, 500]"
+          :page-size="50"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="1000">
+        </el-pagination>
+      </div>
     </div>
   </div>
   <!-- dialog -->
@@ -151,6 +163,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       return {
         power: power,
         csrf: '',
+        currentPage: 1,
         dialogVisible: false,
         search: {
           campaignID: '',
@@ -186,6 +199,12 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       this.getList()
     },
     methods: {
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
       submitForm2 () {
 
       },

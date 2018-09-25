@@ -1,4 +1,9 @@
 <div class='app' data-type="<?php echo $type; ?>">
+  <div
+    v-loading.fullscreen.lock="loading"
+    element-loading-text="资源上传中"
+    element-loading-spinner="el-icon-loading"
+  ></div>
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item><a href="/offer/offer-index">Campaigns</a></el-breadcrumb-item>
@@ -183,7 +188,7 @@
             <el-form-item label="Daily Cap" prop="dailyCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
-            <el-form-item label="Total Cap" prop="totalCap">
+            <el-form-item class='dn' label="Total Cap" prop="totalCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Delivery Price" prop="deliveryPrice">
@@ -269,6 +274,9 @@
             <h5>Creatives</h5>
           </div>
           <div class='content-con'>
+            <div class='tooltipMsg'>
+              Please upload an icon of any format (png, jpg, jpeg, gif), make sure the image ratio is 1:1 and it is less than 500 KB.
+            </div>
             <!-- icon -->
             <el-form-item label="icon" prop="iconList" class='imgDocker'>
               <div class='flex' v-if='!judePowerOperate'>
@@ -283,11 +291,16 @@
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.iconList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.iconList)'></div>
-                <div class='showImg flex'>
-                  <img src="" alt="" :src='item.url'>
-                </div>
+                <a class='db' :href='item.url' target='_black'>
+                  <div class='showImg flex'>
+                    <img src="" alt="" :src='item.url'>
+                  </div>
+                </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
+            </div>
+            <div class='tooltipMsg'>
+              Please upload one or more image of any format (png, jpg, jpeg, gif), make sure the image ratio is between 1:1.7～2.1, 1.7～2.1:1 or 1:1 and it is less than 500 KB.
             </div>
             <!-- image -->
             <el-form-item label="image" prop="imageList" class='imgDocker'>
@@ -303,11 +316,16 @@
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.imageList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.imageList)'></div>
-                <div class='showImg flex'>
-                  <img src="" alt="" :src='item.url'>
-                </div>
+                <a class='db' :href='item.url' target='_black'>
+                  <div class='showImg flex'>
+                    <img src="" alt="" :src='item.url'>
+                  </div>
+                </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
+            </div>
+            <div class='tooltipMsg'>
+              Please upload an video of mp4 format, make sure video is less than 2 MB.
             </div>
             <!-- video -->
             <el-form-item label="video" prop="video" class='imgDocker'>
@@ -323,9 +341,11 @@
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.videoList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.videoList)'></div>
-                <div class='showImg flex'>
-                  <video src="" controls='controls' :src='item.url'></video>
-                </div>
+                <a class='db' :href='item.url' target='_black'>
+                  <div class='showImg flex'>
+                    <video src="" controls='controls' :src='item.url'></video>
+                  </div>
+                </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
             </div>
@@ -508,18 +528,22 @@
         }
       }
       var validatorDeliveryPrice = function (rule, value, callback) {
-        console.log(value)
         if (value) {
           if (value <= 0.1) {
             callback(new Error("不得小于0.1"))
           } else {
-            callback()
+            if (value.toString().length <= value.toFixed(3).length) {
+              callback()
+            } else {
+              callback(new Error("小数点后不大于3位"))
+            }
           }
         } else {
           callback()
         }
       }
       return {
+        loading: false,
         power: power,
         requestUid: "<?= $this->params['request_uid'] ?>",
         groupID: "<?= $this->params['group_id'] ?>",
@@ -666,13 +690,13 @@
             { required: true, validator: validatorPayout, trigger: 'blur' }
           ],
           dailyCap: [
-            { required: false, validator: validatorDailyCap, trigger: 'blur' }
+            { required: false, validator: validatorDailyCap, trigger: ['blur', 'change'] }
           ],
           totalCap: [
-            { required: false, validator: validatorTotalCap, trigger: 'blur' }
+            { required: false, validator: validatorTotalCap, trigger: ['blur', 'change'] }
           ],
           deliveryPrice: [
-            { required: false, validator: validatorDeliveryPrice, trigger: 'blur' }
+            { required: false, validator: validatorDeliveryPrice, trigger: ['blur', 'change'] }
           ],
           // 4
           deviceType: [
@@ -1126,6 +1150,8 @@
       },
       // 上传文件
       uploadFile (type) {
+        // 加载
+        this.loading = true
         var that = this
         var str = '.' + type + 'file'
         var filesInput = document.querySelector(str)
@@ -1148,6 +1174,8 @@
               // console.log('judeUploadFile')
               // 上传函数
               that.uploadFun(fileData, type, function (err, result) {
+                // 加载
+                that.loading = false
                 // console.log('uploadFun')
                 // 总是清空input file
                 filesInput.value = ''
@@ -1615,5 +1643,11 @@
   }
   .judeUrl-font{
     border: 1px solid red;
+  }
+  .tooltipMsg{
+    background: #efefef;
+    margin-top: 20px;
+    padding: 10px;
+    text-align: center;
   }
 </style>

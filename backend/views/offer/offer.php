@@ -1525,9 +1525,6 @@
   .content-con{
     padding: 20px 0;
   }
-  .form-one{
-    width: 400px !important;
-  }
   .imgDocker{
     margin-top: 20px;
   }

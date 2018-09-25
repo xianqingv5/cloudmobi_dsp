@@ -74,5 +74,19 @@ use yii\helpers\Url;
       </a>
     </li>
     <?php } ?>
+    <li class="<?php echo $this->context->id == 'group' ? 'act' : ''; ?>">
+      <!-- title -->
+      <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/user/update-user-pwd')?>">
+        <div class='flex'>
+          <span class='sidebar-icon'>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-wode_xiugaimima"></use>
+            </svg>
+          </span>
+          <span>Edit Password</span>
+        </div>
+        <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
+      </a>
+    </li>
   </ul>
 </div>

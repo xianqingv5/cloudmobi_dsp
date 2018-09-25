@@ -205,4 +205,8 @@ table td {
 .border-1 {
   border: 1px solid #dcdfe6;
 }
+
+.form-one {
+  width: 400px !important;
+}
 /*# sourceMappingURL=common.css.map */

@@ -194,6 +194,11 @@ class UserService extends BaseService
         return $info['success'];
     }
 
+    public static function updateUserPwd()
+    {
+        
+    }
+
     /**
      * 验证email是否已存在
      * @return array

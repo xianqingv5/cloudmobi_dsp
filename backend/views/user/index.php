@@ -62,6 +62,9 @@
       :visible.sync="dialogVisible">
         <div class='flex column'>
           <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
+            <el-form-item label="Account" prop='account'>
+              <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.account" class='inputobj'></el-input>
+            </el-form-item>
             <el-form-item label="Email" prop='email'>
               <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.email" class='inputobj'></el-input>
             </el-form-item>
@@ -173,6 +176,22 @@
           callback()
         }
       }
+      // 验证简写
+      var validateAccount = function (rule, value, callback) {
+        var reg = new RegExp('^[a-zA-Z0-9]{2,3}$')
+        if (reg.test(value)) {
+          // ajax验证是否重复
+          vm.judeAccount(value, function (type, info) {
+            if (type) {
+              callback()
+            } else {
+              callback(new Error(info))
+            }
+          })
+        } else {
+          callback(new Error('格式不正确'))
+        }
+      }
       return {
         dialogBus: {
           title: null,
@@ -195,6 +214,7 @@
           ],
         },
         ruleForm: {
+          account: '',
           email: '',
           name: '',
           pass: '',
@@ -204,6 +224,10 @@
           comment: ''
         },
         rules: {
+          account: [
+            { required: true, message: "This can't be empty", trigger: 'blur' },
+            { required: true, validator: validateAccount, trigger: ['blur', 'change'] }
+          ],
           email: [
             { required: true, message: "This can't be empty", trigger: 'blur' },
             { type: 'email', message: 'Please enter a valid email address', trigger: ['blur', 'change'] },
@@ -243,6 +267,30 @@
       }
     },
     methods: {
+      // 验证简称
+      judeAccount (value, callback) {
+        var vm = this
+        if (this.dialogBus.type === 'create') {
+          var ajaxData = {
+            email: value,
+            dsp_security_param: vm.csrf
+          }
+          $.ajax({
+            url: '/user/check-email',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              if (result.status !== 1) {
+                callback(false, result.info)
+              } else {
+                callback(true)
+              }
+            }
+          })
+        } else {
+          callback(true)
+        }
+      },
       // 重置密码
       resetPass (item) {
         console.log('重置密码')

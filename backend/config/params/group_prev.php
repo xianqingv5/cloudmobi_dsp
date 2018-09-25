@@ -13,6 +13,7 @@ return [
     'user/check-email' => '用户创建之验证邮箱是否已存在',
     'user/update' => '编辑用户',
     'user/update-user-status' => '用户状态修改',
+    'user/update-user-pwd' => '用户修改自己的密码',
 
     // offer
     'offer/offer-index' => 'offer 列表页',

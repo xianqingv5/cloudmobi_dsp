@@ -59,6 +59,19 @@ class UserController extends BaseController
         return $res;
     }
 
+    public function actionUpdateUserPwd()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = UserService::updateUserStatus();
+            return $res;
+        }
+
+        return $this->render('pwd', [
+            'uid' => Yii::$app->user->identity->id,
+        ]);
+    }
+
     /**
      * 验证邮箱是否已存在
      * @return array

@@ -112,6 +112,9 @@
           </el-table-column>
         </el-table>
       </div>
+      <div class='w100 flex jc-end mt-20'>
+        <el-button @click='downloadTable' type="primary">Export<i class="el-icon-download el-icon--right"></i></el-button>
+      </div>
       <!-- report -->
       <div class='mt-20 flex'>
         <div class='col-auto-12 mr-10 border-1 p20'>
@@ -352,6 +355,10 @@
       }
     },
     methods: {
+      // 下载table
+      downloadTable () {
+
+      },
       // 获取链接参数
       getParams (key, callback) {
         var url = window.location.href

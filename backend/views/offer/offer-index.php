@@ -108,6 +108,25 @@
       </table>
     </div>
   </div>
+  <!-- dialog -->
+  <el-dialog
+  :close-on-click-modal='false'
+  title='审核'
+  :visible.sync="dialogVisible">
+    <div class='flex column'>
+      <el-form ref="ruleForm2" :model="ruleForm2" :rules="rules2" label-position="right" label-width="150px">
+        <el-form-item label="Price" prop='price'>
+          <el-input auto-complete="off" v-model.trim="ruleForm2.price" class='inputobj'></el-input>
+        </el-form-item>
+        <el-form-item label="Delivery Price" prop='pass1'>
+          <el-input auto-complete="off" v-model.trim="ruleForm2.deliveryPrice" class='inputobj'></el-input>
+        </el-form-item>
+        <div class='flex jc-end'>
+          <el-button type="primary" @click="submitForm2('ruleForm2')">Submit</el-button>
+        </div>
+      </el-form>
+    </div>
+  </el-dialog>
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
@@ -115,9 +134,24 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
   new Vue({
     el: '.app',
     data () {
+      var validatePrice = function (rule, value, callback) {
+        if (value <= 0.1) {
+          callback(new Error("不得小于0.1"))
+        } else {
+          callback()
+        }
+      }
+      var validateDeliveryPrice = function (rule, value, callback) {
+        if (value <= 0.1) {
+          callback(new Error("不得小于0.1"))
+        } else {
+          callback()
+        }
+      }
       return {
         power: power,
         csrf: '',
+        dialogVisible: false,
         search: {
           campaignID: '',
           advertiser: '',
@@ -131,7 +165,19 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           ],
           title: ''
         },
-        list: []
+        list: [],
+        ruleForm2: {
+          price: '',
+          deliveryPrice: ''
+        },
+        rules2: {
+          price: [
+            { required: true, validator: validatePrice, trigger: 'blur' }
+          ],
+          deliveryPrice: [
+            { required: true, validator: validateDeliveryPrice, trigger: 'blur' }
+          ]
+        }
       }
     },
     mounted () {
@@ -140,9 +186,12 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       this.getList()
     },
     methods: {
+      submitForm2 () {
+
+      },
       allowOffer (item, offerID) {
-        item.status = '1'
-        this.changeStatus(item.status, offerID)
+        this.dialogVisible = true
+        // this.changeStatus(item.status, offerID)
       },
       searchFun () {
         // console.log('search')

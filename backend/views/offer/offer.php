@@ -186,6 +186,9 @@
             <el-form-item label="Total Cap" prop="totalCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
+            <el-form-item label="Delivery Price" prop="deliveryPrice">
+              <el-input class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
+            </el-form-item>
           </div>
         </div>
         <!-- 4 -->
@@ -473,6 +476,13 @@
           callback()
         }
       }
+      var validatorPayout = function (rule, value, callback) {
+        if (value <= 0.1) {
+          callback(new Error("不得小于0.1"))
+        } else {
+          callback()
+        }
+      }
       var validatorDailyCap = function (rule, value, callback) {
         if (value) {
           if (Number(value) !== value) {
@@ -490,6 +500,18 @@
             callback(new Error(ruleLanguagePackage.shouldNumber))
           } else if (!vm.judeTotalCap()) {
             callback(new Error('Total Cap >= Daily Cap'))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+      }
+      var validatorDeliveryPrice = function (rule, value, callback) {
+        console.log(value)
+        if (value) {
+          if (value <= 0.1) {
+            callback(new Error("不得小于0.1"))
           } else {
             callback()
           }
@@ -583,6 +605,7 @@
           payout: null,
           dailyCap: null,
           totalCap: null,
+          deliveryPrice: null,
           // 4
           deviceType: '',
           specificDevice: [],
@@ -639,13 +662,17 @@
           // 3
           payout: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { type: 'number', message: ruleLanguagePackage.shouldNumber , trigger: 'blur' }
+            { type: 'number', message: ruleLanguagePackage.shouldNumber , trigger: 'blur' },
+            { required: true, validator: validatorPayout, trigger: 'blur' }
           ],
           dailyCap: [
             { required: false, validator: validatorDailyCap, trigger: 'blur' }
           ],
           totalCap: [
             { required: false, validator: validatorTotalCap, trigger: 'blur' }
+          ],
+          deliveryPrice: [
+            { required: false, validator: validatorDeliveryPrice, trigger: 'blur' }
           ],
           // 4
           deviceType: [

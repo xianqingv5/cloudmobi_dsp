@@ -38,9 +38,14 @@
               </el-switch>
             </td>
             <td>
-              <div class='flex'>
-                <span class='icon el-icon-edit-outline' :class='{"mr-25":item.group_id==="3"}' @click='showDialog("edit", item)'></span>
-                <a v-if='item.group_id === "3"' class='ml-25' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.id'>
+              <div class='flex jc-start'>
+                <span class='m-0-20' @click='resetPass(item)'>
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-zhongzhimima"></use>
+                  </svg>
+                </span>
+                <span class='icon el-icon-edit-outline m-0-20' @click='showDialog("edit", item)'></span>
+                <a v-if='item.group_id === "3"' class='m-0-20' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.id'>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
@@ -85,6 +90,22 @@
             </el-form-item>
             <div class='flex jc-end'>
               <el-button type="primary" @click="updateForm('ruleForm', dialogBus.type)">Submit</el-button>
+            </div>
+          </el-form>
+        </div>
+      </el-dialog>
+      <!-- edit pass dialog -->
+      <el-dialog
+      :close-on-click-modal='false'
+      title='重置密码'
+      :visible.sync="editPassDialogVisible">
+        <div class='flex column'>
+          <el-form ref="ruleForm2" :model="ruleForm2" :rules="rules2" label-position="right" label-width="50px">
+            <el-form-item label="Pass" prop='pass'>
+              <el-input disabled auto-complete="off" v-model.trim="ruleForm2.pass" class='inputobj'></el-input>
+            </el-form-item>
+            <div class='flex jc-end'>
+              <el-button type="primary" @click="updateForm2('ruleForm2')">Submit</el-button>
             </div>
           </el-form>
         </div>
@@ -159,10 +180,19 @@
           json: {}
         },
         dialogVisible: false,
+        editPassDialogVisible: false,
         csrf: null,
         index: {
           list: [],
           search: ''
+        },
+        ruleForm2: {
+          pass: ''
+        },
+        rules2: {
+          pass: [
+            { required: true, validator: validatePass, trigger: 'blur' }
+          ],
         },
         ruleForm: {
           email: '',
@@ -213,6 +243,12 @@
       }
     },
     methods: {
+      // 重置密码
+      resetPass (item) {
+        console.log('重置密码')
+        console.log(item)
+        this.editPassDialogVisible = true
+      },
       updateStatus (e, item) {
         var vm = this
         var ajaxData = {
@@ -327,6 +363,15 @@
           this.ruleForm.role = this.dialogBus.json.group_id
           this.ruleForm.comment = this.dialogBus.json.comment
         }
+      },
+      updateForm2 (formName) {
+        this.$refs[formName].validate(function (valid) {
+          if (valid) {
+            console.log('updateForm2 submit success')
+          } else {
+            console.log('updateForm2 submit error')
+          }
+        })
       },
       updateForm (formName, type) {
         var vm = this

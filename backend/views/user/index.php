@@ -302,13 +302,9 @@
         this.editPassDialogVisible = true
         this.editPassDialogBus.json = item
         // ajax
-        var ajaxData = {
-          dsp_security_param: this.csrf
-        }
         $.ajax({
           url: '/user/update-pwd',
-          type: 'post',
-          data: ajaxData,
+          type: 'get',
           success: function (result) {
             if (result.status === 1) {
               that.editPassDialogBus.pwd = result.data

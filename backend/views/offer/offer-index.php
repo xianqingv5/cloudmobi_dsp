@@ -111,11 +111,11 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
+          :current-page="pagination.currentPage"
           :page-sizes="[50, 100, 200, 500]"
           :page-size="50"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="1000">
+          :total="pagination.total">
         </el-pagination>
       </div>
     </div>
@@ -163,7 +163,11 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       return {
         power: power,
         csrf: '',
-        currentPage: 1,
+        pagination: {
+          currentPage: 1,
+          total: null,
+          size: null,
+        },
         dialogVisible: false,
         search: {
           campaignID: '',
@@ -200,10 +204,12 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
     },
     methods: {
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        console.log(`每页 ${val} 条`)
+        this.pagination.size = val
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        console.log(`当前页: ${val}`)
+        this.pagination.page = val
       },
       submitForm2 () {
 
@@ -224,6 +230,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           status: this.search.status,
           title: this.search.title,
           dsp_security_param: this.csrf
+          // 此处需要添加分页请求的参数
         }
         $.ajax({
           url: '/offer/offer-index',

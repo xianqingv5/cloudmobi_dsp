@@ -22,14 +22,16 @@ class CommonAsset extends AssetBundle
 
 	//js 文件数组
 	public $js = [
-		'js/vue.2.5.17.js',
+		// 'js/vue.2.5.17.js',
+		'js/vue.2.5.17.min.js',
+		'js/vueComponents.js',
 		'plugin/element-ui@2.4.7/index.js',
 		'plugin/element-ui@2.4.7/locale/en.js',
 		'plugin/aws/aws-sdk-2.283.1.min.js',
 		'plugin/iconfont/iconfont.js',
 		'plugin/aws/app.js',
 		'js/base.js',
-		'js/echarts.js'
+		'js/echarts.common.min.js'
 	];
 
 	/**

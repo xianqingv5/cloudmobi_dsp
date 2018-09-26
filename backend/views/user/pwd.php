@@ -20,6 +20,7 @@
           <el-button type="primary" @click="submitForm('ruleForm')">Save</el-button>
         </el-form-item>
       </el-form>
+      <big-datepicker></big-datepicker>
     </div>
   </div>
 </div>

@@ -76,7 +76,7 @@ use yii\helpers\Url;
     <?php } ?>
     <li class="<?php echo $this->context->id == 'group' ? 'act' : ''; ?>">
       <!-- title -->
-      <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/user/update-user-pwd')?>">
+      <a class='sidebar-title flex jcsb' href="<?php echo Url::to('/user/update-pwd')?>">
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">

@@ -64,6 +64,7 @@
         }
       }
       return {
+        csrf: null,
         ruleForm: {
           oldPass: '',
           newPass: '',
@@ -81,6 +82,9 @@
           ]
         }
       }
+    },
+    mounted () {
+      this.csrf = document.querySelector('#spp_security').value
     },
     methods: {
       submitForm (formName) {

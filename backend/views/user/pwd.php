@@ -20,7 +20,6 @@
           <el-button type="primary" @click="submitForm('ruleForm')">Save</el-button>
         </el-form-item>
       </el-form>
-      <big-datepicker></big-datepicker>
     </div>
   </div>
 </div>
@@ -65,6 +64,7 @@
         }
       }
       return {
+        csrf: null,
         ruleForm: {
           oldPass: '',
           newPass: '',
@@ -82,6 +82,9 @@
           ]
         }
       }
+    },
+    mounted () {
+      this.csrf = document.querySelector('#spp_security').value
     },
     methods: {
       submitForm (formName) {

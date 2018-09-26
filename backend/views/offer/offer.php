@@ -1150,8 +1150,6 @@
       },
       // 上传文件
       uploadFile (type) {
-        // 加载
-        this.loading = true
         var that = this
         var str = '.' + type + 'file'
         var filesInput = document.querySelector(str)
@@ -1279,12 +1277,18 @@
       // 上传s3函数
       uploadFun (data, type, callback) {
         // console.log('开始上传')
+        // 加载
+        this.loading = true
         var that = this
+        var date = new Date()
+        var fileName = date.getTime() + '_' + data.fileName
+        console.log(fileName)
         // 上传状态
         s3.upload({
-          Key: data.fileName,
+          Key: fileName,
           Body: data.file,
-          ACL: 'public-read'
+          ACL: 'public-read',
+          ContentType: 'image/jpeg'
         }, function (err, result) {
           callback(err, result)
         })

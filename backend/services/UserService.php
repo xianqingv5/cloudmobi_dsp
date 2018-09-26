@@ -197,14 +197,14 @@ class UserService extends BaseService
     /**
      * 密码修改
      * @param int $uid
+     * @param string $type 1:用户修改密码 2:管理员修改用户密码
      * @return array
      */
-    public static function updateUserPwd($uid = 0)
+    public static function updateUserPwd($uid = 0, $type = '1')
     {
-        $id = !empty($uid) ? $uid : Yii::$app->user->identity->id;
         try {
-            // 管理员修改密码时,不验证密码(后台直接生产随机字符串)
-            if (!$uid) {
+            // 用户修改密码,管理员修改密码时,不验证密码(后台直接生产随机字符串)
+            if ($type == 1) {
                 // 原密码验证
                 $old_pwd = Yii::$app->request->post('old_pwd', '');
                 $check_old_pwd = self::checkOldPwd($old_pwd, 0);
@@ -219,13 +219,15 @@ class UserService extends BaseService
                 if (self::checkNewPwd($new_pwd, $check_new_pwd)) {
                     return self::$res;
                 }
+                $where['id'] = Yii::$app->user->identity->id;
             } else {
                 $new_pwd = Yii::$app->request->post('new_pwd', '');
+                $where['id'] = $uid;
             }
 
             // 修改密码
             $data = [];
-            $where['id'] = $id;
+
             $data['salt'] = Yii::$app->security->generateRandomString(4);
             $data['password'] = md5($new_pwd . $data['salt']);
             $data['update_date'] = date('Y-m-d H:i:s');
@@ -346,6 +348,7 @@ class UserService extends BaseService
      */
     public static function getCode($num)
     {
+        self::$res['status'] = 1;
         self::$res['data']['code'] = Yii::$app->security->generateRandomString($num);
         return self::$res;
     }

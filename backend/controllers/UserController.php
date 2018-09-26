@@ -86,7 +86,7 @@ class UserController extends BaseController
         if (!Yii::$app->request->isAjax && !Yii::$app->request->isPost) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $uid = Yii::$app->request->post('id', 0);
-            $res = UserService::updateUserPwd($uid);
+            $res = UserService::updateUserPwd($uid, 2);
             return $res;
         }
     }

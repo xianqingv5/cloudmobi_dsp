@@ -338,4 +338,15 @@ class UserService extends BaseService
         self::$res['data'] = $g_res;
         return self::$res;
     }
+
+    /**
+     * 获取随机字符串
+     * @param $num
+     * @return array
+     */
+    public static function getCode($num)
+    {
+        self::$res['data']['code'] = Yii::$app->security->generateRandomString($num);
+        return self::$res;
+    }
 }

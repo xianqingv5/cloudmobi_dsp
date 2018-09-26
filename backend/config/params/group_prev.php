@@ -15,6 +15,7 @@ return [
     'user/update-user-status' => '用户状态修改',
     'user/update-pwd' => '用户修改自己的密码',
     'user/update-user-pwd' => '管理员修改用户的密码',
+    'user/get-code' => '密码获取随机字符串',
 
     // offer
     'offer/offer-index' => 'offer 列表页',

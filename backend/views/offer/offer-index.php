@@ -106,8 +106,39 @@
           </tr>
         </tbody>
       </table>
+      <!-- 分页 -->
+      <div class='flex'>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagination.currentPage"
+          :page-sizes="[50, 100, 200, 500]"
+          :page-size="50"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.total">
+        </el-pagination>
+      </div>
     </div>
   </div>
+  <!-- dialog -->
+  <el-dialog
+  :close-on-click-modal='false'
+  title='审核'
+  :visible.sync="dialogVisible">
+    <div class='flex column'>
+      <el-form ref="ruleForm2" :model="ruleForm2" :rules="rules2" label-position="right" label-width="150px">
+        <el-form-item label="Price" prop='price'>
+          <el-input auto-complete="off" v-model.trim="ruleForm2.price" class='inputobj'></el-input>
+        </el-form-item>
+        <el-form-item label="Delivery Price" prop='pass1'>
+          <el-input auto-complete="off" v-model.trim="ruleForm2.deliveryPrice" class='inputobj'></el-input>
+        </el-form-item>
+        <div class='flex jc-end'>
+          <el-button type="primary" @click="submitForm2('ruleForm2')">Submit</el-button>
+        </div>
+      </el-form>
+    </div>
+  </el-dialog>
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
@@ -115,9 +146,29 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
   new Vue({
     el: '.app',
     data () {
+      var validatePrice = function (rule, value, callback) {
+        if (value <= 0.1) {
+          callback(new Error("不得小于0.1"))
+        } else {
+          callback()
+        }
+      }
+      var validateDeliveryPrice = function (rule, value, callback) {
+        if (value <= 0.1) {
+          callback(new Error("不得小于0.1"))
+        } else {
+          callback()
+        }
+      }
       return {
         power: power,
         csrf: '',
+        pagination: {
+          currentPage: 1,
+          total: null,
+          size: null,
+        },
+        dialogVisible: false,
         search: {
           campaignID: '',
           advertiser: '',
@@ -131,7 +182,19 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           ],
           title: ''
         },
-        list: []
+        list: [],
+        ruleForm2: {
+          price: '',
+          deliveryPrice: ''
+        },
+        rules2: {
+          price: [
+            { required: true, validator: validatePrice, trigger: 'blur' }
+          ],
+          deliveryPrice: [
+            { required: true, validator: validateDeliveryPrice, trigger: 'blur' }
+          ]
+        }
       }
     },
     mounted () {
@@ -140,9 +203,20 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       this.getList()
     },
     methods: {
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`)
+        this.pagination.size = val
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`)
+        this.pagination.page = val
+      },
+      submitForm2 () {
+
+      },
       allowOffer (item, offerID) {
-        item.status = '1'
-        this.changeStatus(item.status, offerID)
+        this.dialogVisible = true
+        // this.changeStatus(item.status, offerID)
       },
       searchFun () {
         // console.log('search')
@@ -156,6 +230,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           status: this.search.status,
           title: this.search.title,
           dsp_security_param: this.csrf
+          // 此处需要添加分页请求的参数
         }
         $.ajax({
           url: '/offer/offer-index',

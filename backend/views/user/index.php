@@ -303,11 +303,11 @@
         this.editPassDialogBus.json = item
         // ajax
         $.ajax({
-          url: '/user/update-pwd',
+          url: '/user/get-code',
           type: 'get',
           success: function (result) {
             if (result.status === 1) {
-              that.editPassDialogBus.pwd = result.data
+              that.ruleForm2.pass = result.data.code
             }
           }
         })
@@ -435,24 +435,27 @@
             console.log('updateForm2 submit success')
             // ajax
             var ajaxData = {
-              dsp_security_param: this.csrf
+              dsp_security_param: this.csrf,
+              id: this.editPassDialogBus.json.id,
+              new_pwd: this.ruleForm2.pass
             }
-            $.ajax({
-              url: '/user/update-pwd',
-              type: 'post',
-              data: ajaxData,
-              success: function (result) {
-                if (result.status === 1) {
-                  that.editPassDialogVisible = false
-                  that.$message({
-                    message: result.info,
-                    type: 'success'
-                  })
-                } else {
-                  that.$message.error(result.info)
-                }
-              }
-            })
+            console.log(ajaxData)
+            // $.ajax({
+            //   url: '/user/update-pwd',
+            //   type: 'post',
+            //   data: ajaxData,
+            //   success: function (result) {
+            //     if (result.status === 1) {
+            //       that.editPassDialogVisible = false
+            //       that.$message({
+            //         message: result.info,
+            //         type: 'success'
+            //       })
+            //     } else {
+            //       that.$message.error(result.info)
+            //     }
+            //   }
+            // })
           } else {
             console.log('updateForm2 submit error')
           }

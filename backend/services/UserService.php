@@ -195,6 +195,107 @@ class UserService extends BaseService
     }
 
     /**
+     * 密码修改
+     * @param int $uid
+     * @return array
+     */
+    public static function updateUserPwd($uid = 0)
+    {
+        $id = !empty($uid) ? $uid : Yii::$app->user->identity->id;
+        try {
+            // 管理员修改密码时,不验证密码(后台直接生产随机字符串)
+            if (!$uid) {
+                // 原密码验证
+                $old_pwd = Yii::$app->request->post('old_pwd', '');
+                $check_old_pwd = self::checkOldPwd($old_pwd, 0);
+                if (!$check_old_pwd) {
+                    self::$res['info'] = "Original password error.";
+                    return self::$res;
+                }
+
+                // 新密码验证
+                $new_pwd = Yii::$app->request->post('new_pwd', '');
+                $check_new_pwd = Yii::$app->request->post('check_new_pwd', '');
+                if (self::checkNewPwd($new_pwd, $check_new_pwd)) {
+                    return self::$res;
+                }
+            } else {
+                $new_pwd = Yii::$app->request->post('new_pwd', '');
+            }
+
+            // 修改密码
+            $data = [];
+            $where['id'] = $id;
+            $data['salt'] = Yii::$app->security->generateRandomString(4);
+            $data['password'] = md5($new_pwd . $data['salt']);
+            $data['update_date'] = date('Y-m-d H:i:s');
+            $res = User::updateData($data, $where);
+            if ($res) {
+                self::$res['status'] = 1;
+                self::$res['info'] = 'success';
+            } else {
+                self::$res['info'] = 'Failure to modify';
+            }
+
+        } catch (\Exception $e) {
+            self::logs($e->getMessage());
+            self::$res['info'] = "Failure to modify";
+        }
+
+        return self::$res;
+
+    }
+
+    /**
+     * 新密码验证
+     * @param $new_pwd
+     * @param $check_new_pwd
+     * @return bool
+     */
+    public static function checkNewPwd($new_pwd, $check_new_pwd)
+    {
+        // 判断是否为空
+        if (empty($new_pwd)) {
+            self::$res['info'] = 'Password must be filled.';
+            return false;
+        }
+        // 判断长度
+        if (strlen($new_pwd) < 8) {
+            self::$res['info'] = 'Password length is at least 8 bits.';
+            return false;
+        }
+
+        // 判断两次输入是否一致
+        if ($new_pwd != $check_new_pwd) {
+            self::$res['info'] = 'The input password is inconsistent.';
+            return false;
+        }
+
+        // 判断密码格式
+        $reg = '/^[0-9a-zA-Z]{8}$/';
+        if (preg_match($reg, $new_pwd)) {
+            self::$res['info'] = 'The password is composed of numbers and strings.';
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 旧密码验证
+     * @param $old_pwd
+     * @param int $uid
+     * @return bool
+     */
+    public static function checkOldPwd($old_pwd, $uid = 0)
+    {
+        $id = !empty($uid) ? $uid : Yii::$app->user->identity->id;
+        $u_res = User::findIdentity($id);
+        return ( $u_res->password === md5($old_pwd . $u_res->salt) ) ? true : false;
+
+    }
+
+    /**
      * 验证email是否已存在
      * @return array
      */

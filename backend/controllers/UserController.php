@@ -59,17 +59,36 @@ class UserController extends BaseController
         return $res;
     }
 
-    public function actionUpdateUserPwd()
+    /**
+     * 修改自己的密码
+     * @return array|string
+     */
+    public function actionUpdatePwd()
     {
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
             Yii::$app->response->format = Response::FORMAT_JSON;
-            $res = UserService::updateUserStatus();
+            $res = UserService::updateUserPwd();
             return $res;
         }
 
         return $this->render('pwd', [
             'uid' => Yii::$app->user->identity->id,
         ]);
+    }
+
+
+    /**
+     * 修改用户密码
+     * @return array
+     */
+    public function actionUpdateUserPwd()
+    {
+        if (!Yii::$app->request->isAjax && !Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $uid = Yii::$app->request->post('id', 0);
+            $res = UserService::updateUserPwd($uid);
+            return $res;
+        }
     }
 
     /**

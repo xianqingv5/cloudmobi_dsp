@@ -200,6 +200,9 @@
         },
         dialogVisible: false,
         editPassDialogVisible: false,
+        editPassDialogBus: {
+          json: {}
+        },
         csrf: null,
         index: {
           list: [],
@@ -293,9 +296,22 @@
       },
       // 重置密码
       resetPass (item) {
+        var that = this
         console.log('重置密码')
         console.log(item)
         this.editPassDialogVisible = true
+        this.editPassDialogBus.json = item
+        // ajax
+        $.ajax({
+          url: '/user/get-code',
+          type: 'get',
+          success: function (result) {
+            if (result.status === 1) {
+              that.ruleForm2.pass = result.data.code
+            }
+          }
+        })
+
       },
       updateStatus (e, item) {
         var vm = this
@@ -413,9 +429,33 @@
         }
       },
       updateForm2 (formName) {
+        var that = this
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('updateForm2 submit success')
+            // ajax
+            var ajaxData = {
+              dsp_security_param: this.csrf,
+              id: this.editPassDialogBus.json.id,
+              new_pwd: this.ruleForm2.pass
+            }
+            console.log(ajaxData)
+            // $.ajax({
+            //   url: '/user/update-pwd',
+            //   type: 'post',
+            //   data: ajaxData,
+            //   success: function (result) {
+            //     if (result.status === 1) {
+            //       that.editPassDialogVisible = false
+            //       that.$message({
+            //         message: result.info,
+            //         type: 'success'
+            //       })
+            //     } else {
+            //       that.$message.error(result.info)
+            //     }
+            //   }
+            // })
           } else {
             console.log('updateForm2 submit error')
           }

@@ -88,13 +88,39 @@
     },
     methods: {
       submitForm (formName) {
+        var that = this
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             if (valid) {
               console.log('submit!')
+              that.ajaxFun()
             } else {
               console.log('error submit!!')
               return false
+            }
+          }
+        })
+      },
+      ajaxFun () {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf,
+          old_pwd: this.ruleForm.oldPass,
+          new_pwd: this.ruleForm.newPass,
+          check_new_pwd: this.ruleForm.checkNewPass
+        }
+        $.ajax({
+          url: '/user/update-pwd',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            if (result.status === 1) {
+              that.$message({
+                message: result.info,
+                type: 'success'
+              })
+            } else {
+              that.$message.error(result.info)
             }
           }
         })

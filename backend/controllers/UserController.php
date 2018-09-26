@@ -91,6 +91,13 @@ class UserController extends BaseController
         }
     }
 
+    public function actionGetCode()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::getCode(8);
+        return $res;
+    }
+
     /**
      * 验证邮箱是否已存在
      * @return array

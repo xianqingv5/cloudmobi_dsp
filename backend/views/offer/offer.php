@@ -946,6 +946,7 @@
               var total_cap = Number(result.data.total_cap)
               if (total_cap === -1) total_cap = null
               that.ruleForm.totalCap = total_cap
+              that.ruleForm.deliveryPrice = result.data.delivery_price
               // 4
               that.ruleForm.deviceType = result.data.device_target.toString()
               var specificDevice = JSON.parse(result.data.specific_device)

@@ -274,9 +274,9 @@ class UserService extends BaseService
         }
 
         // 判断密码格式
-        $reg = '/^[0-9a-zA-Z]{8}$/';
+        $reg = '/^[0-9a-zA-Z-_]{8,}$/';
         if (preg_match($reg, $new_pwd)) {
-            self::$res['info'] = 'The password is composed of numbers and strings.';
+            self::$res['info'] = 'Incorrect password format.';
             return false;
         }
 

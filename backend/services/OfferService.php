@@ -212,7 +212,7 @@ class OfferService extends BaseService
     {
 
         $data = self::getPostInfo();
-        $data['status'] = in_array(Yii::$app->user->identity->group_id, [1,2]) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
+        $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
         $data['create_date'] = date('Y-m-d H:i:s');
 
         $offer_id = DemandOffers::addData($data);
@@ -221,8 +221,9 @@ class OfferService extends BaseService
 
     public static function updateDemandOffer($offer_id)
     {
+        $status = Yii::$app->request->post('status', 1);
         $data = self::getPostInfo();
-        $data['status'] = Yii::$app->request->post('status', 1);
+        $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? $status : 3;
         $res = DemandOffers::updateData($data, ['id' => $offer_id]);
         return $res;
 

@@ -40,7 +40,7 @@ class OfferController extends BaseController
     }
 
     /**
-     * offer update
+     * get offer update info
      * @return array|string
      */
     public function actionOfferUpdateInfo()
@@ -55,6 +55,10 @@ class OfferController extends BaseController
         return $this->render('offer', ['type' => 'update', 'offer_id'=> $offer_id]);
     }
 
+    /**
+     * offer update
+     * @return array
+     */
     public function actionOfferUpdate()
     {
         if (Yii::$app->request->isPost && Yii::$app->request->isAjax) {

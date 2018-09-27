@@ -1,6 +1,6 @@
 // vue插件系统
-Vue.component("big-datepicker", {
-    props: ["propsList"],
+Vue.component('big-datepicker', {
+    props: ['propsList'],
     data: function () {
         return {
             list: [],
@@ -8,17 +8,17 @@ Vue.component("big-datepicker", {
         };
     },
     beforeCreate: function () {
-        console.log("beforeCreate");
+        console.log('beforeCreate');
     },
     created: function () {
-        console.log("created");
+        console.log('created');
     },
     beforeMount: function () {
-        console.log("beforeMount");
+        console.log('beforeMount');
     },
     mounted: function () {
         var _this = this;
-        console.log("mounted");
+        console.log('mounted');
         this.num = 2;
         this.num = 3;
         this.num = 4;
@@ -27,16 +27,16 @@ Vue.component("big-datepicker", {
         });
     },
     beforeUpdate: function () {
-        console.log("beforeUpdate");
+        console.log('beforeUpdate');
     },
     updated: function () {
-        console.log("updated");
+        console.log('updated');
     },
     beforeDestroy: function () {
-        console.log("beforeDestroy");
+        console.log('beforeDestroy');
     },
     destroyed: function () {
-        console.log("destroyed");
+        console.log('destroyed');
     },
     render: function (h, context) {
         return h('div', {

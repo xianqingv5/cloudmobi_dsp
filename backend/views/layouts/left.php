@@ -80,7 +80,7 @@ use yii\helpers\Url;
         <div class='flex'>
           <span class='sidebar-icon'>
             <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-wode_xiugaimima"></use>
+              <use xlink:href="#icon-xiugaimima"></use>
             </svg>
           </span>
           <span>Edit Password</span>

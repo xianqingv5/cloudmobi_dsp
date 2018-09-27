@@ -61,8 +61,8 @@
       :title='dialogBus.title'
       :visible.sync="dialogVisible">
         <div class='flex column'>
-          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
-            <el-form-item label="Account" prop='account'>
+          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="200px">
+            <el-form-item label="Account Short Name" prop='account'>
               <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.account" class='inputobj'></el-input>
             </el-form-item>
             <el-form-item label="Email" prop='email'>

@@ -440,7 +440,7 @@
               new_pwd: that.ruleForm2.pass
             }
             $.ajax({
-              url: '/user/update-pwd',
+              url: '/user/update-user-pwd',
               type: 'post',
               data: ajaxData,
               success: function (result) {

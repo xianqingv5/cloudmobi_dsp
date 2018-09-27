@@ -20,7 +20,14 @@ return [
             'offer_sh' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
-        'offer-update-info' => ['show' => true,'operate' => true],
+        'offer-update-info' => [
+            // 是否页面可操作
+            'show' => true,'operate' => true,
+            // 投放价格是否显示
+            'delivery_price' => ['show' => true,'operate' => true,],
+            // 价格是否可修改
+            'payout' => ['show' => true,'operate' => false,],
+        ],
 
         // 报表页面
         'offer-report-index' => [
@@ -46,7 +53,14 @@ return [
             'offer_sh' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
-        'offer-update-info' => ['show' => true,'operate' => true],
+        'offer-update-info' => [
+            // 是否页面可操作
+            'show' => true,'operate' => true,
+            // 投放价格是否显示
+            'delivery_price' => ['show' => true,'operate' => true,],
+            // 价格是否可修改
+            'payout' => ['show' => true,'operate' => false,],
+        ],
 
         // 报表页面
         'offer-report-index' => [
@@ -70,7 +84,14 @@ return [
             'offer_sh' => ['show' => true,'operate' => false],
         ],
         // offer update 页面
-        'offer-update-info' => ['show' => true,'operate' => false],
+        'offer-update-info' => [
+            // 是否页面可操作
+            'show' => true,'operate' => false,
+            // 投放价格是否显示
+            'delivery_price' => ['show' => false,'operate' => false,],
+            // 价格是否可修改
+            'payout' => ['show' => true,'operate' => true,],
+        ],
 
         // 报表页面
         'offer-report-index' => [

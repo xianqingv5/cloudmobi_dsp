@@ -297,8 +297,7 @@
       // 重置密码
       resetPass (item) {
         var that = this
-        console.log('重置密码')
-        console.log(item)
+        // console.log('重置密码')
         this.editPassDialogVisible = true
         this.editPassDialogBus.json = item
         // ajax

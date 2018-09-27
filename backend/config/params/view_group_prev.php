@@ -29,6 +29,12 @@ return [
             'payout' => ['show' => true,'operate' => false,],
         ],
 
+        // offer create 页面
+        'offer-create' => [
+            // 投放价格是否显示
+            'delivery_price' => ['show' => true,'operate' => true,],
+        ],
+
         // 报表页面
         'offer-report-index' => [
             // 用户搜索
@@ -62,6 +68,12 @@ return [
             'payout' => ['show' => true,'operate' => false,],
         ],
 
+        // offer create 页面
+        'offer-create' => [
+            // 投放价格是否显示
+            'delivery_price' => ['show' => true,'operate' => true,],
+        ],
+
         // 报表页面
         'offer-report-index' => [
             'campaigns_owner' => ['show' => true,'operate' => true],
@@ -91,6 +103,12 @@ return [
             'delivery_price' => ['show' => false,'operate' => false,],
             // 价格是否可修改
             'payout' => ['show' => true,'operate' => true,],
+        ],
+
+        // offer create 页面
+        'offer-create' => [
+            // 投放价格是否显示
+            'delivery_price' => ['show' => false,'operate' => false,],
         ],
 
         // 报表页面

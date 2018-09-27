@@ -1499,6 +1499,7 @@
           payout: that.ruleForm.payout,
           daily_cap: that.ruleForm.dailyCap,
           total_cap: that.ruleForm.totalCap,
+          delivery_price: that.ruleForm.deliveryPrice,
           // 4
           device_target: that.ruleForm.deviceType,
           specific_device: that.ruleForm.specificDevice,

@@ -182,8 +182,8 @@
             <h5>Budget Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item label="Price($)" prop="payout">
-              <el-input :disabled='judePowerOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
+            <el-form-item v-if='power.payout.show' label="Price($)" prop="payout">
+              <el-input :disabled='judePowerOperate || !power.payout.operate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
@@ -191,8 +191,8 @@
             <el-form-item class='dn' label="Total Cap" prop="totalCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
-            <el-form-item label="Delivery Price" prop="deliveryPrice">
-              <el-input class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
+            <el-form-item v-if='power.delivery_price.show' label="Delivery Price" prop="deliveryPrice">
+              <el-input :disabled='!power.delivery_price.operate' class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -363,7 +363,7 @@
 <script>
   // 权限
   var power = JSON.parse('<?= $this->params['view_group'] ?>')
-  // console.log(power)
+  console.log(power)
   // s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'

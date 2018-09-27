@@ -254,6 +254,12 @@ class OfferService extends BaseService
         $data['network_environment'] = Yii::$app->request->post('network_environment', '3');
         $data['comment'] = Yii::$app->request->post('comment', '');
 
+        // 投放价格
+        $delivery_price = Yii::$app->request->post('delivery_price', 0);
+        if ($delivery_price) {
+            $data['delivery_price'] = $delivery_price;
+        }
+
         // 投放时间
         $data['delivery_status'] = Yii::$app->request->post('delivery_status', 2);
         $data['delivery_start_day'] = Yii::$app->request->post('delivery_start_data', date('Y-m-d'));

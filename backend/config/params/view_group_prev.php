@@ -101,7 +101,7 @@ return [
             'offer_sh' => ['show' => true,'operate' => false],
 
             // 列表投放单价是否显示
-            'offer_delivery_price' => ['show' => true,'operate' => true],
+            'offer_delivery_price' => ['show' => false,'operate' => false],
         ],
         // offer update 页面
         'offer-update-info' => [

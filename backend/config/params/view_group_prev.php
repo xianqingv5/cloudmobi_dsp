@@ -18,6 +18,8 @@ return [
             'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => true],
+            // 列表投放单价是否显示
+            'offer_delivery_price' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
         'offer-update-info' => [
@@ -57,6 +59,9 @@ return [
             'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => true],
+
+            // 列表投放单价是否显示
+            'offer_delivery_price' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
         'offer-update-info' => [
@@ -94,6 +99,9 @@ return [
             'offer_status' => ['show' => true,'operate' => false],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => false],
+
+            // 列表投放单价是否显示
+            'offer_delivery_price' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
         'offer-update-info' => [

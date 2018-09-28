@@ -182,8 +182,8 @@
             <h5>Budget Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item label="Price($)" prop="payout">
-              <el-input :disabled='judePowerOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
+            <el-form-item v-if='judePowerPayoutShow' label="Price($)" prop="payout">
+              <el-input :disabled='judePowerOperate || !judePowerPayoutOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
@@ -191,8 +191,8 @@
             <el-form-item class='dn' label="Total Cap" prop="totalCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
-            <el-form-item label="Delivery Price" prop="deliveryPrice">
-              <el-input class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
+            <el-form-item v-if='power.delivery_price.show' label="Delivery Price" prop="deliveryPrice">
+              <el-input :disabled='judePowerOperate || !power.delivery_price.operate' class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -274,7 +274,7 @@
             <h5>Creatives</h5>
           </div>
           <div class='content-con'>
-            <div class='tooltipMsg'>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
               Please upload an icon of any format (png, jpg, jpeg, gif), make sure the image ratio is 1:1 and it is less than 500 KB.
             </div>
             <!-- icon -->
@@ -299,7 +299,7 @@
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
             </div>
-            <div class='tooltipMsg'>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
               Please upload one or more image of any format (png, jpg, jpeg, gif), make sure the image ratio is between 1:1.7～2.1, 1.7～2.1:1 or 1:1 and it is less than 500 KB.
             </div>
             <!-- image -->
@@ -324,7 +324,7 @@
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
             </div>
-            <div class='tooltipMsg'>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
               Please upload an video of mp4 format, make sure video is less than 2 MB.
             </div>
             <!-- video -->
@@ -363,7 +363,7 @@
 <script>
   // 权限
   var power = JSON.parse('<?= $this->params['view_group'] ?>')
-  // console.log(power)
+  console.log(power)
   // s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'
@@ -725,9 +725,27 @@
       }
     },
     computed: {
+      // 权限判断
       judePowerOperate () {
         if (!this.power.operate && this.pageType === 'update') return true
         return false
+      },
+      // payout
+      judePowerPayoutShow () {
+        if (this.power.payout) {
+          if (this.power.payout.show) return true
+          return false
+        } else {
+          return true
+        }
+      },
+      judePowerPayoutOperate () {
+        if (this.power.payout) {
+          if (this.power.payout.operate) return true
+          return false
+        } else {
+          return true
+        }
       },
       spaceShowTrackingUrlFlag () {
         if (this.ruleForm.trackingUrl.indexOf(' ') !== -1) return true

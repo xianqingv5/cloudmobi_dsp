@@ -58,7 +58,7 @@
           <th>Campaign ID</th>
           <th>Campaign Title</th>
           <th>Price</th>
-          <th>Delivery Price</th>
+          <th v-if='power.offer_delivery_price.show'>Delivery Price</th>
           <th>Status</th>
           <th>Actions</th>
         </thead>
@@ -67,7 +67,7 @@
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
-            <td v-text='item.delivery_price'></td>
+            <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price'></td>
             <td>
               <div class='flex'>
                 <div class='flex col-auto-18' :class={jcsb:power.offer_status.show}>
@@ -80,12 +80,12 @@
                       v-model="item.status"
                       active-value='1'
                       inactive-value='2'
-                      @change='changeStatus($event, item.id)'
+                      @change='changeStatus($event, item)'
                     >
                     </el-switch>
                   </template>
                   <template v-if='item.status === "3"'>
-                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item, item.id)'></el-button>
+                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item)'></el-button>
                   </template>
                 </div>
               </div>
@@ -132,7 +132,7 @@
         <el-form-item label="Price" prop='price'>
           <el-input auto-complete="off" v-model.trim="ruleForm2.price" class='inputobj'></el-input>
         </el-form-item>
-        <el-form-item label="Delivery Price" prop='pass1'>
+        <el-form-item label="Delivery Price" prop='deliveryPrice'>
           <el-input auto-complete="off" v-model.trim="ruleForm2.deliveryPrice" class='inputobj'></el-input>
         </el-form-item>
         <div class='flex jc-end'>
@@ -144,7 +144,7 @@
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
-// console.log(power)
+console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -171,6 +171,9 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           size: null,
         },
         dialogVisible: false,
+        dialogBus: {
+          json: {}
+        },
         search: {
           campaignID: '',
           advertiser: '',
@@ -213,12 +216,48 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
         console.log(`当前页: ${val}`)
         this.pagination.page = val
       },
-      submitForm2 () {
-
+      submitForm2 (formName) {
+        var that = this
+        this.$refs[formName].validate(function (valid) {
+          if (valid) {
+            console.log('submit!')
+            that.toExamine(this.ruleForm2)
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
       },
-      allowOffer (item, offerID) {
+      allowOffer (item) {
         this.dialogVisible = true
-        // this.changeStatus(item.status, offerID)
+        this.dialogBus.json = item
+        this.ruleForm2.price = item.payout
+        this.ruleForm2.deliveryPrice = item.delivery_price
+      },
+      // 审核
+      toExamine (data) {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf,
+          payout: data.price,
+          delivery_price: data.deliveryPrice
+        }
+        $.ajax({
+          url: '/offer/offer-update-status',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            if (result.status === 1) {
+              that.$message({
+                message: result.info,
+                type: 'success'
+              })
+            } else {
+              that.$message.error(result.info)
+              window.location.reload()
+            }
+          }
+        })
       },
       searchFun () {
         // console.log('search')
@@ -268,12 +307,12 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           }
         })
       },
-      changeStatus (status, offerID) {
+      changeStatus (ev, item) {
         var that = this
         var ajaxData = {
           dsp_security_param: this.csrf,
-          status: status,
-          offer_id: offerID
+          status: item.status,
+          offer_id: item.id
         }
         $.ajax({
           url: '/offer/offer-update-status',

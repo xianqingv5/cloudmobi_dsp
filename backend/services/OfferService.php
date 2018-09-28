@@ -20,7 +20,7 @@ class OfferService extends BaseService
     public static function getOfferList()
     {
         $where = self::getWhere();
-        $res = DemandOffers::getData(['id', 'channel', 'title', 'payout', 'status'], $where);
+        $res = DemandOffers::getData(['id', 'channel', 'title', 'payout', 'delivery_price', 'status'], $where);
         if ($res) {
             foreach ($res as $k=>$v) {
                 $res[$k]['show_offer_id'] =  $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );

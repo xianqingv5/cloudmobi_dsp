@@ -79,7 +79,8 @@ class DemandOfferService extends BaseService
             $res[$k]['pkg'] = $v['pkg_name'];
             $res[$k]['desc'] = $v['desc'];
             $res[$k]['open_type'] = (int)$v['open_type'];
-            $res[$k]['payout'] = (float)$v['payout'];
+            //$res[$k]['payout'] = (float)$v['payout'];
+            $res[$k]['payout'] = (float)$v['delivery_price'];// 投放单价
             $res[$k]['tracking_url'] = $v['tracking_url'];
             $res[$k]['final_url'] = $v['final_url'];
             $res[$k]['category'] = $category[ $v['platform'] ][ $v['category_id'] ];

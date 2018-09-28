@@ -58,6 +58,7 @@
           <th>Campaign ID</th>
           <th>Campaign Title</th>
           <th>Price</th>
+          <th>Delivery Price</th>
           <th>Status</th>
           <th>Actions</th>
         </thead>
@@ -66,6 +67,7 @@
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
+            <td v-text='item.delivery_price'></td>
             <td>
               <div class='flex'>
                 <div class='flex col-auto-18' :class={jcsb:power.offer_status.show}>
@@ -237,7 +239,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            // console.log(result)
+            console.log(result)
             if (result.status === 1) {
               that.list = result.data
             } else {

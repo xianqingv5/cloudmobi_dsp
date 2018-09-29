@@ -325,7 +325,7 @@
               </div>
             </div>
             <div class='tooltipMsg' v-if='!judePowerOperate'>
-              Please upload an video of mp4 format, make sure video is less than 2 MB.
+              Please upload an video of mp4 format, make sure video is less than 5 MB.
             </div>
             <!-- video -->
             <el-form-item label="video" prop="video" class='imgDocker'>

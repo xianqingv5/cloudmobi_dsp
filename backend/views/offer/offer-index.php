@@ -130,10 +130,10 @@
     <div class='flex column'>
       <el-form ref="ruleForm2" :model="ruleForm2" :rules="rules2" label-position="right" label-width="150px">
         <el-form-item label="Price" prop='price'>
-          <el-input auto-complete="off" v-model.trim="ruleForm2.price" class='inputobj'></el-input>
+          <el-input disabled='disabled' auto-complete="off" v-model.trim="ruleForm2.price" class='inputobj'></el-input>
         </el-form-item>
         <el-form-item label="Delivery Price" prop='deliveryPrice'>
-          <el-input auto-complete="off" v-model.trim="ruleForm2.deliveryPrice" class='inputobj'></el-input>
+          <el-input disabled='disabled' auto-complete="off" v-model.trim="ruleForm2.deliveryPrice" class='inputobj'></el-input>
         </el-form-item>
         <div class='flex jc-end'>
           <el-button type="primary" @click="submitForm2('ruleForm2')">Submit</el-button>
@@ -256,7 +256,8 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
         var ajaxData = {
           dsp_security_param: this.csrf,
           payout: data.price,
-          delivery_price: data.deliveryPrice
+          delivery_price: data.deliveryPrice,
+          offer_id: data.id
         }
         $.ajax({
           url: '/offer/offer-update-status',

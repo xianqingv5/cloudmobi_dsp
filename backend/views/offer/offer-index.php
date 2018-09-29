@@ -237,7 +237,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
-            that.toExamine(this.ruleForm2)
+            that.toExamine(that.ruleForm2)
           } else {
             console.log('error submit!!')
             return false

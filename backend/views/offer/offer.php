@@ -535,7 +535,7 @@
           if (value <= 0.1) {
             callback(new Error("不得小于0.1"))
           } else {
-            if (value.toString().length <= value.toFixed(3).length) {
+            if (value.toString().length <= Number(value).toFixed(3).length) {
               callback()
             } else {
               callback(new Error("小数点后不大于3位"))

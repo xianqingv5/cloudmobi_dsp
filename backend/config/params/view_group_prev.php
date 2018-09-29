@@ -90,9 +90,9 @@ return [
         // offer list页面
         'offer-index' => [
             // 创建
-            'offer_create' => ['show' => false, 'operate' => false],
+            'offer_create' => ['show' => true, 'operate' => true],
             // 修改
-            'offer_update' => ['show' => false,'operate' => false],
+            'offer_update' => ['show' => true,'operate' => true],
             // 查看
             'offer_see' => ['show' => true,'operate' => false],
             // 状态

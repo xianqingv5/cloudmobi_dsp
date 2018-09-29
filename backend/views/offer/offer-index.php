@@ -144,7 +144,7 @@
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
+// console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -174,6 +174,7 @@ console.log(power)
         dialogBus: {
           json: {}
         },
+        userStatus: [],
         search: {
           campaignID: '',
           advertiser: '',
@@ -208,6 +209,33 @@ console.log(power)
       this.getList()
     },
     methods: {
+      getConfig () {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer/get-offer-config',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            // console.log(result)
+            that.userStatus = result.data.user_status
+            that.judeUserStatus()
+          }
+        })
+      },
+      judeUserStatus () {
+        var that = this
+        var object = this.userStatus
+        for (const key in object) {
+          if (object.hasOwnProperty(key)) {
+            that.list.map(function (ele) {
+              if (ele)
+            })
+          }
+        }
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
         this.pagination.size = val
@@ -278,9 +306,10 @@ console.log(power)
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
+            // console.log(result)
             if (result.status === 1) {
               that.list = result.data
+              that.getConfig()
             } else {
               that.$message.error(result.info)
             }

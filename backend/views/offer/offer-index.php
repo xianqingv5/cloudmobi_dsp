@@ -257,7 +257,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           dsp_security_param: this.csrf,
           payout: data.price,
           delivery_price: data.deliveryPrice,
-          offer_id: data.id
+          offer_id: this.dialogBus.json.id
         }
         $.ajax({
           url: '/offer/offer-update-status',

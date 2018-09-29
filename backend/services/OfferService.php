@@ -415,6 +415,13 @@ class OfferService extends BaseService
      */
     public static function updateOfferStatus()
     {
+        // 投放价格验证
+        $delivery_price = Yii::$app->request->post('delivery_price',0);
+        if ( $delivery_price < 0.1 ) {
+            self::$res['info'] = 'Incorrect delivery price.';
+            return self::$res;
+        }
+
         $offer_id = Yii::$app->request->post('offer_id', 0);
         $status = Yii::$app->request->post('status', 1);
         $res = DemandOffers::updateData(['status' => $status], ['id' => $offer_id]);

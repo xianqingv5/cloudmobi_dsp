@@ -76,7 +76,7 @@
                   <span v-if='item.status === "3"'>under review</span>
                   <template v-if='item.status !== "3" && power.offer_status.show'>
                     <el-switch
-                      :disabled='!power.offer_status.operate'
+                      :disabled='!power.offer_status.operate || userStatus[item.campaign_owner] !== "1"'
                       v-model="item.status"
                       active-value='1'
                       inactive-value='2'
@@ -221,20 +221,8 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           success: function (result) {
             // console.log(result)
             that.userStatus = result.data.user_status
-            that.judeUserStatus()
           }
         })
-      },
-      judeUserStatus () {
-        var that = this
-        var object = this.userStatus
-        for (const key in object) {
-          if (object.hasOwnProperty(key)) {
-            that.list.map(function (ele) {
-              if (ele)
-            })
-          }
-        }
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)

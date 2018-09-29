@@ -142,7 +142,7 @@ class UserService extends BaseService
             $all_offer_res = true;
             if ($data['status'] == 2) { //关闭所有offer
                 $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 2);
-            } else {// offer 未审核
+            } else if($data['status'] == 1) {// offer 未审核
                 $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 3);
             }
 

@@ -76,7 +76,7 @@
                   <span v-if='item.status === "3"'>under review</span>
                   <template v-if='item.status !== "3" && power.offer_status.show'>
                     <el-switch
-                      :disabled='!power.offer_status.operate'
+                      :disabled='!power.offer_status.operate || userStatus[item.campaign_owner] !== "1"'
                       v-model="item.status"
                       active-value='1'
                       inactive-value='2'
@@ -144,7 +144,7 @@
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
-console.log(power)
+// console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -174,6 +174,7 @@ console.log(power)
         dialogBus: {
           json: {}
         },
+        userStatus: [],
         search: {
           campaignID: '',
           advertiser: '',
@@ -208,6 +209,21 @@ console.log(power)
       this.getList()
     },
     methods: {
+      getConfig () {
+        var that = this
+        var ajaxData = {
+          dsp_security_param: this.csrf
+        }
+        $.ajax({
+          url: '/offer/get-offer-config',
+          type: 'post',
+          data: ajaxData,
+          success: function (result) {
+            // console.log(result)
+            that.userStatus = result.data.user_status
+          }
+        })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
         this.pagination.size = val
@@ -221,7 +237,7 @@ console.log(power)
         this.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
-            that.toExamine(this.ruleForm2)
+            that.toExamine(that.ruleForm2)
           } else {
             console.log('error submit!!')
             return false
@@ -278,9 +294,10 @@ console.log(power)
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
+            // console.log(result)
             if (result.status === 1) {
               that.list = result.data
+              that.getConfig()
             } else {
               that.$message.error(result.info)
             }

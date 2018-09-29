@@ -1068,11 +1068,9 @@
       },
       // 初始化日期
       initDate () {
-        var end = new Date()
-        var start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
-        end.setTime(end.getTime() + 3600 * 1000 * 24 * 14)
-        this.ruleForm.deliveryDate = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+        var start = moment().add(-2, 'day').format('YYYY-MM-DD')
+        var end = moment().add(14, 'day').format('YYYY-MM-DD')
+        this.ruleForm.deliveryDate = [start, end]
       },
       // 初始化页面
       initData () {

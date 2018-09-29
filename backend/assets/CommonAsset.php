@@ -31,7 +31,6 @@ class CommonAsset extends AssetBundle
 		'plugin/echarts.common.min.js',
 		'plugin/aws/aws-sdk-2.283.1.min.js',
 		'plugin/aws/app.js',
-		'js/base.js',
 		'js/vueComponents.js',
 	];
 

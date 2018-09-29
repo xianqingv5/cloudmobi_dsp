@@ -422,7 +422,11 @@
         var start = new Date()
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
         end.setTime(end.getTime())
-        this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+        // this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+        this.search.date = [
+          moment().add((-7 + 1), 'day').format('YYYY-MM-DD'),
+          moment().add((-0 + 1), 'day').format('YYYY-MM-DD')
+        ]
       },
       searchFun () {
         // console.log('search')

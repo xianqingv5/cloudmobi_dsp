@@ -378,7 +378,7 @@
   var maxRatio = 2.1
   var baseRatio = 1.9 / 1
   var maxImageSize = 500 * 1024
-  var maxVideoSize = 2 * 1024 * 1024
+  var maxVideoSize = 5 * 1024 * 1024
   // 正则
   var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
   var iOSReg = new RegExp('https://itunes.apple.com/')
@@ -408,8 +408,8 @@
     fileTypeError: 'The type of file can not be accepted.',
     // 图片小于500k
     uploadImageSizeMax: 'Size of picture must be less than 500kb.',
-    // 视频小于2M
-    uploadVideoSizeMax: 'Size of video must be less than 2M.',
+    // 视频小于5M
+    uploadVideoSizeMax: 'Size of video must be less than 5M.',
     // icon不是一比一
     uploadIconSizeError: 'The width-length ratio of picture must be 1:1.',
     // 图片尺寸不对

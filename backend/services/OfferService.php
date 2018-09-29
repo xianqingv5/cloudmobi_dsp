@@ -410,7 +410,7 @@ class OfferService extends BaseService
     }
 
     /**
-     * offer 状态 修改
+     * 根据offer id 状态 修改
      * @return array
      */
     public static function updateOfferStatus()
@@ -427,6 +427,17 @@ class OfferService extends BaseService
         return self::$res;
     }
 
+    /**
+     * 根据用户id 修改offer状态
+     * @param $uid
+     * @param int $status
+     * @return bool
+     */
+    public static function updateOfferStatusByUser($uid, $status = 2)
+    {
+        $res = DemandOffers::updateData(['status' => $status], ['campaign_owner' => $uid]);
+        return $res ? true : false;
+    }
 
     /**
      * 获取offer各种配置信息
@@ -455,6 +466,8 @@ class OfferService extends BaseService
         // 获取设备信息
         self::$res['data']['mobile'] = Yii::$app->params['MOBILE'];
 
+        // 获取用户状态
+        self::$res['data']['user_status'] = UserService::getUserStatus();
         return self::$res;
     }
 }

@@ -106,7 +106,7 @@ class OfferController extends BaseController
      */
     public function actionGetOfferConfig()
     {
-        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+        if (!Yii::$app->request->isAjax && !Yii::$app->request->isPost) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $res = OfferService::getOfferConfig();
             return $res;

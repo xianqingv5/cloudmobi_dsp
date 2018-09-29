@@ -135,8 +135,18 @@ class UserService extends BaseService
         $data['status'] = Yii::$app->request->post('status', 1);
         $transaction = Yii::$app->db->beginTransaction();
         try {
+            // 修改用户状态
             $res = User::updateData($data,$where);
-            if ($res) {
+
+            // 当用户状态改变时
+            $all_offer_res = true;
+            if ($data['status'] == 2) { //关闭所有offer
+                $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 2);
+            } else {// offer 未审核
+                $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 3);
+            }
+
+            if ($res && $all_offer_res) {
                 self::$res['status'] = 1;
                 self::$res['info'] = 'success';
                 $transaction->commit();
@@ -339,6 +349,16 @@ class UserService extends BaseService
         self::$res['status'] = 1;
         self::$res['data'] = $g_res;
         return self::$res;
+    }
+
+    /**
+     * 获取用户状态
+     * @return array
+     */
+    public static function getUserStatus()
+    {
+        $res = User::getData(['id', 'status'], ['group_id not in(1,2)']);
+        return $res ? array_column($res, 'status', 'id') : [];
     }
 
     /**

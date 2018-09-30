@@ -85,7 +85,7 @@
                     </el-switch>
                   </template>
                   <template v-if='item.status === "3"'>
-                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item)'></el-button>
+                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item, index)'></el-button>
                   </template>
                 </div>
               </div>
@@ -244,9 +244,10 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           }
         })
       },
-      allowOffer (item) {
+      allowOffer (item, index) {
         this.dialogVisible = true
         this.dialogBus.json = item
+        this.dialogBus.index = index
         this.ruleForm2.price = item.payout
         this.ruleForm2.deliveryPrice = item.delivery_price
       },
@@ -264,11 +265,13 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           type: 'post',
           data: ajaxData,
           success: function (result) {
+            that.dialogVisible = false
             if (result.status === 1) {
               that.$message({
                 message: result.info,
                 type: 'success'
               })
+              that.list[that.dialogBus.index].status = '1'
             } else {
               that.$message.error(result.info)
               window.location.reload()

@@ -178,7 +178,7 @@
       }
       // 验证简写
       var validateAccount = function (rule, value, callback) {
-        var reg = new RegExp('^[a-zA-Z0-9]{2,3}$')
+        var reg = new RegExp('^[a-zA-Z]{3}[0-9]+$')
         if (reg.test(value)) {
           // ajax验证是否重复
           vm.judeAccount(value, function (type, info) {
@@ -273,6 +273,7 @@
       // 验证简称
       judeAccount (value, callback) {
         var vm = this
+        return callback(true)
         if (this.dialogBus.type === 'create') {
           var ajaxData = {
             email: value,

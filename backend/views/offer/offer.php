@@ -1,9 +1,9 @@
 <div class='app' data-type="<?php echo $type; ?>">
-  <div
+  <!-- <div
     v-loading.fullscreen.lock="loading"
     element-loading-text="资源上传中"
     element-loading-spinner="el-icon-loading"
-  ></div>
+  ></div> -->
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item><a href="/offer/offer-index">Campaigns</a></el-breadcrumb-item>
@@ -59,7 +59,9 @@
                   v-for="item in options.attributeProvider"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  :disabled="item.disabled"
+                  >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -185,14 +187,14 @@
             <el-form-item v-if='judePowerPayoutShow' label="Price($)" prop="payout">
               <el-input :disabled='judePowerOperate || !judePowerPayoutOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
             </el-form-item>
+            <el-form-item v-if='power.delivery_price.show' label="Delivery Price($)" prop="deliveryPrice">
+              <el-input :disabled='judePowerOperate || !power.delivery_price.operate' class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
+            </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
             <el-form-item class='dn' label="Total Cap" prop="totalCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
-            </el-form-item>
-            <el-form-item v-if='power.delivery_price.show' label="Delivery Price" prop="deliveryPrice">
-              <el-input :disabled='judePowerOperate || !power.delivery_price.operate' class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
             </el-form-item>
           </div>
         </div>
@@ -284,8 +286,9 @@
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("icon")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("icon")'/>Upload creatives</el-button>
+                <el-button v-if='!ruleForm.iconLoading' type="primary" @click='uploadFile("icon")'/>Upload creatives</el-button>
                 <input class='iconfile dn' type="file" name="iconfile">
+                <el-button v-if='ruleForm.iconLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
             <div class='flex flex-wrap'>
@@ -309,8 +312,9 @@
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("image")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("image")'>Upload creatives</el-button>
+                <el-button v-if='!ruleForm.imageLoading' type="primary" @click='uploadFile("image")'>Upload creatives</el-button>
                 <input class='imagefile dn' type="file" name="imagefile">
+                <el-button v-if='ruleForm.imageLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
             <div class='flex flex-wrap'>
@@ -325,7 +329,7 @@
               </div>
             </div>
             <div class='tooltipMsg' v-if='!judePowerOperate'>
-              Please upload an video of mp4 format, make sure video is less than 2 MB.
+              Please upload an video of mp4 format, make sure video is less than 5 MB.
             </div>
             <!-- video -->
             <el-form-item label="video" prop="video" class='imgDocker'>
@@ -334,8 +338,9 @@
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("video")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("video")'>Upload creatives</el-button>
+                <el-button v-if='!ruleForm.videoLoading' type="primary" @click='uploadFile("video")'>Upload creatives</el-button>
                 <input class='videofile dn' type="file" name="videofile">
+                <el-button v-if='ruleForm.videoLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
             <div class='flex flex-wrap'>
@@ -378,7 +383,7 @@
   var maxRatio = 2.1
   var baseRatio = 1.9 / 1
   var maxImageSize = 500 * 1024
-  var maxVideoSize = 2 * 1024 * 1024
+  var maxVideoSize = 5 * 1024 * 1024
   // 正则
   var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
   var iOSReg = new RegExp('https://itunes.apple.com/')
@@ -408,8 +413,8 @@
     fileTypeError: 'The type of file can not be accepted.',
     // 图片小于500k
     uploadImageSizeMax: 'Size of picture must be less than 500kb.',
-    // 视频小于2M
-    uploadVideoSizeMax: 'Size of video must be less than 2M.',
+    // 视频小于5M
+    uploadVideoSizeMax: 'Size of video must be less than 5M.',
     // icon不是一比一
     uploadIconSizeError: 'The width-length ratio of picture must be 1:1.',
     // 图片尺寸不对
@@ -532,7 +537,7 @@
           if (value <= 0.1) {
             callback(new Error("不得小于0.1"))
           } else {
-            if (value.toString().length <= value.toFixed(3).length) {
+            if (value.toString().length <= Number(value).toFixed(3).length) {
               callback()
             } else {
               callback(new Error("小数点后不大于3位"))
@@ -640,10 +645,13 @@
           // 5
           icon: '',
           iconList: [],
+          iconLoading: false,
           image: '',
           imageList: [],
+          imageLoading: false,
           video: '',
-          videoList: []
+          videoList: [],
+          videoLoading: false,
         },
         rules: {
           // 1
@@ -907,6 +915,22 @@
       this.showCountryFun()
     },
     methods: {
+      // 20181009 1-5 | 6
+      judeAttributeProviderOptionsDisabled () {
+        if (this.ruleForm.attributeProvider === '6') {
+          this.options.attributeProvider.map(function (ele) {
+            if (ele.value !== '6') {
+              ele.disabled = true
+            }
+          })
+        } else {
+          this.options.attributeProvider.map(function (ele) {
+            if (ele.value === '6') {
+              ele.disabled = true
+            }
+          })
+        }
+      },
       // 获取已经保存的信息
       getUpdateInfo () {
         var that = this
@@ -928,6 +952,7 @@
               that.ruleForm.campaignOwner = result.data.campaign_owner
               that.ruleForm.advertiser = result.data.sponsor
               that.ruleForm.attributeProvider = result.data.att_pro
+              that.judeAttributeProviderOptionsDisabled()
               // 2
               that.ruleForm.platform = result.data.platform
               that.ruleForm.storeUrl = result.data.final_url
@@ -1114,7 +1139,8 @@
               that.options.attributeProvider.push({
                 channel: ele.channel,
                 value: ele.id,
-                label: ele.tpm
+                label: ele.tpm,
+                disabled: false
               })
             })
             // country
@@ -1189,8 +1215,16 @@
               // console.log('judeUploadFile')
               // 上传函数
               that.uploadFun(fileData, type, function (err, result) {
-                // 加载
-                that.loading = false
+                // 加载状态清除
+                if (type === 'icon') {
+                  that.ruleForm.iconLoading = false
+                }
+                if (type === 'image') {
+                  that.ruleForm.imageLoading = false
+                }
+                if (type === 'video') {
+                  that.ruleForm.videoLoading = false
+                }
                 // console.log('uploadFun')
                 // 总是清空input file
                 filesInput.value = ''
@@ -1293,9 +1327,18 @@
       },
       // 上传s3函数
       uploadFun (data, type, callback) {
+        var that = this
         // console.log('开始上传')
         // 加载
-        this.loading = true
+          if (type === 'icon') {
+            that.ruleForm.iconLoading = true
+          }
+          if (type === 'image') {
+            that.ruleForm.imageLoading = true
+          }
+          if (type === 'video') {
+            that.ruleForm.videoLoading = true
+          }
         var that = this
         var date = new Date()
         var fileName = date.getTime() + '_' + data.fileName

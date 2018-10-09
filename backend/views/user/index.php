@@ -4,10 +4,12 @@
       <el-breadcrumb-item>Account Management</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='content mt-30'>
+  <div class='flex jc-end p30'>
+    <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+  </div>
+  <div class='content'>
     <div class='contentBox'>
-      <div class='flex jc-btween mb-20'>
-        <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+      <div class='flex jc-end mb-20'>
         <el-input
           class='form-search'
           placeholder="Email / User List"
@@ -178,7 +180,7 @@
       }
       // 验证简写
       var validateAccount = function (rule, value, callback) {
-        var reg = new RegExp('^[a-zA-Z0-9]{2,3}$')
+        var reg = new RegExp('^[a-zA-Z]{3}[0-9]+$')
         if (reg.test(value)) {
           // ajax验证是否重复
           vm.judeAccount(value, function (type, info) {
@@ -273,6 +275,7 @@
       // 验证简称
       judeAccount (value, callback) {
         var vm = this
+        return callback(true)
         if (this.dialogBus.type === 'create') {
           var ajaxData = {
             email: value,

@@ -5,10 +5,10 @@
       <el-breadcrumb-item>Campaign List</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='flex jc-end p0-30'>
-    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color mt-30'><el-button type="primary">New Campaign</el-button></a>
+  <div class='flex jc-end p30'>
+    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
   </div>
-  <div class='content mt-30'>
+  <div class='content'>
     <div class='contentBox'>
       <div class='searchBox flex jcsb mb-20'>
         <el-input
@@ -58,6 +58,7 @@
           <th>Campaign ID</th>
           <th>Campaign Title</th>
           <th>Price</th>
+          <th>Platform</th>
           <th v-if='power.offer_delivery_price.show'>Delivery Price</th>
           <th>Status</th>
           <th>Actions</th>
@@ -67,6 +68,7 @@
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
+            <td>平台信息</td>
             <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price'></td>
             <td>
               <div class='flex'>
@@ -85,7 +87,7 @@
                     </el-switch>
                   </template>
                   <template v-if='item.status === "3"'>
-                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item)'></el-button>
+                    <el-button v-if='power.offer_sh.operate' type="success" icon="el-icon-check" circle @click='allowOffer(item, index)'></el-button>
                   </template>
                 </div>
               </div>
@@ -244,9 +246,10 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           }
         })
       },
-      allowOffer (item) {
+      allowOffer (item, index) {
         this.dialogVisible = true
         this.dialogBus.json = item
+        this.dialogBus.index = index
         this.ruleForm2.price = item.payout
         this.ruleForm2.deliveryPrice = item.delivery_price
       },
@@ -257,18 +260,20 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           dsp_security_param: this.csrf,
           payout: data.price,
           delivery_price: data.deliveryPrice,
-          offer_id: data.id
+          offer_id: this.dialogBus.json.id
         }
         $.ajax({
           url: '/offer/offer-update-status',
           type: 'post',
           data: ajaxData,
           success: function (result) {
+            that.dialogVisible = false
             if (result.status === 1) {
               that.$message({
                 message: result.info,
                 type: 'success'
               })
+              that.list[that.dialogBus.index].status = '1'
             } else {
               that.$message.error(result.info)
               window.location.reload()

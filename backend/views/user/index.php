@@ -4,10 +4,12 @@
       <el-breadcrumb-item>Account Management</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='content mt-30'>
+  <div class='flex jc-end p30'>
+    <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+  </div>
+  <div class='content'>
     <div class='contentBox'>
-      <div class='flex jc-btween mb-20'>
-        <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+      <div class='flex jc-end mb-20'>
         <el-input
           class='form-search'
           placeholder="Email / User List"

@@ -5,10 +5,10 @@
       <el-breadcrumb-item>Campaign List</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='flex jc-end p0-30'>
-    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color mt-30'><el-button type="primary">New Campaign</el-button></a>
+  <div class='flex jc-end p30'>
+    <a v-if='power.offer_create.show' href="/offer/offer-create" class='base-color'><el-button type="primary">New Campaign</el-button></a>
   </div>
-  <div class='content mt-30'>
+  <div class='content'>
     <div class='contentBox'>
       <div class='searchBox flex jcsb mb-20'>
         <el-input
@@ -58,6 +58,7 @@
           <th>Campaign ID</th>
           <th>Campaign Title</th>
           <th>Price</th>
+          <th>Platform</th>
           <th v-if='power.offer_delivery_price.show'>Delivery Price</th>
           <th>Status</th>
           <th>Actions</th>
@@ -67,6 +68,7 @@
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
+            <td>平台信息</td>
             <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price'></td>
             <td>
               <div class='flex'>

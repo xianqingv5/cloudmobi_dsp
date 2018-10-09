@@ -907,7 +907,27 @@
         deep: false
       })
       // initData
-      this.initData()
+      // this.initData()
+      const fn = async _ => {
+        try {
+          await this.initData()
+        } catch (error) {
+          console.log(error)
+        }
+        try {
+          await this.initDate()
+        } catch (error) {
+          console.log(error)
+        }
+        try {
+          await this.getUpdateInfo()
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      fn().then( _ => {
+        console.log('init success')
+      })
       // 默认全选
       this.addAllDeliveryWeek()
       this.addAllDeliveryHour()
@@ -1159,10 +1179,10 @@
             that.options.minOSversionBase = result.data.version
             // category
             that.options.categoryBase = result.data.category
-            // initDate
-            that.initDate()
-            // 
-            that.getUpdateInfo()
+            // // initDate
+            // that.initDate()
+            // // 获取edit信息
+            // that.getUpdateInfo()
           }
         })
       },

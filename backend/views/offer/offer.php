@@ -59,7 +59,9 @@
                   v-for="item in options.attributeProvider"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  :disabled="item.disabled"
+                  >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -913,6 +915,22 @@
       this.showCountryFun()
     },
     methods: {
+      // 20181009 1-5 | 6
+      judeAttributeProviderOptionsDisabled () {
+        if (this.ruleForm.attributeProvider === '6') {
+          this.options.attributeProvider.map(function (ele) {
+            if (ele.value !== '6') {
+              ele.disabled = true
+            }
+          })
+        } else {
+          this.options.attributeProvider.map(function (ele) {
+            if (ele.value === '6') {
+              ele.disabled = true
+            }
+          })
+        }
+      },
       // 获取已经保存的信息
       getUpdateInfo () {
         var that = this
@@ -934,6 +952,7 @@
               that.ruleForm.campaignOwner = result.data.campaign_owner
               that.ruleForm.advertiser = result.data.sponsor
               that.ruleForm.attributeProvider = result.data.att_pro
+              that.judeAttributeProviderOptionsDisabled()
               // 2
               that.ruleForm.platform = result.data.platform
               that.ruleForm.storeUrl = result.data.final_url
@@ -1120,7 +1139,8 @@
               that.options.attributeProvider.push({
                 channel: ele.channel,
                 value: ele.id,
-                label: ele.tpm
+                label: ele.tpm,
+                disabled: false
               })
             })
             // country

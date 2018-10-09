@@ -20,10 +20,11 @@ class OfferService extends BaseService
     public static function getOfferList()
     {
         $where = self::getWhere();
-        $res = DemandOffers::getData(['id', 'channel', 'campaign_owner', 'title', 'payout', 'delivery_price', 'status'], $where);
+        $res = DemandOffers::getData(['id', 'channel', 'campaign_owner', 'offer_id', 'title', 'payout', 'delivery_price', 'status'], $where);
         if ($res) {
             foreach ($res as $k=>$v) {
-                $res[$k]['show_offer_id'] =  $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                // $res[$k]['show_offer_id'] =  $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                $res[$k]['show_offer_id'] =  Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
             }
             self::$res['status'] = 1;
             self::$res['data'] = $res;
@@ -89,7 +90,8 @@ class OfferService extends BaseService
 
         self::$res['data'] = $offer[0];
         // 页面显示offer id 组装
-        self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
+        // self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
+        self::$res['data']['show_offer_id'] = Yii::$app->params['THIRD_PARTY'][$offer[0]['channel']] . $offer[0]['offer_id'];
         // 数据转换
         $delivery_hour = !empty($offer[0]['delivery_hour']) ? json_decode($offer[0]['delivery_hour'], true) : [];
         $d_hour = [];
@@ -212,9 +214,16 @@ class OfferService extends BaseService
     {
 
         $data = self::getPostInfo();
+
+        // 生成offer id
+        do {
+            $offer_id = self::generateOfferId();
+            $num = DemandOffers::getData(['count(*) as num'], ["offer_id = '" . $offer_id . "'"])[0]['num'];
+        } while($num);
+        $data['offer_id'] = $offer_id;
+
         $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
         $data['create_date'] = date('Y-m-d H:i:s');
-
         $offer_id = DemandOffers::addData($data);
         return $offer_id;
     }
@@ -437,6 +446,20 @@ class OfferService extends BaseService
     {
         $res = DemandOffers::updateData(['status' => $status], ['campaign_owner' => $uid]);
         return $res ? true : false;
+    }
+
+    /**
+     * 生成offer id
+     * 规则: Account简称 + _ + 10位编号(日月年 + 4位随机数。例:0810181234)
+     * @return string
+     */
+    public static function generateOfferId()
+    {
+        $uid = Yii::$app->request->post('campaign_owner', 0);
+        $uInfo = User::findIdentity($uid);
+        $short_name = !empty($uInfo) ? $uInfo->short_name : '';
+        $offer_id = $short_name . '_' . date('dmy') . rand(1000, 9999);
+        return $offer_id;
     }
 
     /**

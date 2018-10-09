@@ -207,13 +207,13 @@ class OfferReportService extends BaseService
                 $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";;
             }
             // 查询数据
-            $result = DemandOffers::getData(['id', 'channel'], $where);
+            $result = DemandOffers::getData(['id', 'channel', 'offer_id'], $where);
             self::$res['data']['campaigns'] = [];
             if ($result) {
                 // offer id 组装
                 self::$res['status'] = 1;
                 foreach ($result as $k=>$v) {
-                    self::$res['data']['campaigns'][$k]['name'] = $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                    self::$res['data']['campaigns'][$k]['name'] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
                     self::$res['data']['campaigns'][$k]['id'] = $v['id'];
                 }
             }

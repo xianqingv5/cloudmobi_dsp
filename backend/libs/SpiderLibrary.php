@@ -48,11 +48,13 @@ class SpiderLibrary
                 $parse_url = explode('/', parse_url($url)['path']);
                 // 匹配标签
                 $category_arr = self::get_tag_data($content, 'a', 'class', 'link');
-                $title_arr = self::get_tag_data($content, 'h1', 'class', 'product-header__title app-header__title');
+                //$title_arr = self::get_tag_data($content, 'h1', 'class', 'product-header__title app-header__title');
+                // ios 抓取标题
+                $title_arr = self::ios_get_tag_data($content, 'meta', 'name', 'keywords');
 
                 // 处理标签数据
                 $category = !empty($category_arr) ? $category_arr[1] : '';
-                $title = !empty($title_arr) ? explode(' ',trim(filter_var($title_arr[0], FILTER_SANITIZE_STRING)))[0] : '';
+                $title = !empty($title_arr) ? explode(',',trim(filter_var($title_arr[0], FILTER_SANITIZE_STRING)))[0] : '';
                 $return['type'] = $category;
 
                 $return['offer_title'] = htmlspecialchars_decode(trim($title));
@@ -73,7 +75,6 @@ class SpiderLibrary
             self::$res['status'] = 0;
             self::$res['info'] = $e->getMessage();
         }
-
         return self::$res;
     }
 
@@ -132,6 +133,12 @@ class SpiderLibrary
      */
     private static function get_tag_data($html,$tag,$attr,$value){
         $regex = '/<'.$tag.'.*?'.$attr.'=["|\']'. $value . '["|\'].*?>(.*?)<\/'.$tag.'>/is';
+        preg_match_all($regex,$html,$matches, PREG_PATTERN_ORDER);
+        return $matches[1];
+    }
+
+    private static function ios_get_tag_data($html,$tag,$attr,$value){
+        $regex = '/<'.$tag.'.*?'.$attr.'=["|\']'. $value . '["|\'] content="(.*?)".*?>/is';
         preg_match_all($regex,$html,$matches, PREG_PATTERN_ORDER);
         return $matches[1];
     }

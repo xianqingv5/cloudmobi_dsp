@@ -150,10 +150,12 @@ class UserService extends BaseService
                 self::$res['status'] = 1;
                 self::$res['info'] = 'success';
                 $transaction->commit();
+            } else {
+                self::$res['info'] = 'error';
             }
         } catch (\Exception $e) {
             self::logs($e->getMessage());
-            self::$res['info'] = $e->getMessage();
+            self::$res['info'] = 'error';
             $transaction->rollBack();
         }
 

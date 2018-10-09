@@ -91,7 +91,7 @@ class OfferReportingServices
     }
 
     public static function getOfferId($offer_id,$user_id){
-        $fields = ['id','channel','campaign_owner'];
+        $fields = ['id','channel','campaign_owner', 'offer_id'];
 
         $offer_str = Yii::$app->params['OFFER_ID_STRING'];
         $where = [];
@@ -107,8 +107,8 @@ class OfferReportingServices
         if($offer){
             $data = [];
             foreach ($offer as $k => $v) {
-//                $data[$k]['offer_id'] = $v['channel'] . '_' . 'offline' . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
-                $data[$k]['offer_id'] = $v['channel'] . '_' . $offer_str . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                // $data[$k]['offer_id'] = $v['channel'] . '_' . $offer_str . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                $data[$k]['offer_id'] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
                 $data[$k]['campaign_owner'] = $v['campaign_owner'];
             }
             return $data;

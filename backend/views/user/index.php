@@ -471,6 +471,7 @@
           if (valid) {
             if (type === 'create') {
               var ajaxData = {
+                short_name : vm.ruleForm.account,
                 email: vm.ruleForm.email,
                 username: vm.ruleForm.name,
                 password: vm.ruleForm.pass,

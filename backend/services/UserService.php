@@ -61,11 +61,12 @@ class UserService extends BaseService
             // 创建用户
             $data = [];
             $date = date('Y-m-d H:i:s');
-            $data['email'] = Yii::$app->request->post('email', '');
+            $data['email'] = trim(Yii::$app->request->post('email', ''));
             $data['username'] = Yii::$app->request->post('username', '');
             $data['salt'] = Yii::$app->security->generateRandomString(4);
             $data['password'] = md5(Yii::$app->request->post('password') . $data['salt']);
             $data['group_id'] = Yii::$app->request->post('group_id', '4');
+            $data['short_name'] = trim(Yii::$app->request->post('short_name'));
             $data['comment'] = Yii::$app->request->post('comment', '');
             $data['status'] = 1;
             $data['create_date'] = $date;
@@ -177,6 +178,12 @@ class UserService extends BaseService
             'password_length' => 'Password length is at least 8 bits.',
             'email_check' => 'The email address is invalid',
         ];
+
+        // short name 验证
+        $sn_res = self::checkShortName();
+        if (!$sn_res['status']) {
+            return $sn_res['info'];
+        }
 
         // email
         $email = trim(Yii::$app->request->post('email', ''));
@@ -372,6 +379,22 @@ class UserService extends BaseService
     {
         self::$res['status'] = 1;
         self::$res['data']['code'] = Yii::$app->security->generateRandomString($num);
+        return self::$res;
+    }
+
+    /**
+     * 验证用户简称是否已存在
+     * @return array
+     */
+    public static function checkShortName()
+    {
+        $short_name = trim(Yii::$app->request->post('short_name'));
+        $res = User::getData(['count(*) as num'], ["short_name='" . $short_name . "'"]);
+        if ($res[0]['num']) {
+            self::$res['info'] = 'The Short Name already exists.';
+        } else {
+            self::$res['status'] = 1;
+        }
         return self::$res;
     }
 }

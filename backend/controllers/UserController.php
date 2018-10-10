@@ -110,6 +110,17 @@ class UserController extends BaseController
     }
 
     /**
+     * 验证用户简称是否已存在
+     * @return array
+     */
+    public function actionCheckShortName()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::checkShortName();
+        return $res;
+    }
+
+    /**
      * 获取可创建的组权限
      * @return array
      */

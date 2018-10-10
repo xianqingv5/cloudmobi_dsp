@@ -6,7 +6,6 @@ use Yii;
 use backend\services\OfferReportService;
 use yii\web\Response;
 use yii\web\ForbiddenHttpException;
-use backend\libs\ExcelLibrary;
 
 class OfferReportController extends BaseController
 {
@@ -70,15 +69,6 @@ class OfferReportController extends BaseController
 
     public function actionDownloadReport()
     {
-        // 报表标题
-        $header         = array_values( $show_fields );
 
-        $data = [];
-        // $data           = webReportService::processExcelData($params, $show_fields, $is_reward_video_type);
-
-        // 文件名
-        $filename       = 'Reporting_st_et.xls';
-
-        ExcelLibrary::getExcel($header, $data, $filename);
     }
 }

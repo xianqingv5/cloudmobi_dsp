@@ -5,6 +5,7 @@ use Yii;
 use common\models\DemandOffers;
 use common\models\OfferReporting;
 use common\models\User;
+use backend\libs\ExcelLibrary;
 
 class OfferReportService extends BaseService
 {
@@ -267,5 +268,18 @@ class OfferReportService extends BaseService
             $date = date('Y-m-d',strtotime($date) + 24 * 3600);
         }
         return $data;
+    }
+
+    public static function downloadReport()
+    {
+
+        $data = [];
+
+        // 报表标题
+        $header         = array_keys( $data[0] );
+        // 文件名
+        $filename       = 'Reporting_st_et.xls';
+
+        ExcelLibrary::getExcel($header, $data, $filename);
     }
 }

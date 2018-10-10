@@ -270,15 +270,49 @@ class OfferReportService extends BaseService
         return $data;
     }
 
+    /**
+     * 报表下载
+     */
     public static function downloadReport()
     {
 
-        $data = [];
-
-        // 报表标题
-        $header         = array_keys( $data[0] );
+        $data = []; $header = [];
+        $where = self::getWhere();
+        $fields = [
+            'day',
+            'campaign_owner',
+            'offer_id',
+            'country_id',
+            'platform',
+            'sum(click) as click',
+            'sum(conversion) as conversion',
+            'sum(payout) as payout',
+            'sum(conversion) / sum(click) as cvr'
+        ];
+        // 查询并组装数据
+        $result = OfferReporting::getData($fields, $where, 'day,campaign_owner,offer_id,country_id,platform');
+        if ($result) {
+            // 用户信息
+            $user_res = array_column(User::getData(['id', 'email']), 'email', 'id');
+            // 国家信息
+            $country_res = array_column(self::getCountryData(['id', 'short_name']), 'short_name', 'id');
+            $platform = ['1' => 'Android', '2' => 'IOS'];
+            foreach ($result as $k=>$v) {
+                $data[$k]['Day'] = $v['day'];
+                $data[$k]['Email'] = isset($user_res[$v['campaign_owner']]) ? $user_res[$v['campaign_owner']] : '';
+                $data[$k]['Offer id'] = $v['offer_id'];
+                $data[$k]['Country'] = isset($country_res[$v['country_id']]) ? $country_res[$v['country_id']] : 'UNKNOWN';
+                $data[$k]['Platform'] = isset($platform[$v['platform']]) ? $platform[$v['platform']] : 'UNKNOWN';
+                $data[$k]['Click'] = $v['click'];
+                $data[$k]['Conversion'] = $v['conversion'];
+                $data[$k]['Payout'] = $v['payout'];
+                $data[$k]['CVR'] = $v['cvr'];
+            }
+            // 报表标题
+            $header         = array_keys( $data[0] );
+        }
         // 文件名
-        $filename       = 'Reporting_st_et.xls';
+        $filename       = 'Reporting.xls';
 
         ExcelLibrary::getExcel($header, $data, $filename);
     }

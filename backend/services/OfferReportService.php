@@ -179,7 +179,14 @@ class OfferReportService extends BaseService
         // campaign
         $offer_ids = Yii::$app->request->get('campaigns', []);
         if ($offer_ids) {
-            $where['offer_id'] = "offer_id in('" . ( is_array($offer_ids) ? implode("','", $offer_ids) : [0] ) ."')";
+            $off_ids = DemandOffers::getData(['id', 'channel', 'offer_id'], ["id in('" . implode("','", $offer_ids) . "')"]);
+            $ofids = [];
+            if ($off_ids) {
+                foreach ($off_ids as $v) {
+                    $ofids[] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
+                }
+            }
+            $where['offer_id'] = "offer_id in('" . ( !empty($ofids) ? implode("','", $ofids) : '0' ) ."')";
         }
 
         // country

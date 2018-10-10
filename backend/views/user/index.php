@@ -424,6 +424,7 @@
         if (type === 'edit') {
           this.dialogBus.title = 'Edit User'
           this.dialogBus.json = item
+          this.ruleForm.account = this.dialogBus.json.short_name
           this.ruleForm.email = this.dialogBus.json.email
           this.ruleForm.name = this.dialogBus.json.username
           this.ruleForm.pass = this.dialogBus.json.password
@@ -471,7 +472,7 @@
           if (valid) {
             if (type === 'create') {
               var ajaxData = {
-                short_name : vm.ruleForm.account,
+                short_name: vm.ruleForm.account,
                 email: vm.ruleForm.email,
                 username: vm.ruleForm.name,
                 password: vm.ruleForm.pass,

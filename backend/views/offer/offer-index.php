@@ -68,7 +68,10 @@
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
-            <td>平台信息</td>
+            <td>
+              <span v-if='item.platform === "2"'>iOS</span>
+              <span v-if='item.platform === "1"'>Android</span>
+            </td>
             <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price'></td>
             <td>
               <div class='flex'>

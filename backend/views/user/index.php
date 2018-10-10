@@ -22,6 +22,7 @@
           <th>Email</th>
           <th>User Name</th>
           <th>Comment</th>
+          <th>Short Name</th>
           <th>Status</th>
           <th>Operation</th>
         </thead>
@@ -30,6 +31,7 @@
             <td v-text='item.email'></td>
             <td v-text='item.username'></td>
             <td v-text='item.comment'></td>
+            <td v-text='item.short_name'></td>
             <td>
               <el-switch
                 v-model="item.status"
@@ -180,7 +182,7 @@
       }
       // 验证简写
       var validateAccount = function (rule, value, callback) {
-        var reg = new RegExp('^[a-zA-Z]{3}[0-9]+$')
+        var reg = new RegExp('^[a-zA-Z0-9]{3}$')
         if (reg.test(value)) {
           // ajax验证是否重复
           vm.judeAccount(value, function (type, info) {
@@ -191,7 +193,7 @@
             }
           })
         } else {
-          callback(new Error('格式不正确'))
+          callback(new Error('Use 3 characters with a mix of letters & numbers.'))
         }
       }
       return {

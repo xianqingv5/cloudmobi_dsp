@@ -912,15 +912,7 @@
       const fn = async _ => {
         try {
           await this.initData()
-        } catch (error) {
-          console.log(error)
-        }
-        try {
           await this.initDate()
-        } catch (error) {
-          console.log(error)
-        }
-        try {
           await this.getUpdateInfo()
         } catch (error) {
           console.log(error)

@@ -22,6 +22,7 @@
           <th>Email</th>
           <th>User Name</th>
           <th>Comment</th>
+          <th>Short Name</th>
           <th>Status</th>
           <th>Operation</th>
         </thead>
@@ -30,6 +31,7 @@
             <td v-text='item.email'></td>
             <td v-text='item.username'></td>
             <td v-text='item.comment'></td>
+            <td v-text='item.short_name'></td>
             <td>
               <el-switch
                 v-model="item.status"

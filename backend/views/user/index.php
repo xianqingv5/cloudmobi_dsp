@@ -180,7 +180,7 @@
       }
       // 验证简写
       var validateAccount = function (rule, value, callback) {
-        var reg = new RegExp('^[a-zA-Z]{3}[0-9]+$')
+        var reg = new RegExp('^[a-zA-Z0-9]{3}$')
         if (reg.test(value)) {
           // ajax验证是否重复
           vm.judeAccount(value, function (type, info) {
@@ -191,7 +191,7 @@
             }
           })
         } else {
-          callback(new Error('格式不正确'))
+          callback(new Error('Use 3 characters with a mix of letters & numbers.'))
         }
       }
       return {

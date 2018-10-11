@@ -1,8 +1,9 @@
 <div class='app'>
   <div class='content mt-30'>
     <div class='contentBox'>
-      <div class='searchBox flex jcsb mb-20'>
-        <div>
+      <div >
+        <form id='downloadReport' class='searchBox flex jcsb mb-20' action="/offer-report/download-report">
+          <div>
           <el-date-picker
             @change='searchFun'
             v-model="search.date"
@@ -13,9 +14,10 @@
             value-format="yyyy-MM-dd"
             >
           </el-date-picker>
+          <input type="hidden" name="date" :value='search.date'>
         </div>
         <div>
-          <el-select filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
+          <el-select name='campaigns' filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
               v-for="item in options.campaigns"
               :key="item.value"
@@ -25,7 +27,7 @@
           </el-select>
         </div>
         <div>
-          <el-select filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
+          <el-select name='country' filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
               v-for="item in options.country"
               :key="item.value"
@@ -35,7 +37,7 @@
           </el-select>
         </div>
         <div v-if='power.campaigns_owner.show'>
-          <el-select filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
+          <el-select name='campaigns_owner' filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
               v-for="item in options.campaignsOwner"
               :key="item.value"
@@ -45,6 +47,7 @@
           </el-select>
         </div>
         <el-button @click='downloadTable' type="primary">Export<i class="el-icon-download el-icon--right"></i></el-button>
+        </form>
       </div>
       <div class='chartBox'>
         <div class='tabBox flex'>
@@ -339,21 +342,18 @@
     methods: {
       // 下载table
       downloadTable () {
-        // offer-report/download-report
-        var ajaxData = {
-          date: this.search.date,
-          campaigns: this.search.campaigns,
-          country: this.search.country,
-          campaigns_owner: this.search.campaignsOwner
-        }
-        $.ajax({
-          url: '/offer-report/download-report',
-          type: 'get',
-          data: ajaxData,
-          success: function (result) {
-            console.log(result)
-          }
-        })
+        // var that = this
+        // var formData = new FormData()
+        // formData.append('date', that.search.date)
+        // formData.append('campaigns', that.search.campaigns)
+        // formData.append('country', that.search.country)
+        // formData.append('campaigns_owner', that.search.campaignsOwner)
+        // var request = new XMLHttpRequest()
+        // request.open("POST", "/offer-report/download-report")
+        // request.send(formData)
+        var downloadReport = document.querySelector('#downloadReport')
+        // console.log($(downloadReport).serializeArray())
+        downloadReport.submit()
       },
       // 获取链接参数
       getParams (key, callback) {

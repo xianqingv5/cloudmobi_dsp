@@ -119,39 +119,37 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Tracking Link" prop="trackingUrl">
+            <el-form-item label="Tracking Link" prop="trackingUrl" 
+              :rules="[
+                {
+                  validator: validatorUrl,
+                  trigger: ['blur', 'change']
+                }
+              ]"
+            >
               <div>
-                <div>
-                  <el-input 
-                  :disabled='judePowerOperate' 
-                  class='form-one' 
-                  type='textarea' 
-                  v-model.trim="ruleForm.trackingUrl" 
-                  :rules="{
-                    required: true, validator: 'validatorUrl', trigger: ['blur', 'change']
-                  }"
-                  placeholder=''></el-input>
-                </div>
-                <div class='judeUrl-box form-one' v-if='spaceShowTrackingUrlFlag'>
-                  <span class='judeUrl-span' v-html='spaceShowTrackingUrl'></span>
-                </div>
+                <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
+              </div>
+              <div class='judeUrl-box form-one mt-10' v-if='spaceShowUrlFlag("trackingUrl")'>
+                <span class='judeUrl-span' v-html='spaceShowUrl("trackingUrl")'></span>
               </div>
             </el-form-item>
             <template v-for='(obj, i) in ruleForm.impressionUrl'>
-                <el-form-item :label='"Impression Link (" + (i + 1) + ")"' :prop="'impressionUrl.' + i + '.value'">
-                <el-input 
-                :disabled='judePowerOperate' 
-                class='form-one' 
-                type='textarea' 
-                v-model.trim="obj.value" 
-                :rules="{
-                  required: false, validator: validatorUrl, trigger: ['blur', 'change']
-                }"
-                placeholder=''></el-input>
+                <el-form-item :label='"Impression Link (" + (i + 1) + ")"' :prop="'impressionUrl.' + i + '.value'"
+                :rules="[
+                  {required: true, validator: validatorUrl, trigger: ['blur', 'change']}
+                ]"
+                >
+                  <div>
+                    <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="obj.value" placeholder=''></el-input>
+                  </div>
+                  <div class='judeUrl-box form-one mt-10' v-if='spaceShowUrlFlag("impressionUrl", i)'>
+                  <span class='judeUrl-span' v-html='spaceShowUrl("impressionUrl", i)'></span>
+                </div>
               </el-form-item>
             </template>
             <el-form-item label="">
-              <el-button class='dn' type="primary" @click='addImpressionUrl'>Add</el-button>
+              <el-button class='db' type="primary" @click='addImpressionUrl'>Add</el-button>
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">
@@ -302,9 +300,6 @@
             <h5>Creatives</h5>
           </div>
           <div class='content-con'>
-            <div class='tooltipMsg' v-if='!judePowerOperate'>
-              Please upload an icon of any format (png, jpg, jpeg, gif), make sure the image ratio is 1:1 and it is less than 500 KB.
-            </div>
             <!-- icon -->
             <el-form-item label="icon" prop="iconList" class='imgDocker'>
               <div class='flex' v-if='!judePowerOperate'>
@@ -317,6 +312,9 @@
                 <el-button v-if='ruleForm.iconLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
+              Please upload an icon of any format (png, jpg, jpeg, gif), make sure the image ratio is 1:1 and it is less than 500 KB.
+            </div>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.iconList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.iconList)'></div>
@@ -327,9 +325,6 @@
                 </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
-            </div>
-            <div class='tooltipMsg' v-if='!judePowerOperate'>
-              Please upload one or more image of any format (png, jpg, jpeg, gif), make sure the image ratio is between 1:1.7～2.1, 1.7～2.1:1 or 1:1 and it is less than 500 KB.
             </div>
             <!-- image -->
             <el-form-item label="image" prop="imageList" class='imgDocker'>
@@ -343,6 +338,9 @@
                 <el-button v-if='ruleForm.imageLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
+              Please upload one or more image of any format (png, jpg, jpeg, gif), make sure the image ratio is between 1:1.7～2.1, 1.7～2.1:1 or 1:1 and it is less than 500 KB.
+            </div>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.imageList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.imageList)'></div>
@@ -353,9 +351,6 @@
                 </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
-            </div>
-            <div class='tooltipMsg' v-if='!judePowerOperate'>
-              Please upload an video of mp4 format, make sure video is less than 5 MB.
             </div>
             <!-- video -->
             <el-form-item label="video" prop="video" class='imgDocker'>
@@ -369,6 +364,9 @@
                 <el-button v-if='ruleForm.videoLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
+              Please upload an video of mp4 format, make sure video is less than 5 MB.
+            </div>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.videoList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.videoList)'></div>
@@ -777,16 +775,6 @@
           return true
         }
       },
-      spaceShowTrackingUrlFlag () {
-        if (this.ruleForm['trackingUrl'].indexOf(' ') !== -1) return true
-        return false
-      },
-      spaceShowTrackingUrl () {
-        if (this.spaceShowTrackingUrlFlag) {
-          var str = this.ruleForm.trackingUrl
-          return str.replace(spaceReg, '<span class="judeUrl-font">&nbsp;</span>')
-        }
-      },
       spaceShowStoreUrl () {
         if (this.spaceShowStoreUrlFlag) {
           var str = this.ruleForm.storeUrl
@@ -951,13 +939,34 @@
     },
     methods: {
       validatorUrl (rule, value, callback) {
-        console.log(value)
         if (value.match(spaceReg) !== null) {
           callback(new Error(ruleLanguagePackage.notSpace))
         } else if (!regHref.test(value)) {
           callback(new Error(ruleLanguagePackage.notWWW))
         } else {
           callback()
+        }
+      },
+      spaceShowUrlFlag (obj, i) {
+        var object = {}
+        if (i !== undefined) {
+          object = this.ruleForm[obj][i].value
+        } else {
+          object = this.ruleForm[obj]
+        }
+        if (object.indexOf(' ') !== -1) return true
+        return false
+      },
+      spaceShowUrl (obj, i) {
+        var object = {}
+        if (i !== undefined) {
+          object = this.ruleForm[obj][i].value
+        } else {
+          object = this.ruleForm[obj]
+        }
+        if (this.spaceShowUrlFlag(obj, i)) {
+          var str = object
+          return str.replace(spaceReg, '<span class="judeUrl-font">&nbsp;</span>')
         }
       },
       addImpressionUrl () {
@@ -1764,7 +1773,6 @@
     border-radius: 4px;
   }
   .judeUrl-box{
-    margin-bottom: 10px;
     line-height: 22px;
     padding: 10px 14px;
     border: 1px solid #dcdfe6;

@@ -1,16 +1,8 @@
 <div class='app'>
-  <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>Report</el-breadcrumb-item>
-    </el-breadcrumb>
-  </div>
   <div class='content mt-30'>
     <div class='contentBox'>
-      <div class='searchBox w100 flex jcsb mb-20'>
+      <div class='searchBox flex jcsb mb-20'>
         <div>
-          <div class='mb-20'>
-            <h4>Date Range</h4>
-          </div>
           <el-date-picker
             @change='searchFun'
             v-model="search.date"
@@ -23,9 +15,6 @@
           </el-date-picker>
         </div>
         <div>
-          <div class='mb-20'>
-            <h4>Campaigns</h4>
-          </div>
           <el-select filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
               v-for="item in options.campaigns"
@@ -36,9 +25,6 @@
           </el-select>
         </div>
         <div>
-          <div class='mb-20'>
-            <h4>Countries</h4>
-          </div>
           <el-select filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
               v-for="item in options.country"
@@ -49,9 +35,6 @@
           </el-select>
         </div>
         <div v-if='power.campaigns_owner.show'>
-          <div class='mb-20'>
-            <h4>Campaigns Owner</h4>
-          </div>
           <el-select filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
               v-for="item in options.campaignsOwner"
@@ -61,6 +44,7 @@
             </el-option>
           </el-select>
         </div>
+        <el-button @click='downloadTable' type="primary">Export<i class="el-icon-download el-icon--right"></i></el-button>
       </div>
       <div class='chartBox'>
         <div class='tabBox flex'>
@@ -70,15 +54,16 @@
           <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
         <div class='conBox' v-show='flag.main'>
-          <div class='mainReport' id='mainReport' style='width: 100%;height: 400px;'></div>
+          <div class='mainReport' id='mainReport' style='width: 100%;height: 300px;'></div>
         </div>
         <div  v-show='!flag.main' class='flex m30'>NO Data</div>
       </div>
       <!-- table -->
       <div class='reportTableBox'>
         <el-table
+          size='mini'
           border
-          height='500'
+          height='400'
           class='reportTable'
           :data="judeTableData"
           style="width: 100%"
@@ -111,9 +96,6 @@
             sortable>
           </el-table-column>
         </el-table>
-      </div>
-      <div class='w100 flex jc-end mt-20'>
-        <el-button @click='downloadTable' type="primary">Export<i class="el-icon-download el-icon--right"></i></el-button>
       </div>
       <!-- report -->
       <div class='mt-20 flex'>
@@ -357,7 +339,21 @@
     methods: {
       // 下载table
       downloadTable () {
-
+        // offer-report/download-report
+        var ajaxData = {
+          date: this.search.date,
+          campaigns: this.search.campaigns,
+          country: this.search.country,
+          campaigns_owner: this.search.campaignsOwner
+        }
+        $.ajax({
+          url: '/offer-report/download-report',
+          type: 'get',
+          data: ajaxData,
+          success: function (result) {
+            console.log(result)
+          }
+        })
       },
       // 获取链接参数
       getParams (key, callback) {

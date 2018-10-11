@@ -269,6 +269,10 @@ class OfferService extends BaseService
             $data['delivery_price'] = $delivery_price;
         }
 
+        // impression url
+        $impression_url = Yii::$app->request->post('impression_url', []);
+        $data['impression_url'] = json_encode($impression_url);
+
         // 投放时间
         $data['delivery_status'] = Yii::$app->request->post('delivery_status', 2);
         $data['delivery_start_day'] = Yii::$app->request->post('delivery_start_data', date('Y-m-d'));

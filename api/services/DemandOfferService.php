@@ -94,6 +94,9 @@ class DemandOfferService extends BaseService
             $res[$k]['att_pro'] = (int)$v['att_pro'];
             $res[$k]['network_environment'] = (int)$v['network_environment'];
 
+            // impression url
+            $res[$k]['impression_url'] = !empty($v['impression_url']) ? json_decode($v['impression_url'], true) : [];
+
             // specific device
             $specific_device =  ( !empty($v['specific_device']) && $v['specific_device'] != 'null' ) ? json_decode($v['specific_device'], true) : [];
             $res[$k]['specific_device'] = is_array($specific_device) ? $specific_device : [];

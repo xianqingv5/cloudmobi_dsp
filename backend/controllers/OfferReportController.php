@@ -72,8 +72,8 @@ class OfferReportController extends BaseController
      */
     public function actionDownloadReport()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $res = OfferReportService::downloadReport();
-        return $res;
+        //Yii::$app->response->format = Response::FORMAT_JSON;
+        OfferReportService::downloadReport();
+        //return $res;
     }
 }

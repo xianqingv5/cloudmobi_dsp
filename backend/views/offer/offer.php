@@ -149,7 +149,7 @@
               </el-form-item>
             </template>
             <el-form-item label="">
-              <el-button class='db' type="primary" @click='addImpressionUrl'>Add</el-button>
+              <el-button class='dn' type="primary" @click='addImpressionUrl'>Add</el-button>
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">

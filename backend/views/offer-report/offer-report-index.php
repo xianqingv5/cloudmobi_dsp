@@ -14,10 +14,12 @@
             value-format="yyyy-MM-dd"
             >
           </el-date-picker>
-          <input type="hidden" name="date" :value='search.date'>
+          <template v-for='obj in search.date'>
+            <input type="hidden" name="date[]" :value='obj'>
+          </template>
         </div>
         <div>
-          <el-select name='campaigns' filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
+          <el-select filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
               v-for="item in options.campaigns"
               :key="item.value"
@@ -25,9 +27,12 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <template v-for='obj in search.campaigns'>
+            <input type="hidden" name="campaigns[]" :value='obj'>
+          </template>
         </div>
         <div>
-          <el-select name='country' filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
+          <el-select filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
               v-for="item in options.country"
               :key="item.value"
@@ -35,9 +40,12 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <template v-for='obj in search.country'>
+            <input type="hidden" name="country[]" :value='obj'>
+          </template>
         </div>
         <div v-if='power.campaigns_owner.show'>
-          <el-select name='campaigns_owner' filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
+          <el-select filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
               v-for="item in options.campaignsOwner"
               :key="item.value"
@@ -45,6 +53,9 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <template v-for='obj in search.campaignsOwner'>
+            <input type="hidden" name="campaigns_owner[]" :value='obj'>
+          </template>
         </div>
         <el-button @click='downloadTable' type="primary">Export<i class="el-icon-download el-icon--right"></i></el-button>
         </form>
@@ -352,7 +363,7 @@
         // request.open("POST", "/offer-report/download-report")
         // request.send(formData)
         var downloadReport = document.querySelector('#downloadReport')
-        // console.log($(downloadReport).serializeArray())
+        console.log($(downloadReport).serializeArray())
         downloadReport.submit()
       },
       // 获取链接参数

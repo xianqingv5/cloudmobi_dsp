@@ -120,18 +120,39 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Tracking Link" prop="trackingUrl">
-              <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
-            </el-form-item>
-            <el-form-item label="">
-              <div class='judeUrl-box form-one' v-if='spaceShowTrackingUrlFlag'>
-                <span class='judeUrl-span' v-html='spaceShowTrackingUrl'></span>
+              <div>
+                <div>
+                  <el-input 
+                  :disabled='judePowerOperate' 
+                  class='form-one' 
+                  type='textarea' 
+                  v-model.trim="ruleForm.trackingUrl" 
+                  :rules="{
+                    required: true, validator: 'validatorUrl', trigger: ['blur', 'change']
+                  }"
+                  placeholder=''></el-input>
+                </div>
+                <div class='judeUrl-box form-one' v-if='spaceShowTrackingUrlFlag'>
+                  <span class='judeUrl-span' v-html='spaceShowTrackingUrl'></span>
+                </div>
               </div>
             </el-form-item>
             <template v-for='(obj, i) in ruleForm.impressionUrl'>
-                <el-form-item label="Impression Link" :prop="'impressionUrl.' + i + '.value'">
-                <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="obj.value" placeholder=''></el-input>
+                <el-form-item :label='"Impression Link (" + (i + 1) + ")"' :prop="'impressionUrl.' + i + '.value'">
+                <el-input 
+                :disabled='judePowerOperate' 
+                class='form-one' 
+                type='textarea' 
+                v-model.trim="obj.value" 
+                :rules="{
+                  required: false, validator: validatorUrl, trigger: ['blur', 'change']
+                }"
+                placeholder=''></el-input>
               </el-form-item>
             </template>
+            <el-form-item label="">
+              <el-button class='dn' type="primary" @click='addImpressionUrl'>Add</el-button>
+            </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">
                 <el-radio label="2">OFF</el-radio>
@@ -497,15 +518,6 @@
           callback(new Error(ruleLanguagePackage.notSpace))
         }
       }
-      var validatorUrl = function (rule, value, callback) {
-        if (value.match(spaceReg) !== null) {
-          callback(new Error(ruleLanguagePackage.notSpace))
-        } else if (!regHref.test(value)) {
-          callback(new Error(ruleLanguagePackage.notWWW))
-        } else {
-          callback()
-        }
-      }
       var validatorPayout = function (rule, value, callback) {
         if (value <= 0.1) {
           callback(new Error("不得小于0.1"))
@@ -693,12 +705,10 @@
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           trackingUrl: [
-            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorUrl, trigger: ['blur', 'change'] }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           impressionUrl: [
-            { required: false, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorUrl, trigger: ['blur', 'change'] }
+            { required: false, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           schedule: [
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
@@ -940,6 +950,23 @@
       this.showCountryFun()
     },
     methods: {
+      validatorUrl (rule, value, callback) {
+        console.log(value)
+        if (value.match(spaceReg) !== null) {
+          callback(new Error(ruleLanguagePackage.notSpace))
+        } else if (!regHref.test(value)) {
+          callback(new Error(ruleLanguagePackage.notWWW))
+        } else {
+          callback()
+        }
+      },
+      addImpressionUrl () {
+        var date = new Date()
+        this.ruleForm.impressionUrl.push({
+          value: '',
+          key: date.getTime()
+        })
+      },
       // 20181009 1-5 | 6
       judeAttributeProviderOptionsDisabled () {
         if (this.ruleForm.attributeProvider === '6') {
@@ -1737,8 +1764,9 @@
     border-radius: 4px;
   }
   .judeUrl-box{
-    margin-bottom: 20px;
-    padding: 10px;
+    margin-bottom: 10px;
+    line-height: 22px;
+    padding: 10px 14px;
     border: 1px solid #dcdfe6;
     border-radius: 4px;
     word-wrap: break-word;

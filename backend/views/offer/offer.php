@@ -127,6 +127,11 @@
                 <span class='judeUrl-span' v-html='spaceShowTrackingUrl'></span>
               </div>
             </el-form-item>
+            <template v-for='(obj, i) in ruleForm.impressionUrl'>
+                <el-form-item label="Impression Link" :prop="'impressionUrl.' + i + '.value'">
+                <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="obj.value" placeholder=''></el-input>
+              </el-form-item>
+            </template>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">
                 <el-radio label="2">OFF</el-radio>
@@ -492,7 +497,7 @@
           callback(new Error(ruleLanguagePackage.notSpace))
         }
       }
-      var validatorTrackingUrl = function (rule, value, callback) {
+      var validatorUrl = function (rule, value, callback) {
         if (value.match(spaceReg) !== null) {
           callback(new Error(ruleLanguagePackage.notSpace))
         } else if (!regHref.test(value)) {
@@ -625,6 +630,9 @@
           name: '',
           category: '',
           trackingUrl: '',
+          impressionUrl: [
+            {value: ''}
+          ],
           schedule: '2',
           deliveryDate: [],
           deliveryWeek: [],
@@ -686,7 +694,11 @@
           ],
           trackingUrl: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorTrackingUrl, trigger: ['blur', 'change'] }
+            { validator: validatorUrl, trigger: ['blur', 'change'] }
+          ],
+          impressionUrl: [
+            { required: false, message: ruleLanguagePackage.required, trigger: 'blur' },
+            { validator: validatorUrl, trigger: ['blur', 'change'] }
           ],
           schedule: [
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
@@ -756,7 +768,7 @@
         }
       },
       spaceShowTrackingUrlFlag () {
-        if (this.ruleForm.trackingUrl.indexOf(' ') !== -1) return true
+        if (this.ruleForm['trackingUrl'].indexOf(' ') !== -1) return true
         return false
       },
       spaceShowTrackingUrl () {
@@ -974,6 +986,14 @@
               that.ruleForm.name = result.data.pkg_name
               that.ruleForm.category = result.data.category_id
               that.ruleForm.trackingUrl = result.data.tracking_url
+              if (result.data.impression_url) {
+                result.data.impression_url.map(function (ele, i) {
+                  that.ruleForm.impressionUrl.push({
+                    key: i,
+                    value: ele
+                  })
+                })
+              }
               that.ruleForm.schedule = result.data.delivery_status
               var deliveryDate = []
               deliveryDate.push(result.data.delivery_start_day)
@@ -1545,6 +1565,9 @@
       },
       submitAjax () {
         var that = this
+        var impressionUrlArr = that.ruleForm.impressionUrl.map(function (ele) {
+          return ele.value
+        })
         var ajaxData = {
           status: that.offerStatus,
           offer_id: that.offerID,
@@ -1562,6 +1585,7 @@
           pkg_name: that.ruleForm.name,
           category_id: that.ruleForm.category,
           tracking_url: that.ruleForm.trackingUrl,
+          impression_url: impressionUrlArr,
           delivery_status: that.ruleForm.schedule,
           delivery_start_data: that.ruleForm.deliveryDate[0],
           delivery_end_data: that.ruleForm.deliveryDate[1],

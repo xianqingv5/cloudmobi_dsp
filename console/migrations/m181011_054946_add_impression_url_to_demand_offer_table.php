@@ -14,8 +14,8 @@ class m181011_054946_add_impression_url_to_demand_offer_table extends Migration
     {
         $this->addColumn(
             '{{%demand_offers}}',
-            'open_type',
-            $this->string(2000)->notNull()->defaultValue('')->comment('json格式:impression跳转url')->after('comment')
+            'impression_url',
+            $this->string(2000)->notNull()->defaultValue('')->comment('json格式:impression跳转url')->after('final_url')
         );
     }
 

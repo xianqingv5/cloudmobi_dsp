@@ -275,7 +275,6 @@ class OfferReportService extends BaseService
      */
     public static function downloadReport()
     {
-
         $data = []; $header = [];
         $where = self::getWhere();
         $fields = [

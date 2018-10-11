@@ -28,6 +28,7 @@ class CommonAsset extends AssetBundle
 		'plugin/element-ui@2.4.7/locale/en.js',
 		'plugin/iconfont/iconfont.js',
 		'plugin/moment.js',
+		'plugin/math.5.2.0.min.js',
 		'plugin/echarts.common.min.js',
 		'plugin/aws/aws-sdk-2.283.1.min.js',
 		'plugin/aws/app.js',

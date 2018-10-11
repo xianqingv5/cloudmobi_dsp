@@ -72,7 +72,7 @@
               <span v-if='item.platform === "2"'>iOS</span>
               <span v-if='item.platform === "1"'>Android</span>
             </td>
-            <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price'></td>
+            <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price' :class='{"color_danger":item.status === "1"&&item.delivery_price == 0}'></td>
             <td>
               <div class='flex'>
                 <div class='flex col-auto-18' :class={jcsb:power.offer_status.show}>

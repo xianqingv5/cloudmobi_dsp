@@ -33,5 +33,6 @@ return [
     'offer-report/country-top-bar' => 'offer report 国家top数据',
     'offer-report/offer-report-data' => 'offer report 大折线图和表格数据',
     'offer-report/get-offer-search' => 'offer report 搜索数据获取',
+    'offer-report/download-report' => 'offer 报表下载',
 
 ];

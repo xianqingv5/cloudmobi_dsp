@@ -235,9 +235,10 @@ class UserService extends BaseService
                 // 新密码验证
                 $new_pwd = Yii::$app->request->post('new_pwd', '');
                 $check_new_pwd = Yii::$app->request->post('check_new_pwd', '');
-                if (self::checkNewPwd($new_pwd, $check_new_pwd)) {
+                if (!self::checkNewPwd($new_pwd, $check_new_pwd)) {
                     return self::$res;
                 }
+
                 $where['id'] = Yii::$app->user->identity->id;
             } else {
                 $new_pwd = Yii::$app->request->post('new_pwd', '');
@@ -246,7 +247,6 @@ class UserService extends BaseService
 
             // 修改密码
             $data = [];
-
             $data['salt'] = Yii::$app->security->generateRandomString(4);
             $data['password'] = md5($new_pwd . $data['salt']);
             $data['update_date'] = date('Y-m-d H:i:s');
@@ -293,8 +293,8 @@ class UserService extends BaseService
         }
 
         // 判断密码格式
-        $reg = '/^[0-9a-zA-Z-_]{8,}$/';
-        if (preg_match($reg, $new_pwd)) {
+        $reg = '/^[0-9a-zA-Z-_.@]{8,}$/';
+        if (!preg_match($reg, $new_pwd)) {
             self::$res['info'] = 'Incorrect password format.';
             return false;
         }

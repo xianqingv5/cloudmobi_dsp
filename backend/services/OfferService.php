@@ -245,6 +245,7 @@ class OfferService extends BaseService
         } while($num);
         $data['offer_id'] = $offer_id;
 
+        $data['channel'] = Yii::$app->params['THIRD_PARTY'][$data['channel']] . self::getUserShortName($data['campaign_owner']);
         $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
         $data['create_date'] = date('Y-m-d H:i:s');
         $offer_id = DemandOffers::addData($data);
@@ -267,10 +268,9 @@ class OfferService extends BaseService
      */
     private static function getPostInfo()
     {
-        $channel = Yii::$app->request->post('channel', '');
         $data['campaign_owner'] = Yii::$app->request->post('campaign_owner', 0);
         // offer channel
-        $data['channel'] = Yii::$app->params['THIRD_PARTY'][$channel] . self::getUserShortName($data['campaign_owner']);
+        $data['channel'] = Yii::$app->request->post('channel', '');
         $data['title'] = Yii::$app->request->post('title', '');
         $data['pkg_name'] = Yii::$app->request->post('pkg_name', '');
         $data['desc'] = Yii::$app->request->post('desc', '');
@@ -315,7 +315,6 @@ class OfferService extends BaseService
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));
 
         $data['update_date'] = date('Y-m-d H:i:s');
-
         return $data;
     }
 

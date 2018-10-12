@@ -53,7 +53,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Attribute Provider" prop="attributeProvider">
-              <el-select class='form-one' @change='judeChannel' :disabled='judePowerOperate'
+              <el-select class='form-one' @change='judeChannel' :disabled='pageType === "update" || judePowerOperate'
                 v-model="ruleForm.attributeProvider" clearable placeholder="">
                 <el-option
                   v-for="item in options.attributeProvider"

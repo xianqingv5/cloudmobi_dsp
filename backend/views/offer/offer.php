@@ -923,8 +923,8 @@
         try {
           await this.initData()
           await this.initDate()
-          await this.setCampaignOwner()
           await this.getUpdateInfo()
+          await this.setCampaignOwner()
         } catch (error) {
           console.log(error)
         }

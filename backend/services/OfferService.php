@@ -296,6 +296,13 @@ class OfferService extends BaseService
 
         // impression url
         $impression_url = Yii::$app->request->post('impression_url', []);
+        if ($impression_url) {
+            foreach ($impression_url as $k=>$v) {
+                if (empty($v)) {
+                    unset($impression_url[$k]);
+                }
+            }
+        }
         $data['impression_url'] = json_encode($impression_url);
 
         // 投放时间

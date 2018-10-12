@@ -1035,14 +1035,16 @@
               that.ruleForm.name = result.data.pkg_name
               that.ruleForm.category = result.data.category_id
               that.ruleForm.trackingUrl = result.data.tracking_url
-              that.ruleForm.impressionUrl.splice(0)
-              if (result.data.impression_url) {
-                result.data.impression_url.map(function (ele, i) {
-                  that.ruleForm.impressionUrl.push({
-                    key: i,
-                    value: ele
+              if (result.data.impression_url.length !== 0) {
+                that.ruleForm.impressionUrl.splice(0)
+                if (result.data.impression_url) {
+                  result.data.impression_url.map(function (ele, i) {
+                    that.ruleForm.impressionUrl.push({
+                      key: i,
+                      value: ele
+                    })
                   })
-                })
+                }
               }
               that.ruleForm.schedule = result.data.delivery_status
               var deliveryDate = []

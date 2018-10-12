@@ -13,7 +13,7 @@
         <el-select filterable
           @change='searchFun'
           class='form-search mr-20'
-          v-model="search.rule" clearable placeholder="Rule">
+          v-model="search.role" clearable placeholder="Role">
           <el-option
             v-for="item in ruleForm.roleOptions"
             :key="item.value"
@@ -222,7 +222,7 @@
         csrf: null,
         search: {
           name: '',
-          rule: ''
+          role: ''
         },
         index: {
           list: []
@@ -284,8 +284,8 @@
         var vm = this
         return  this.index.list.filter(function (ele) {
           var str = ele.email + ele.username
-          if (vm.search.rule) {
-            if (vm.search.rule === ele.group_id) {
+          if (vm.search.role) {
+            if (vm.search.role === ele.group_id) {
               return str.toLowerCase().indexOf(vm.search.name.toLowerCase()) !== -1
             }
           } else {

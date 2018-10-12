@@ -116,7 +116,7 @@ return [
             // 修改
             'offer_update' => ['show' => true,'operate' => true],
             // 查看
-            'offer_see' => ['show' => true,'operate' => false],
+            'offer_see' => ['show' => false,'operate' => false],
             // 状态
             'offer_status' => ['show' => true,'operate' => false],
             // offer 审核
@@ -130,7 +130,7 @@ return [
         // offer update 页面
         'offer-update-info' => [
             // 是否页面可操作
-            'show' => true,'operate' => false,
+            'show' => true,'operate' => true,
             // 投放价格是否显示
             'delivery_price' => ['show' => false,'operate' => false,],
             // 价格是否可修改

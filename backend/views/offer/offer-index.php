@@ -70,7 +70,7 @@
           <th>Actions</th>
         </thead>
         <tbody is='transition-group' name='list'>
-          <tr v-for='(item, index) in list' :key='index'>
+          <tr v-for='(item, index) in handleList' :key='index'>
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
             <td v-text='item.payout'></td>
@@ -125,8 +125,8 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pagination.currentPage"
-          :page-sizes="[50, 100, 200, 500]"
-          :page-size="50"
+          :page-sizes="[5, 10, 50, 100, 200, 500]"
+          :page-size='pagination.size'
           layout="total, sizes, prev, pager, next, jumper"
           :total="pagination.total">
         </el-pagination>
@@ -222,6 +222,16 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       this.initData()
       this.getList()
     },
+    computed: {
+      handleList () {
+        var that = this
+        return this.list.filter(function (ele, index) {
+          if ((index / that.pagination.size) >= (that.pagination.currentPage - 1) && (index / that.pagination.size) < (that.pagination.currentPage) ) {
+            return ele
+          }
+        })
+      }
+    },
     methods: {
       getConfig () {
         var that = this
@@ -250,7 +260,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
-        this.pagination.page = val
+        this.pagination.currentPage = val
       },
       submitForm2 (formName) {
         var that = this
@@ -319,9 +329,12 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            // console.log(result)
+            console.log(result)
             if (result.status === 1) {
               that.list = result.data
+              that.pagination.currentPage = result.page.page
+              that.pagination.total = Number(result.page.count)
+              that.pagination.size = result.page.page_size
             } else {
               that.list.splice(0)
               that.$message.error(result.info)

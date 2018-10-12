@@ -110,7 +110,7 @@ class OfferService extends BaseService
         self::$res['data'] = $offer[0];
         // 页面显示offer id 组装
         // self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
-        self::$res['data']['show_offer_id'] = Yii::$app->params['THIRD_PARTY'][$offer[0]['channel']] . $offer[0]['offer_id'];
+        self::$res['data']['show_offer_id'] = $offer[0]['channel'] . "_" . $offer[0]['offer_id'];
         // 数据转换
         $delivery_hour = !empty($offer[0]['delivery_hour']) ? json_decode($offer[0]['delivery_hour'], true) : [];
         $d_hour = [];

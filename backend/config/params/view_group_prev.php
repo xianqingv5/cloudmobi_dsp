@@ -6,6 +6,12 @@
 return [
     // super admin
     '1' => [
+        // user list 页面
+        'user-index' => [
+            // 根据权限搜索用户
+            'search_role' => ['show' => true, 'operate' => true],
+        ],
+
         // offer list页面
         'offer-index' => [
             // 创建
@@ -20,6 +26,8 @@ return [
             'offer_sh' => ['show' => true,'operate' => true],
             // 列表投放单价是否显示
             'offer_delivery_price' => ['show' => true,'operate' => true],
+            // offer search campaign owner
+            'offer_search_campaign_owner' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
         'offer-update-info' => [
@@ -47,6 +55,12 @@ return [
     ],
     // admin
     '2' => [
+        // user list 页面
+        'user-index' => [
+            // 根据权限搜索用户
+            'search_role' => ['show' => true, 'operate' => true],
+        ],
+
         // offer list页面
         'offer-index' => [
             // 创建
@@ -62,6 +76,8 @@ return [
 
             // 列表投放单价是否显示
             'offer_delivery_price' => ['show' => true,'operate' => true],
+            // offer search campaign owner
+            'offer_search_campaign_owner' => ['show' => true,'operate' => true],
         ],
         // offer update 页面
         'offer-update-info' => [
@@ -87,6 +103,12 @@ return [
     ],
     // advertiser agent
     '3' => [
+        // user list 页面
+        'user-index' => [
+            // 根据权限搜索用户
+            'search_role' => ['show' => false, 'operate' => false],
+        ],
+
         // offer list页面
         'offer-index' => [
             // 创建
@@ -102,6 +124,8 @@ return [
 
             // 列表投放单价是否显示
             'offer_delivery_price' => ['show' => false,'operate' => false],
+            // offer search campaign owner
+            'offer_search_campaign_owner' => ['show' => false,'operate' => false],
         ],
         // offer update 页面
         'offer-update-info' => [

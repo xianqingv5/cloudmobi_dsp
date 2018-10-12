@@ -15,7 +15,7 @@
           class='form-search mr-20'
           v-model="search.rule" clearable placeholder="Rule">
           <el-option
-            v-for="item in options.rule"
+            v-for="item in ruleForm.roleOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -220,14 +220,6 @@
           json: {}
         },
         csrf: null,
-        options: {
-          rule: [
-            {
-              value: '3',
-              label: '3'
-            }
-          ]
-        },
         search: {
           name: '',
           rule: ''

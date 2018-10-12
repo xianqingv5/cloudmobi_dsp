@@ -31,7 +31,7 @@
               <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one' :disabled='groupID === agentGroupID || pageType === "update" || judePowerOperate'
+              <el-select class='form-one' :disabled='groupID == agentGroupID || pageType === "update" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -940,7 +940,8 @@
     },
     methods: {
       setCampaignOwner () {
-        if (this.groupID === this.agentGroupID) {
+        console.log('setCampaignOwner')
+        if (this.groupID == this.agentGroupID) {
           this.ruleForm.campaignOwner = this.requestUid
         }
       },
@@ -1010,11 +1011,13 @@
             offer_id: this.offerID,
             dsp_security_param: this.csrf
           }
-          $.ajax({
+          return new Promise((resolve, reject) => {
+            $.ajax({
             url: '/offer/offer-update-info',
             data: ajaxData,
             type: 'post',
             success: function (result) {
+              console.log('getUpdateInfo')
               // console.log(result)
               that.offerStatus = result.data.status
               that.showOfferID = result.data.show_offer_id
@@ -1087,9 +1090,13 @@
               if (videoList) {
                 that.ruleForm.videoList = videoList
               }
-              // 
+              // 判断国家select是否显示
               that.showCountryFun()
+              // 代理商时设置campaignOwner
+              // that.setCampaignOwner()
+              resolve(2)
             }
+          })
           })
         }
       },
@@ -1173,6 +1180,7 @@
       },
       // 初始化日期
       initDate () {
+        console.log('initDate')
         var start = moment().add(-2, 'day').format('YYYY-MM-DD')
         var end = moment().add(14, 'day').format('YYYY-MM-DD')
         this.ruleForm.deliveryDate = [start, end]
@@ -1183,70 +1191,74 @@
         var ajaxData = {
           dsp_security_param: this.csrf
         }
-        $.ajax({
-          url: '/offer/get-offer-config',
-          type: 'post',
-          data: ajaxData,
-          success: function (result) {
-            // console.log(result)
-            // 代理商的groupid
-            that.agentGroupID = result.data.group.id
-            // Campaign Owner
-            if (that.pageType === 'create') {
-              result.data.user.map(function (ele) {
-                if (ele.status === '1') {
+        return new Promise((resolve, reject) => {
+          $.ajax({
+            url: '/offer/get-offer-config',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log('initData')
+              // console.log(result)
+              // 代理商的groupid
+              that.agentGroupID = result.data.group.id
+              // Campaign Owner
+              if (that.pageType === 'create') {
+                result.data.user.map(function (ele) {
+                  if (ele.status === '1') {
+                    that.options.campaignOwner.push({
+                      value: ele.id,
+                      label: ele.email
+                    })
+                  }
+                })
+              }
+              if (that.pageType === 'update') {
+                result.data.user.map(function (ele) {
                   that.options.campaignOwner.push({
                     value: ele.id,
                     label: ele.email
                   })
-                }
-              })
-            }
-            if (that.pageType === 'update') {
-              result.data.user.map(function (ele) {
-                that.options.campaignOwner.push({
+                })
+              }
+              // advertiser
+              result.data.ads.map(function (ele) {
+                that.options.advertiser.push({
                   value: ele.id,
-                  label: ele.email
+                  label: ele.ads
                 })
               })
+              // attributeProvider
+              result.data.tpm.map(function (ele) {
+                that.options.attributeProvider.push({
+                  channel: ele.channel,
+                  value: ele.id,
+                  label: ele.tpm,
+                  disabled: false
+                })
+              })
+              // country
+              var country = []
+              result.data.country.map(function (ele) {
+                country.push({
+                  value: ele.id,
+                  label: ele.full_name
+                })
+              })
+              // specificDevice
+              that.options.specificDeviceBase = result.data.mobile
+              // country
+              that.options.country = country
+              // version
+              that.options.minOSversionBase = result.data.version
+              // category
+              that.options.categoryBase = result.data.category
+              // initDate
+              // that.initDate()
+              // 获取edit信息
+              // that.getUpdateInfo()
+              resolve(1)
             }
-            // advertiser
-            result.data.ads.map(function (ele) {
-              that.options.advertiser.push({
-                value: ele.id,
-                label: ele.ads
-              })
-            })
-            // attributeProvider
-            result.data.tpm.map(function (ele) {
-              that.options.attributeProvider.push({
-                channel: ele.channel,
-                value: ele.id,
-                label: ele.tpm,
-                disabled: false
-              })
-            })
-            // country
-            var country = []
-            result.data.country.map(function (ele) {
-              country.push({
-                value: ele.id,
-                label: ele.full_name
-              })
-            })
-            // specificDevice
-            that.options.specificDeviceBase = result.data.mobile
-            // country
-            that.options.country = country
-            // version
-            that.options.minOSversionBase = result.data.version
-            // category
-            that.options.categoryBase = result.data.category
-            // // initDate
-            // that.initDate()
-            // // 获取edit信息
-            // that.getUpdateInfo()
-          }
+          })
         })
       },
       addAllDeliveryWeek () {

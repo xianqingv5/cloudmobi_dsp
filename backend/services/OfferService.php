@@ -13,6 +13,8 @@ class OfferService extends BaseService
 {
     public static $res = ['status'=>0, 'info'=>'', 'data'=>[]];
 
+    CONST PAGE_SIZE = 50;// 每页条数
+
     /**
      * offer 列表数据获取
      * @return array
@@ -20,13 +22,26 @@ class OfferService extends BaseService
     public static function getOfferList()
     {
         $where = self::getWhere();
-        $res = DemandOffers::getData(['id', 'channel', 'title', 'payout', 'status'], $where);
+        $fields = ['id', 'channel', 'campaign_owner', 'offer_id', 'title', 'payout', 'delivery_price', 'status', 'platform'];
+        // 查询总条数
+        $res_count = DemandOffers::getData(['count(*) as num'], $where);
+
+        // 分页
+        $page = Yii::$app->request->post('page', 1);
+        $page_size = Yii::$app->request->post('page_size', self::PAGE_SIZE);
+        $page2 = ($page > 0) ? $page - 1 : 0;
+        $limit =  $page2 . "," . $page_size;
+
+        $res = DemandOffers::getData($fields, $where, '', 'update_date desc,status desc', $limit);
         if ($res) {
             foreach ($res as $k=>$v) {
-                $res[$k]['show_offer_id'] =  $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                $res[$k]['show_offer_id'] =  $v['channel'] . '_' . $v['offer_id'];
             }
             self::$res['status'] = 1;
             self::$res['data'] = $res;
+            self::$res['page']['count'] = $res_count[0]['num'];// 总条数
+            self::$res['page']['page_size'] = $page_size;// 每页条数
+            self::$res['page']['page'] = $page;// 当前页
         } else {
             self::$res['info'] = 'No Data';
         }
@@ -44,6 +59,11 @@ class OfferService extends BaseService
         // 是否是代理广告商
         if (Yii::$app->user->identity->group_id == 3) {
             $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";
+        } else {
+            $campaign_owner = Yii::$app->request->post('campaign_owner', 0);
+            if ($campaign_owner) {
+                $where['campaign_owner'] = "campaign_owner = '" . $campaign_owner . "'";
+            }
         }
 
         // search campaign id
@@ -89,7 +109,12 @@ class OfferService extends BaseService
 
         self::$res['data'] = $offer[0];
         // 页面显示offer id 组装
-        self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
+        // self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
+        self::$res['data']['show_offer_id'] = $offer[0]['channel'] . "_" . $offer[0]['offer_id'];
+
+        // impression url
+        self::$res['data']['impression_url']  = !empty($offer[0]['impression_url']) ? json_decode($offer[0]['impression_url'], true) : [];
+
         // 数据转换
         $delivery_hour = !empty($offer[0]['delivery_hour']) ? json_decode($offer[0]['delivery_hour'], true) : [];
         $d_hour = [];
@@ -212,17 +237,26 @@ class OfferService extends BaseService
     {
 
         $data = self::getPostInfo();
-        $data['status'] = in_array(Yii::$app->user->identity->group_id, [1,2]) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
-        $data['create_date'] = date('Y-m-d H:i:s');
 
+        // 生成offer id
+        do {
+            $offer_id = self::generateOfferId();
+            $num = DemandOffers::getData(['count(*) as num'], ["offer_id = '" . $offer_id . "'"])[0]['num'];
+        } while($num);
+        $data['offer_id'] = $offer_id;
+
+        $data['channel'] = Yii::$app->params['THIRD_PARTY'][$data['channel']] . self::getUserShortName($data['campaign_owner']);
+        $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
+        $data['create_date'] = date('Y-m-d H:i:s');
         $offer_id = DemandOffers::addData($data);
         return $offer_id;
     }
 
     public static function updateDemandOffer($offer_id)
     {
+        $status = Yii::$app->request->post('status', 1);
         $data = self::getPostInfo();
-        $data['status'] = Yii::$app->request->post('status', 1);
+        $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? $status : 3;
         $res = DemandOffers::updateData($data, ['id' => $offer_id]);
         return $res;
 
@@ -234,8 +268,9 @@ class OfferService extends BaseService
      */
     private static function getPostInfo()
     {
-        $data['channel'] = Yii::$app->request->post('channel', '');
         $data['campaign_owner'] = Yii::$app->request->post('campaign_owner', 0);
+        // offer channel
+        $data['channel'] = Yii::$app->request->post('channel', '');
         $data['title'] = Yii::$app->request->post('title', '');
         $data['pkg_name'] = Yii::$app->request->post('pkg_name', '');
         $data['desc'] = Yii::$app->request->post('desc', '');
@@ -252,6 +287,23 @@ class OfferService extends BaseService
         $data['att_pro'] = Yii::$app->request->post('att_pro', 0);
         $data['network_environment'] = Yii::$app->request->post('network_environment', '3');
         $data['comment'] = Yii::$app->request->post('comment', '');
+
+        // 投放价格
+        $delivery_price = Yii::$app->request->post('delivery_price', 0);
+        if ($delivery_price) {
+            $data['delivery_price'] = $delivery_price;
+        }
+
+        // impression url
+        $impression_url = Yii::$app->request->post('impression_url', []);
+        if ($impression_url) {
+            foreach ($impression_url as $k=>$v) {
+                if (empty($v)) {
+                    unset($impression_url[$k]);
+                }
+            }
+        }
+        $data['impression_url'] = json_encode($impression_url);
 
         // 投放时间
         $data['delivery_status'] = Yii::$app->request->post('delivery_status', 2);
@@ -270,7 +322,6 @@ class OfferService extends BaseService
         $data['specific_device'] = json_encode(Yii::$app->request->post('specific_device'));
 
         $data['update_date'] = date('Y-m-d H:i:s');
-
         return $data;
     }
 
@@ -403,7 +454,7 @@ class OfferService extends BaseService
     }
 
     /**
-     * offer 状态 修改
+     * 根据offer id 状态 修改
      * @return array
      */
     public static function updateOfferStatus()
@@ -420,6 +471,51 @@ class OfferService extends BaseService
         return self::$res;
     }
 
+    /**
+     * 根据用户id 修改offer状态
+     * @param $uid
+     * @param int $status
+     * @return bool
+     */
+    public static function updateOfferStatusByUser($uid, $status = 2)
+    {
+        $res = DemandOffers::updateData(['status' => $status], ['campaign_owner' => $uid]);
+        return $res ? true : false;
+    }
+
+    /**
+     * 生成offer id
+     * 规则: 10位编号(日月年 + 4位随机数。例:0810181234)
+     * @return string
+     */
+    public static function generateOfferId()
+    {
+        $offer_id = date('dmy') . rand(1000, 9999);
+        return $offer_id;
+    }
+
+    /**
+     * 获取用户简称
+     * @param $uid
+     * @return mixed|string
+     */
+    public static function getUserShortName($uid)
+    {
+        $uInfo = User::findIdentity($uid);
+        $short_name = !empty($uInfo) ? $uInfo->short_name : '';
+        return $short_name;
+    }
+
+    /**
+     * 查询用户的offer数量
+     * @param $uid
+     * @return mixed
+     */
+    public static function getOfferNumByUser($uid)
+    {
+        $res = DemandOffers::getData(['count(*) as num'], ['campaign_owner='.$uid]);
+        return $res[0]['num'];
+    }
 
     /**
      * 获取offer各种配置信息
@@ -443,11 +539,16 @@ class OfferService extends BaseService
         self::$res['data']['country'] = CountryService::getCountryAllData(['id', 'full_name', 'short_name'], ['id>0']);
 
         // 获取应用类别
-        self::$res['data']['category'] = CategoryService::getCategoryData(0, ['id', 'en_name as name'], ['parent_id = 0']);
+        self::$res['data']['category'] = CategoryService::getCategoryData(0, ['id', 'en_name as name'], ['1=1']);
 
         // 获取设备信息
         self::$res['data']['mobile'] = Yii::$app->params['MOBILE'];
 
+        // 获取用户状态
+        self::$res['data']['user_status'] = UserService::getUserStatus();
+
+        // group id
+        self::$res['data']['group']['id'] = self::isAdvertiserAgent() ? Yii::$app->user->identity->group_id : -1;
         return self::$res;
     }
 }

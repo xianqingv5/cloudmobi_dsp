@@ -73,16 +73,21 @@ class DemandOfferService extends BaseService
         foreach ($data as $k=>$v) {
             $oid = $v['id'];// offer id
 
-            $res[$k]['id'] = Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+            // 查询offer 类别
+            //$category_ids = $v['category_id'];
+
+            // $res[$k]['id'] = Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+            $res[$k]['id'] = $v['offer_id'];
             $res[$k]['channel'] = $v['channel'];
             $res[$k]['title'] = $v['title'];
             $res[$k]['pkg'] = $v['pkg_name'];
             $res[$k]['desc'] = $v['desc'];
             $res[$k]['open_type'] = (int)$v['open_type'];
-            $res[$k]['payout'] = (float)$v['payout'];
+            //$res[$k]['payout'] = (float)$v['payout'];
+            $res[$k]['payout'] = (float)$v['delivery_price'];// 投放单价
             $res[$k]['tracking_url'] = $v['tracking_url'];
             $res[$k]['final_url'] = $v['final_url'];
-            $res[$k]['category'] = $category[ $v['platform'] ][ $v['category_id'] ];
+            $res[$k]['category'] = [ $category[ $v['platform'] ][ $v['category_id'] ] ];
             $res[$k]['daily_cap'] = (int)$v['daily_cap'];
             $res[$k]['daily_cap'] = (int)$v['daily_cap'];
             $res[$k]['status'] = (int)$v['status'];
@@ -91,6 +96,9 @@ class DemandOfferService extends BaseService
             $res[$k]['min_osv'] = $v['min_os_version'];
             $res[$k]['att_pro'] = (int)$v['att_pro'];
             $res[$k]['network_environment'] = (int)$v['network_environment'];
+
+            // impression url
+            $res[$k]['impression_url'] = !empty($v['impression_url']) ? json_decode($v['impression_url'], true) : [];
 
             // specific device
             $specific_device =  ( !empty($v['specific_device']) && $v['specific_device'] != 'null' ) ? json_decode($v['specific_device'], true) : [];

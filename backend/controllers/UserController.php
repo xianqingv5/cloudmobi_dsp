@@ -60,6 +60,45 @@ class UserController extends BaseController
     }
 
     /**
+     * 修改自己的密码
+     * @return array|string
+     */
+    public function actionUpdatePwd()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $res = UserService::updateUserPwd();
+            return $res;
+        }
+
+        return $this->render('pwd', [
+            'uid' => Yii::$app->user->identity->id,
+        ]);
+    }
+
+
+    /**
+     * 修改用户密码
+     * @return array
+     */
+    public function actionUpdateUserPwd()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $uid = Yii::$app->request->post('id', 0);
+            $res = UserService::updateUserPwd($uid, 2);
+            return $res;
+        }
+    }
+
+    public function actionGetCode()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::getCode(8);
+        return $res;
+    }
+
+    /**
      * 验证邮箱是否已存在
      * @return array
      */
@@ -67,6 +106,17 @@ class UserController extends BaseController
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $res = UserService::checkEmail();
+        return $res;
+    }
+
+    /**
+     * 验证用户简称是否已存在
+     * @return array
+     */
+    public function actionCheckShortName()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $res = UserService::checkShortName();
         return $res;
     }
 

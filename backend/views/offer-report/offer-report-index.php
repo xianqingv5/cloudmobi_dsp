@@ -1,16 +1,9 @@
 <div class='app'>
-  <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>Report</el-breadcrumb-item>
-    </el-breadcrumb>
-  </div>
   <div class='content mt-30'>
     <div class='contentBox'>
-      <div class='searchBox w100 flex jcsb mb-20'>
-        <div>
-          <div class='mb-20'>
-            <h4>Date Range</h4>
-          </div>
+      <div >
+        <form id='downloadReport' class='searchBox flex jcsb mb-20' action="/offer-report/download-report">
+          <div>
           <el-date-picker
             @change='searchFun'
             v-model="search.date"
@@ -21,11 +14,11 @@
             value-format="yyyy-MM-dd"
             >
           </el-date-picker>
+          <template v-for='obj in search.date'>
+            <input type="hidden" name="date[]" :value='obj'>
+          </template>
         </div>
         <div>
-          <div class='mb-20'>
-            <h4>Campaigns</h4>
-          </div>
           <el-select filterable @change='searchFun' v-model="search.campaigns" multiple placeholder="All Campaigns">
             <el-option
               v-for="item in options.campaigns"
@@ -34,11 +27,11 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <template v-for='obj in search.campaigns'>
+            <input type="hidden" name="campaigns[]" :value='obj'>
+          </template>
         </div>
         <div>
-          <div class='mb-20'>
-            <h4>Countries</h4>
-          </div>
           <el-select filterable @change='searchFun' v-model="search.country" multiple placeholder="All Countries">
             <el-option
               v-for="item in options.country"
@@ -47,11 +40,11 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <template v-for='obj in search.country'>
+            <input type="hidden" name="country[]" :value='obj'>
+          </template>
         </div>
         <div v-if='power.campaigns_owner.show'>
-          <div class='mb-20'>
-            <h4>Campaigns Owner</h4>
-          </div>
           <el-select filterable @change='searchFun' v-model="search.campaignsOwner" multiple placeholder="All Campaigns Owner">
             <el-option
               v-for="item in options.campaignsOwner"
@@ -60,7 +53,12 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <template v-for='obj in search.campaignsOwner'>
+            <input type="hidden" name="campaigns_owner[]" :value='obj'>
+          </template>
         </div>
+        <el-button @click='downloadTable' type="primary">Export<i class="el-icon-download el-icon--right"></i></el-button>
+        </form>
       </div>
       <div class='chartBox'>
         <div class='tabBox flex'>
@@ -70,15 +68,16 @@
           <div class='tab-btn' @click='choiceMain("cvr")' :class='{act:mainChoice === "cvr"}'>CVR</div>
         </div>
         <div class='conBox' v-show='flag.main'>
-          <div class='mainReport' id='mainReport' style='width: 100%;height: 400px;'></div>
+          <div class='mainReport' id='mainReport' style='width: 100%;height: 300px;'></div>
         </div>
         <div  v-show='!flag.main' class='flex m30'>NO Data</div>
       </div>
       <!-- table -->
       <div class='reportTableBox'>
         <el-table
+          size='mini'
           border
-          height='500'
+          height='400'
           class='reportTable'
           :data="judeTableData"
           style="width: 100%"
@@ -352,6 +351,21 @@
       }
     },
     methods: {
+      // 下载table
+      downloadTable () {
+        // var that = this
+        // var formData = new FormData()
+        // formData.append('date', that.search.date)
+        // formData.append('campaigns', that.search.campaigns)
+        // formData.append('country', that.search.country)
+        // formData.append('campaigns_owner', that.search.campaignsOwner)
+        // var request = new XMLHttpRequest()
+        // request.open("POST", "/offer-report/download-report")
+        // request.send(formData)
+        var downloadReport = document.querySelector('#downloadReport')
+        console.log($(downloadReport).serializeArray())
+        downloadReport.submit()
+      },
       // 获取链接参数
       getParams (key, callback) {
         var url = window.location.href
@@ -411,11 +425,9 @@
       },
       // 初始化日期
       initDate () {
-        var end = new Date()
-        var start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
-        end.setTime(end.getTime())
-        this.search.date = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+        var start = moment().add(-7, 'day').format('YYYY-MM-DD')
+        var end = moment().add(-1, 'day').format('YYYY-MM-DD')
+        this.search.date = [start, end]
       },
       searchFun () {
         // console.log('search')

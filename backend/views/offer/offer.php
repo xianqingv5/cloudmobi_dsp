@@ -1,4 +1,9 @@
 <div class='app' data-type="<?php echo $type; ?>">
+  <!-- <div
+    v-loading.fullscreen.lock="loading"
+    element-loading-text="资源上传中"
+    element-loading-spinner="el-icon-loading"
+  ></div> -->
   <div class='breadcrumbDocker w100 flex flex-row-flex-start-center'>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item><a href="/offer/offer-index">Campaigns</a></el-breadcrumb-item>
@@ -26,7 +31,7 @@
               <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one' :disabled='groupID === "3" || judePowerOperate'
+              <el-select class='form-one' :disabled='groupID == agentGroupID || pageType === "update" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -37,7 +42,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Advertiser" prop="advertiser">
-              <el-select class='form-one' :disabled='judePowerOperate'
+              <el-select class='form-one' :disabled='pageType === "update" || judePowerOperate'
                 v-model="ruleForm.advertiser" clearable placeholder="">
                 <el-option
                   v-for="item in options.advertiser"
@@ -48,13 +53,15 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Attribute Provider" prop="attributeProvider">
-              <el-select class='form-one' @change='judeChannel' :disabled='judePowerOperate'
+              <el-select class='form-one' @change='judeChannel' :disabled='pageType === "update" || judePowerOperate'
                 v-model="ruleForm.attributeProvider" clearable placeholder="">
                 <el-option
                   v-for="item in options.attributeProvider"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  :disabled="item.disabled"
+                  >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -112,13 +119,38 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Tracking Link" prop="trackingUrl">
-              <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
-            </el-form-item>
-            <el-form-item label="">
-              <div class='judeUrl-box form-one' v-if='spaceShowTrackingUrlFlag'>
-                <span class='judeUrl-span' v-html='spaceShowTrackingUrl'></span>
+            <el-form-item label="Tracking Link" prop="trackingUrl" 
+              :rules="[
+                {
+                  required: true,
+                  validator: validatorUrl,
+                  trigger: ['blur', 'change']
+                }
+              ]"
+            >
+              <div>
+                <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="ruleForm.trackingUrl" placeholder=''></el-input>
               </div>
+              <div class='judeUrl-box form-one mt-10' v-if='spaceShowUrlFlag("trackingUrl")'>
+                <span class='judeUrl-span' v-html='spaceShowUrl("trackingUrl")'></span>
+              </div>
+            </el-form-item>
+            <template v-for='(obj, i) in ruleForm.impressionUrl'>
+                <el-form-item :label='"Impression Link"' :prop="'impressionUrl.' + i + '.value'"
+                :rules="[
+                  { required: false, validator: validatorUrl, trigger: ['blur', 'change'] }
+                ]"
+                >
+                  <div>
+                    <el-input :disabled='judePowerOperate' class='form-one' type='textarea' v-model.trim="obj.value" placeholder=''></el-input>
+                  </div>
+                  <div class='judeUrl-box form-one mt-10' v-if='spaceShowUrlFlag("impressionUrl", i)'>
+                  <span class='judeUrl-span' v-html='spaceShowUrl("impressionUrl", i)'></span>
+                </div>
+              </el-form-item>
+            </template>
+            <el-form-item label="">
+              <el-button class='dn' type="primary" @click='addImpressionUrl'>Add</el-button>
             </el-form-item>
             <el-form-item label="Schedule" prop="schedule">
               <el-radio-group :disabled='judePowerOperate' class='form-one' v-model="ruleForm.schedule">
@@ -177,13 +209,16 @@
             <h5>Budget Info</h5>
           </div>
           <div class='content-con flex column'>
-            <el-form-item label="Price($)" prop="payout">
-              <el-input :disabled='judePowerOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
+            <el-form-item v-if='judePowerPayoutShow' label="Price($)" prop="payout">
+              <el-input :disabled='judePowerOperate || !judePowerPayoutOperate' class='form-one' v-model.number="ruleForm.payout" placeholder=''></el-input>
+            </el-form-item>
+            <el-form-item v-if='power.delivery_price.show' label="Delivery Price($)" prop="deliveryPrice">
+              <el-input :disabled='judePowerOperate || !power.delivery_price.operate' class='form-one' v-model.trim.number="ruleForm.deliveryPrice" placeholder=''></el-input>
             </el-form-item>
             <el-form-item label="Daily Cap" prop="dailyCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.dailyCap" placeholder=''></el-input>
             </el-form-item>
-            <el-form-item label="Total Cap" prop="totalCap">
+            <el-form-item class='dn' label="Total Cap" prop="totalCap">
               <el-input :disabled='judePowerOperate' class='form-one' v-model.trim.number="ruleForm.totalCap" placeholder=''></el-input>
             </el-form-item>
           </div>
@@ -273,16 +308,22 @@
                   <el-input class='form-one' v-model="ruleForm.icon" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("icon")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("icon")'/>Upload creatives</el-button>
+                <el-button v-if='!ruleForm.iconLoading' type="primary" @click='uploadFile("icon")'/>Upload creatives</el-button>
                 <input class='iconfile dn' type="file" name="iconfile">
+                <el-button v-if='ruleForm.iconLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
+              Please upload an icon of any format (png, jpg, jpeg, gif), make sure the image ratio is 1:1 and it is less than 500 KB.
+            </div>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.iconList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.iconList)'></div>
-                <div class='showImg flex'>
-                  <img src="" alt="" :src='item.url'>
-                </div>
+                <a class='db' :href='item.url' target='_black'>
+                  <div class='showImg flex'>
+                    <img src="" alt="" :src='item.url'>
+                  </div>
+                </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
             </div>
@@ -293,16 +334,22 @@
                   <el-input class='form-one' v-model="ruleForm.image" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("image")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("image")'>Upload creatives</el-button>
+                <el-button v-if='!ruleForm.imageLoading' type="primary" @click='uploadFile("image")'>Upload creatives</el-button>
                 <input class='imagefile dn' type="file" name="imagefile">
+                <el-button v-if='ruleForm.imageLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
+              Please upload one or more image of any format (png, jpg, jpeg, gif), make sure the image ratio is between 1:1.7～2.1, 1.7～2.1:1 or 1:1 and it is less than 500 KB.
+            </div>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.imageList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.imageList)'></div>
-                <div class='showImg flex'>
-                  <img src="" alt="" :src='item.url'>
-                </div>
+                <a class='db' :href='item.url' target='_black'>
+                  <div class='showImg flex'>
+                    <img src="" alt="" :src='item.url'>
+                  </div>
+                </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
             </div>
@@ -313,16 +360,22 @@
                   <el-input class='form-one' v-model="ruleForm.video" placeholder=''></el-input>
                   <el-button type="primary" @click='previewAddFile("video")'>Upload via url</el-button>
                 </div>
-                <el-button type="primary" @click='uploadFile("video")'>Upload creatives</el-button>
+                <el-button v-if='!ruleForm.videoLoading' type="primary" @click='uploadFile("video")'>Upload creatives</el-button>
                 <input class='videofile dn' type="file" name="videofile">
+                <el-button v-if='ruleForm.videoLoading' type="primary" :loading="true">Uploading</el-button>
               </div>
             </el-form-item>
+            <div class='tooltipMsg' v-if='!judePowerOperate'>
+              Please upload an video of mp4 format, make sure video is less than 5 MB.
+            </div>
             <div class='flex flex-wrap'>
               <div class='imgBox showImgBox' v-for='(item, index) in ruleForm.videoList'>
                 <div v-if='!judePowerOperate' class='close icon el-icon-close' @click='deleteFun(item, index, ruleForm.videoList)'></div>
-                <div class='showImg flex'>
-                  <video src="" controls='controls' :src='item.url'></video>
-                </div>
+                <a class='db' :href='item.url' target='_black'>
+                  <div class='showImg flex'>
+                    <video src="" controls='controls' :src='item.url'></video>
+                  </div>
+                </a>
                 <!-- <div class='showImgTitle' v-text='item'></div> -->
               </div>
             </div>
@@ -340,7 +393,7 @@
 <script>
   // 权限
   var power = JSON.parse('<?= $this->params['view_group'] ?>')
-  // console.log(power)
+  console.log(power)
   // s3
   var albumBucketName = 'cloudmobi-resource'
   var bucketRegion = 'ap-southeast-1'
@@ -355,7 +408,7 @@
   var maxRatio = 2.1
   var baseRatio = 1.9 / 1
   var maxImageSize = 500 * 1024
-  var maxVideoSize = 2 * 1024 * 1024
+  var maxVideoSize = 5 * 1024 * 1024
   // 正则
   var regHref = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]')
   var iOSReg = new RegExp('https://itunes.apple.com/')
@@ -385,8 +438,8 @@
     fileTypeError: 'The type of file can not be accepted.',
     // 图片小于500k
     uploadImageSizeMax: 'Size of picture must be less than 500kb.',
-    // 视频小于2M
-    uploadVideoSizeMax: 'Size of video must be less than 2M.',
+    // 视频小于5M
+    uploadVideoSizeMax: 'Size of video must be less than 5M.',
     // icon不是一比一
     uploadIconSizeError: 'The width-length ratio of picture must be 1:1.',
     // 图片尺寸不对
@@ -464,11 +517,9 @@
           callback(new Error(ruleLanguagePackage.notSpace))
         }
       }
-      var validatorTrackingUrl = function (rule, value, callback) {
-        if (value.match(spaceReg) !== null) {
-          callback(new Error(ruleLanguagePackage.notSpace))
-        } else if (!regHref.test(value)) {
-          callback(new Error(ruleLanguagePackage.notWWW))
+      var validatorPayout = function (rule, value, callback) {
+        if (value <= 0.1) {
+          callback(new Error("不得小于0.1"))
         } else {
           callback()
         }
@@ -497,10 +548,27 @@
           callback()
         }
       }
+      var validatorDeliveryPrice = function (rule, value, callback) {
+        if (value) {
+          if (value <= 0.1) {
+            callback(new Error("不得小于0.1"))
+          } else {
+            if (value.toString().length <= Number(value).toFixed(3).length) {
+              callback()
+            } else {
+              callback(new Error("小数点后不大于3位"))
+            }
+          }
+        } else {
+          callback()
+        }
+      }
       return {
+        loading: false,
         power: power,
         requestUid: "<?= $this->params['request_uid'] ?>",
         groupID: "<?= $this->params['group_id'] ?>",
+        agentGroupID: null,
         offerID: "<?php echo $offer_id; ?>",
         offerStatus: null,
         showOfferID: null,
@@ -574,6 +642,9 @@
           name: '',
           category: '',
           trackingUrl: '',
+          impressionUrl: [
+            {value: ''}
+          ],
           schedule: '2',
           deliveryDate: [],
           deliveryWeek: [],
@@ -583,6 +654,7 @@
           payout: null,
           dailyCap: null,
           totalCap: null,
+          deliveryPrice: null,
           // 4
           deviceType: '',
           specificDevice: [],
@@ -593,10 +665,13 @@
           // 5
           icon: '',
           iconList: [],
+          iconLoading: false,
           image: '',
           imageList: [],
+          imageLoading: false,
           video: '',
-          videoList: []
+          videoList: [],
+          videoLoading: false,
         },
         rules: {
           // 1
@@ -630,8 +705,10 @@
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           trackingUrl: [
-            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { validator: validatorTrackingUrl, trigger: ['blur', 'change'] }
+            { required: true, message: ruleLanguagePackage.required, trigger: 'blur' }
+          ],
+          impressionUrl: [
+            { required: false, message: ruleLanguagePackage.required, trigger: 'blur' }
           ],
           schedule: [
             { required: true, message: ruleLanguagePackage.shouldChoiceOne, trigger: 'blur' }
@@ -639,13 +716,17 @@
           // 3
           payout: [
             { required: true, message: ruleLanguagePackage.required, trigger: 'blur' },
-            { type: 'number', message: ruleLanguagePackage.shouldNumber , trigger: 'blur' }
+            { type: 'number', message: ruleLanguagePackage.shouldNumber , trigger: 'blur' },
+            { required: true, validator: validatorPayout, trigger: 'blur' }
           ],
           dailyCap: [
-            { required: false, validator: validatorDailyCap, trigger: 'blur' }
+            { required: false, validator: validatorDailyCap, trigger: ['blur', 'change'] }
           ],
           totalCap: [
-            { required: false, validator: validatorTotalCap, trigger: 'blur' }
+            { required: false, validator: validatorTotalCap, trigger: ['blur', 'change'] }
+          ],
+          deliveryPrice: [
+            { required: false, validator: validatorDeliveryPrice, trigger: ['blur', 'change'] }
           ],
           // 4
           deviceType: [
@@ -674,18 +755,27 @@
       }
     },
     computed: {
+      // 权限判断
       judePowerOperate () {
+        // operate为是否可操作
         if (!this.power.operate && this.pageType === 'update') return true
         return false
       },
-      spaceShowTrackingUrlFlag () {
-        if (this.ruleForm.trackingUrl.indexOf(' ') !== -1) return true
-        return false
+      // payout
+      judePowerPayoutShow () {
+        if (this.power.payout) {
+          if (this.power.payout.show) return true
+          return false
+        } else {
+          return true
+        }
       },
-      spaceShowTrackingUrl () {
-        if (this.spaceShowTrackingUrlFlag) {
-          var str = this.ruleForm.trackingUrl
-          return str.replace(spaceReg, '<span class="judeUrl-font">&nbsp;</span>')
+      judePowerPayoutOperate () {
+        if (this.power.payout) {
+          if (this.power.payout.operate) return true
+          return false
+        } else {
+          return true
         }
       },
       spaceShowStoreUrl () {
@@ -798,9 +888,6 @@
     mounted () {
       var that = this
       this.csrf = document.querySelector('#spp_security').value
-      if (this.groupID === '3') {
-        this.ruleForm.campaignOwner = this.requestUid
-      }
       this.$watch('ruleForm.platform', function (newVal, oldVal) {
         this.$refs['ruleForm'].validateField('storeUrl')
         // android
@@ -830,7 +917,21 @@
         deep: false
       })
       // initData
-      this.initData()
+      // this.initData()
+      // 就是这么嚣张
+      const fn = async _ => {
+        try {
+          await this.initData()
+          await this.initDate()
+          await this.getUpdateInfo()
+          await this.setCampaignOwner()
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      fn().then( _ => {
+        console.log('init success')
+      })
       // 默认全选
       this.addAllDeliveryWeek()
       this.addAllDeliveryHour()
@@ -838,6 +939,70 @@
       this.showCountryFun()
     },
     methods: {
+      setCampaignOwner () {
+        console.log('setCampaignOwner')
+        if (this.groupID == this.agentGroupID) {
+          this.ruleForm.campaignOwner = this.requestUid
+        }
+      },
+      validatorUrl (rule, value, callback) {
+        if (rule.required) {
+          if (value.match(spaceReg) !== null) {
+            callback(new Error(ruleLanguagePackage.notSpace))
+          } else if (!regHref.test(value)) {
+            callback(new Error(ruleLanguagePackage.notWWW))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+      },
+      spaceShowUrlFlag (obj, i) {
+        var object = {}
+        if (i !== undefined) {
+          object = this.ruleForm[obj][i].value
+        } else {
+          object = this.ruleForm[obj]
+        }
+        if (object.indexOf(' ') !== -1) return true
+        return false
+      },
+      spaceShowUrl (obj, i) {
+        var object = {}
+        if (i !== undefined) {
+          object = this.ruleForm[obj][i].value
+        } else {
+          object = this.ruleForm[obj]
+        }
+        if (this.spaceShowUrlFlag(obj, i)) {
+          var str = object
+          return str.replace(spaceReg, '<span class="judeUrl-font">&nbsp;</span>')
+        }
+      },
+      addImpressionUrl () {
+        var date = new Date()
+        this.ruleForm.impressionUrl.push({
+          value: '',
+          key: date.getTime()
+        })
+      },
+      // 20181009 1-5 | 6
+      judeAttributeProviderOptionsDisabled () {
+        if (this.ruleForm.attributeProvider === '6') {
+          this.options.attributeProvider.map(function (ele) {
+            if (ele.value !== '6') {
+              ele.disabled = true
+            }
+          })
+        } else {
+          this.options.attributeProvider.map(function (ele) {
+            if (ele.value === '6') {
+              ele.disabled = true
+            }
+          })
+        }
+      },
       // 获取已经保存的信息
       getUpdateInfo () {
         var that = this
@@ -846,11 +1011,13 @@
             offer_id: this.offerID,
             dsp_security_param: this.csrf
           }
-          $.ajax({
+          return new Promise((resolve, reject) => {
+            $.ajax({
             url: '/offer/offer-update-info',
             data: ajaxData,
             type: 'post',
             success: function (result) {
+              console.log('getUpdateInfo')
               // console.log(result)
               that.offerStatus = result.data.status
               that.showOfferID = result.data.show_offer_id
@@ -859,6 +1026,7 @@
               that.ruleForm.campaignOwner = result.data.campaign_owner
               that.ruleForm.advertiser = result.data.sponsor
               that.ruleForm.attributeProvider = result.data.att_pro
+              that.judeAttributeProviderOptionsDisabled()
               // 2
               that.ruleForm.platform = result.data.platform
               that.ruleForm.storeUrl = result.data.final_url
@@ -867,6 +1035,15 @@
               that.ruleForm.name = result.data.pkg_name
               that.ruleForm.category = result.data.category_id
               that.ruleForm.trackingUrl = result.data.tracking_url
+              that.ruleForm.impressionUrl.splice(0)
+              if (result.data.impression_url) {
+                result.data.impression_url.map(function (ele, i) {
+                  that.ruleForm.impressionUrl.push({
+                    key: i,
+                    value: ele
+                  })
+                })
+              }
               that.ruleForm.schedule = result.data.delivery_status
               var deliveryDate = []
               deliveryDate.push(result.data.delivery_start_day)
@@ -895,6 +1072,7 @@
               var total_cap = Number(result.data.total_cap)
               if (total_cap === -1) total_cap = null
               that.ruleForm.totalCap = total_cap
+              that.ruleForm.deliveryPrice = result.data.delivery_price
               // 4
               that.ruleForm.deviceType = result.data.device_target.toString()
               var specificDevice = JSON.parse(result.data.specific_device)
@@ -912,9 +1090,13 @@
               if (videoList) {
                 that.ruleForm.videoList = videoList
               }
-              // 
+              // 判断国家select是否显示
               that.showCountryFun()
+              // 代理商时设置campaignOwner
+              // that.setCampaignOwner()
+              resolve(2)
             }
+          })
           })
         }
       },
@@ -998,11 +1180,10 @@
       },
       // 初始化日期
       initDate () {
-        var end = new Date()
-        var start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
-        end.setTime(end.getTime() + 3600 * 1000 * 24 * 14)
-        this.ruleForm.deliveryDate = [formatDate(start, "yyyy-MM-dd"), formatDate(end, "yyyy-MM-dd")]
+        console.log('initDate')
+        var start = moment().add(-2, 'day').format('YYYY-MM-DD')
+        var end = moment().add(14, 'day').format('YYYY-MM-DD')
+        this.ruleForm.deliveryDate = [start, end]
       },
       // 初始化页面
       initData () {
@@ -1010,66 +1191,74 @@
         var ajaxData = {
           dsp_security_param: this.csrf
         }
-        $.ajax({
-          url: '/offer/get-offer-config',
-          type: 'post',
-          data: ajaxData,
-          success: function (result) {
-            // Campaign Owner
-            if (that.pageType === 'create') {
-              result.data.user.map(function (ele) {
-                if (ele.status === '1') {
+        return new Promise((resolve, reject) => {
+          $.ajax({
+            url: '/offer/get-offer-config',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log('initData')
+              // console.log(result)
+              // 代理商的groupid
+              that.agentGroupID = result.data.group.id
+              // Campaign Owner
+              if (that.pageType === 'create') {
+                result.data.user.map(function (ele) {
+                  if (ele.status === '1') {
+                    that.options.campaignOwner.push({
+                      value: ele.id,
+                      label: ele.email
+                    })
+                  }
+                })
+              }
+              if (that.pageType === 'update') {
+                result.data.user.map(function (ele) {
                   that.options.campaignOwner.push({
                     value: ele.id,
                     label: ele.email
                   })
-                }
-              })
-            }
-            if (that.pageType === 'update') {
-              result.data.user.map(function (ele) {
-                that.options.campaignOwner.push({
+                })
+              }
+              // advertiser
+              result.data.ads.map(function (ele) {
+                that.options.advertiser.push({
                   value: ele.id,
-                  label: ele.email
+                  label: ele.ads
                 })
               })
+              // attributeProvider
+              result.data.tpm.map(function (ele) {
+                that.options.attributeProvider.push({
+                  channel: ele.channel,
+                  value: ele.id,
+                  label: ele.tpm,
+                  disabled: false
+                })
+              })
+              // country
+              var country = []
+              result.data.country.map(function (ele) {
+                country.push({
+                  value: ele.id,
+                  label: ele.full_name
+                })
+              })
+              // specificDevice
+              that.options.specificDeviceBase = result.data.mobile
+              // country
+              that.options.country = country
+              // version
+              that.options.minOSversionBase = result.data.version
+              // category
+              that.options.categoryBase = result.data.category
+              // initDate
+              // that.initDate()
+              // 获取edit信息
+              // that.getUpdateInfo()
+              resolve(1)
             }
-            // advertiser
-            result.data.ads.map(function (ele) {
-              that.options.advertiser.push({
-                value: ele.id,
-                label: ele.ads
-              })
-            })
-            // attributeProvider
-            result.data.tpm.map(function (ele) {
-              that.options.attributeProvider.push({
-                channel: ele.channel,
-                value: ele.id,
-                label: ele.tpm
-              })
-            })
-            // country
-            var country = []
-            result.data.country.map(function (ele) {
-              country.push({
-                value: ele.id,
-                label: ele.full_name
-              })
-            })
-            // specificDevice
-            that.options.specificDeviceBase = result.data.mobile
-            // country
-            that.options.country = country
-            // version
-            that.options.minOSversionBase = result.data.version
-            // category
-            that.options.categoryBase = result.data.category
-            // initDate
-            that.initDate()
-            // 
-            that.getUpdateInfo()
-          }
+          })
         })
       },
       addAllDeliveryWeek () {
@@ -1121,6 +1310,16 @@
               // console.log('judeUploadFile')
               // 上传函数
               that.uploadFun(fileData, type, function (err, result) {
+                // 加载状态清除
+                if (type === 'icon') {
+                  that.ruleForm.iconLoading = false
+                }
+                if (type === 'image') {
+                  that.ruleForm.imageLoading = false
+                }
+                if (type === 'video') {
+                  that.ruleForm.videoLoading = false
+                }
                 // console.log('uploadFun')
                 // 总是清空input file
                 filesInput.value = ''
@@ -1223,13 +1422,28 @@
       },
       // 上传s3函数
       uploadFun (data, type, callback) {
-        // console.log('开始上传')
         var that = this
+        // console.log('开始上传')
+        // 加载
+          if (type === 'icon') {
+            that.ruleForm.iconLoading = true
+          }
+          if (type === 'image') {
+            that.ruleForm.imageLoading = true
+          }
+          if (type === 'video') {
+            that.ruleForm.videoLoading = true
+          }
+        var that = this
+        var date = new Date()
+        var fileName = date.getTime() + '_' + data.fileName
+        console.log(fileName)
         // 上传状态
         s3.upload({
-          Key: data.fileName,
+          Key: fileName,
           Body: data.file,
-          ACL: 'public-read'
+          ACL: 'public-read',
+          ContentType: 'image/jpeg'
         }, function (err, result) {
           callback(err, result)
         })
@@ -1396,7 +1610,7 @@
         var that = this
         this.spiderFlag = false
         // that.submitAjax()
-        this.$refs[formName].validate(function (valid) {
+        that.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
             that.submitAjax()
@@ -1413,6 +1627,9 @@
       },
       submitAjax () {
         var that = this
+        var impressionUrlArr = that.ruleForm.impressionUrl.map(function (ele) {
+          return ele.value
+        })
         var ajaxData = {
           status: that.offerStatus,
           offer_id: that.offerID,
@@ -1430,6 +1647,7 @@
           pkg_name: that.ruleForm.name,
           category_id: that.ruleForm.category,
           tracking_url: that.ruleForm.trackingUrl,
+          impression_url: impressionUrlArr,
           delivery_status: that.ruleForm.schedule,
           delivery_start_data: that.ruleForm.deliveryDate[0],
           delivery_end_data: that.ruleForm.deliveryDate[1],
@@ -1440,6 +1658,7 @@
           payout: that.ruleForm.payout,
           daily_cap: that.ruleForm.dailyCap,
           total_cap: that.ruleForm.totalCap,
+          delivery_price: that.ruleForm.deliveryPrice,
           // 4
           device_target: that.ruleForm.deviceType,
           specific_device: that.ruleForm.specificDevice,
@@ -1476,21 +1695,35 @@
           })
         }
         if (that.pageType === 'update') {
-          $.ajax({
-            url: '/offer/offer-update',
-            type: 'post',
-            data: ajaxData,
-            success: function (result) {
-              if (result.status === 1) {
-                window.location.href = '/offer/offer-index'
-              } else {
-                that.$message.error(result.info)
+          var her = this
+          this.sumbitAjaxFun = function () {
+            $.ajax({
+              url: '/offer/offer-update',
+              type: 'post',
+              data: ajaxData,
+              success: function (result) {
+                if (result.status === 1) {
+                  window.location.href = '/offer/offer-index'
+                } else {
+                  that.$message.error(result.info)
+                }
+              },
+              error: function (result) {
+                // console.log(result)
               }
-            },
-            error: function (result) {
-              // console.log(result)
-            }
-          })
+            })
+          }
+          if (that.agentGroupID !== -1) {
+            that.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', 'Warning', {
+              confirmButtonText: 'Confirm',
+              cancelButtonText: 'Cancel',
+              type: 'warning'
+            }).then(() => {
+              her.sumbitAjaxFun()
+            }).catch(() => {})
+          } else {
+            this.sumbitAjaxFun()
+          }
         }
       }
     },
@@ -1524,9 +1757,6 @@
   }
   .content-con{
     padding: 20px 0;
-  }
-  .form-one{
-    width: 400px !important;
   }
   .imgDocker{
     margin-top: 20px;
@@ -1583,13 +1813,19 @@
     border-radius: 4px;
   }
   .judeUrl-box{
-    margin-bottom: 20px;
-    padding: 10px;
+    line-height: 22px;
+    padding: 10px 14px;
     border: 1px solid #dcdfe6;
     border-radius: 4px;
     word-wrap: break-word;
   }
   .judeUrl-font{
     border: 1px solid red;
+  }
+  .tooltipMsg{
+    background: #efefef;
+    margin-top: 20px;
+    padding: 10px;
+    text-align: center;
   }
 </style>

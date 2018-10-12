@@ -5,6 +5,7 @@ use Yii;
 use common\models\DemandOffers;
 use common\models\OfferReporting;
 use common\models\User;
+use backend\libs\ExcelLibrary;
 
 class OfferReportService extends BaseService
 {
@@ -179,7 +180,14 @@ class OfferReportService extends BaseService
         // campaign
         $offer_ids = Yii::$app->request->get('campaigns', []);
         if ($offer_ids) {
-            $where['offer_id'] = "offer_id in('" . ( is_array($offer_ids) ? implode("','", $offer_ids) : [0] ) ."')";
+            $off_ids = DemandOffers::getData(['id', 'channel', 'offer_id'], ["id in('" . implode("','", $offer_ids) . "')"]);
+            $ofids = [];
+            if ($off_ids) {
+                foreach ($off_ids as $v) {
+                    $ofids[] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
+                }
+            }
+            $where['offer_id'] = "offer_id in('" . ( !empty($ofids) ? implode("','", $ofids) : '0' ) ."')";
         }
 
         // country
@@ -207,13 +215,13 @@ class OfferReportService extends BaseService
                 $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";;
             }
             // 查询数据
-            $result = DemandOffers::getData(['id', 'channel'], $where);
+            $result = DemandOffers::getData(['id', 'channel', 'offer_id'], $where);
             self::$res['data']['campaigns'] = [];
             if ($result) {
                 // offer id 组装
                 self::$res['status'] = 1;
                 foreach ($result as $k=>$v) {
-                    self::$res['data']['campaigns'][$k]['name'] = $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
+                    self::$res['data']['campaigns'][$k]['name'] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
                     self::$res['data']['campaigns'][$k]['id'] = $v['id'];
                 }
             }
@@ -260,5 +268,51 @@ class OfferReportService extends BaseService
             $date = date('Y-m-d',strtotime($date) + 24 * 3600);
         }
         return $data;
+    }
+
+    /**
+     * 报表下载
+     */
+    public static function downloadReport()
+    {
+        $data = []; $header = [];
+        $where = self::getWhere();
+        $fields = [
+            'day',
+            'campaign_owner',
+            'offer_id',
+            'country_id',
+            'platform',
+            'sum(click) as click',
+            'sum(conversion) as conversion',
+            'sum(payout) as payout',
+            'sum(conversion) / sum(click) as cvr'
+        ];
+        // 查询并组装数据
+        $result = OfferReporting::getData($fields, $where, 'day,campaign_owner,offer_id,country_id,platform');
+        if ($result) {
+            // 用户信息
+            $user_res = array_column(User::getData(['id', 'email']), 'email', 'id');
+            // 国家信息
+            $country_res = array_column(self::getCountryData(['id', 'short_name']), 'short_name', 'id');
+            $platform = ['1' => 'Android', '2' => 'IOS'];
+            foreach ($result as $k=>$v) {
+                $data[$k]['Day'] = $v['day'];
+                $data[$k]['Email'] = isset($user_res[$v['campaign_owner']]) ? $user_res[$v['campaign_owner']] : '';
+                $data[$k]['Offer id'] = $v['offer_id'];
+                $data[$k]['Country'] = isset($country_res[$v['country_id']]) ? $country_res[$v['country_id']] : 'UNKNOWN';
+                $data[$k]['Platform'] = isset($platform[$v['platform']]) ? $platform[$v['platform']] : 'UNKNOWN';
+                $data[$k]['Click'] = $v['click'];
+                $data[$k]['Conversion'] = $v['conversion'];
+                $data[$k]['Payout'] = $v['payout'];
+                $data[$k]['CVR'] = $v['cvr'];
+            }
+            // 报表标题
+            $header         = array_keys( $data[0] );
+        }
+        // 文件名
+        $filename       = 'Reporting.xls';
+
+        ExcelLibrary::getExcel($header, $data, $filename);
     }
 }

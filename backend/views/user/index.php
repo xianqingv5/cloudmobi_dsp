@@ -4,15 +4,30 @@
       <el-breadcrumb-item>Account Management</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  <div class='content mt-30'>
+  <div class='flex jc-end p30'>
+    <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+  </div>
+  <div class='content'>
     <div class='contentBox'>
-      <div class='flex jc-btween mb-20'>
-        <el-button type="primary" @click='showDialog("create")'>Create User</el-button>
+      <div class='flex jc-end mb-20'>
+        <el-select filterable
+          v-if='power.search_role.show'
+          @change='searchFun'
+          class='form-search mr-20'
+          v-model="search.role" clearable placeholder="Role">
+          <el-option
+            v-for="item in ruleForm.roleOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-input
+          @change='searchFun'
           class='form-search'
-          placeholder="Email / User List"
+          placeholder="Email / User Name"
           prefix-icon="el-icon-search"
-          v-model="index.search">
+          v-model="search.name">
         </el-input>
       </div>
       <table class='table table-bordered'>
@@ -20,6 +35,7 @@
           <th>Email</th>
           <th>User Name</th>
           <th>Comment</th>
+          <th>Short Name</th>
           <th>Status</th>
           <th>Operation</th>
         </thead>
@@ -28,6 +44,7 @@
             <td v-text='item.email'></td>
             <td v-text='item.username'></td>
             <td v-text='item.comment'></td>
+            <td v-text='item.short_name'></td>
             <td>
               <el-switch
                 v-model="item.status"
@@ -38,9 +55,14 @@
               </el-switch>
             </td>
             <td>
-              <div class='flex'>
-                <span class='icon el-icon-edit-outline' :class='{"mr-25":item.group_id==="3"}' @click='showDialog("edit", item)'></span>
-                <a v-if='item.group_id === "3"' class='ml-25' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.id'>
+              <div class='flex jc-start'>
+                <span class='m-0-20' @click='resetPass(item)'>
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-zhongzhimima"></use>
+                  </svg>
+                </span>
+                <span class='icon el-icon-edit-outline m-0-20' @click='showDialog("edit", item)'></span>
+                <a v-if='item.group_id === "3"' class='m-0-20' :href='"/offer-report/offer-report-index?campaigns_owner=" + item.id'>
                   <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-chakanbaobiao"></use>
                   </svg>
@@ -56,7 +78,10 @@
       :title='dialogBus.title'
       :visible.sync="dialogVisible">
         <div class='flex column'>
-          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="150px">
+          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="200px">
+            <el-form-item label="Account Short Name" prop='account'>
+              <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.account" class='inputobj'></el-input>
+            </el-form-item>
             <el-form-item label="Email" prop='email'>
               <el-input :disabled='dialogBus.type === "edit"' auto-complete="off" v-model.trim="ruleForm.email" class='inputobj'></el-input>
             </el-form-item>
@@ -89,10 +114,28 @@
           </el-form>
         </div>
       </el-dialog>
+      <!-- edit pass dialog -->
+      <el-dialog
+      :close-on-click-modal='false'
+      title='重置密码'
+      :visible.sync="editPassDialogVisible">
+        <div class='flex column'>
+          <el-form ref="ruleForm2" :model="ruleForm2" :rules="rules2" label-position="right" label-width="50px">
+            <el-form-item label="Pass" prop='pass'>
+              <el-input disabled auto-complete="off" v-model.trim="ruleForm2.pass" class='inputobj'></el-input>
+            </el-form-item>
+            <div class='flex jc-end'>
+              <el-button type="primary" @click="updateForm2('ruleForm2')">Submit</el-button>
+            </div>
+          </el-form>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </div>
 <script>
+var power = JSON.parse('<?= $this->params['view_group'] ?>')
+console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -152,19 +195,52 @@
           callback()
         }
       }
+      // 验证简写
+      var validateAccount = function (rule, value, callback) {
+        var reg = new RegExp('^[a-zA-Z0-9]{3}$')
+        if (reg.test(value)) {
+          // ajax验证是否重复
+          vm.judeAccount(value, function (type, info) {
+            if (type) {
+              callback()
+            } else {
+              callback(new Error(info))
+            }
+          })
+        } else {
+          callback(new Error('Use 3 characters with a mix of letters & numbers.'))
+        }
+      }
       return {
+        power: power,
         dialogBus: {
           title: null,
           type: null,
           json: {}
         },
         dialogVisible: false,
+        editPassDialogVisible: false,
+        editPassDialogBus: {
+          json: {}
+        },
         csrf: null,
+        search: {
+          name: '',
+          role: ''
+        },
         index: {
-          list: [],
-          search: ''
+          list: []
+        },
+        ruleForm2: {
+          pass: ''
+        },
+        rules2: {
+          pass: [
+            { required: true, validator: validatePass, trigger: 'blur' }
+          ],
         },
         ruleForm: {
+          account: '',
           email: '',
           name: '',
           pass: '',
@@ -174,6 +250,10 @@
           comment: ''
         },
         rules: {
+          account: [
+            { required: true, message: "This can't be empty", trigger: 'blur' },
+            { required: true, validator: validateAccount, trigger: ['blur', 'change'] }
+          ],
           email: [
             { required: true, message: "This can't be empty", trigger: 'blur' },
             { type: 'email', message: 'Please enter a valid email address', trigger: ['blur', 'change'] },
@@ -208,11 +288,63 @@
         var vm = this
         return  this.index.list.filter(function (ele) {
           var str = ele.email + ele.username
-          return str.toLowerCase().indexOf(vm.index.search.toLowerCase()) !== -1
+          if (vm.search.role) {
+            if (vm.search.role === ele.group_id) {
+              return str.toLowerCase().indexOf(vm.search.name.toLowerCase()) !== -1
+            }
+          } else {
+            return str.toLowerCase().indexOf(vm.search.name.toLowerCase()) !== -1
+          }
         })
       }
     },
     methods: {
+      searchFun () {
+        console.log('search')
+      },
+      // 验证简称
+      judeAccount (value, callback) {
+        var vm = this
+        return callback(true)
+        if (this.dialogBus.type === 'create') {
+          var ajaxData = {
+            email: value,
+            dsp_security_param: vm.csrf
+          }
+          $.ajax({
+            url: '/user/check-email',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              if (result.status !== 1) {
+                callback(false, result.info)
+              } else {
+                callback(true)
+              }
+            }
+          })
+        } else {
+          callback(true)
+        }
+      },
+      // 重置密码
+      resetPass (item) {
+        var that = this
+        // console.log('重置密码')
+        this.editPassDialogVisible = true
+        this.editPassDialogBus.json = item
+        // ajax
+        $.ajax({
+          url: '/user/get-code',
+          type: 'get',
+          success: function (result) {
+            if (result.status === 1) {
+              that.ruleForm2.pass = result.data.code
+            }
+          }
+        })
+
+      },
       updateStatus (e, item) {
         var vm = this
         var ajaxData = {
@@ -320,6 +452,7 @@
         if (type === 'edit') {
           this.dialogBus.title = 'Edit User'
           this.dialogBus.json = item
+          this.ruleForm.account = this.dialogBus.json.short_name
           this.ruleForm.email = this.dialogBus.json.email
           this.ruleForm.name = this.dialogBus.json.username
           this.ruleForm.pass = this.dialogBus.json.password
@@ -328,6 +461,38 @@
           this.ruleForm.comment = this.dialogBus.json.comment
         }
       },
+      updateForm2 (formName) {
+        var that = this
+        this.$refs[formName].validate(function (valid) {
+          if (valid) {
+            console.log('updateForm2 submit success')
+            // ajax
+            var ajaxData = {
+              dsp_security_param: that.csrf,
+              id: that.editPassDialogBus.json.id,
+              new_pwd: that.ruleForm2.pass
+            }
+            $.ajax({
+              url: '/user/update-user-pwd',
+              type: 'post',
+              data: ajaxData,
+              success: function (result) {
+                if (result.status === 1) {
+                  that.editPassDialogVisible = false
+                  that.$message({
+                    message: result.info,
+                    type: 'success'
+                  })
+                } else {
+                  that.$message.error(result.info)
+                }
+              }
+            })
+          } else {
+            console.log('updateForm2 submit error')
+          }
+        })
+      },
       updateForm (formName, type) {
         var vm = this
         console.log(type)
@@ -335,6 +500,7 @@
           if (valid) {
             if (type === 'create') {
               var ajaxData = {
+                short_name: vm.ruleForm.account,
                 email: vm.ruleForm.email,
                 username: vm.ruleForm.name,
                 password: vm.ruleForm.pass,

@@ -3,6 +3,7 @@ html {
 }
 
 body {
+  min-width: 1280px;
   font-size: 62.5%;
   margin: 0;
   font-family: sans-serif;
@@ -204,5 +205,9 @@ table td {
 
 .border-1 {
   border: 1px solid #dcdfe6;
+}
+
+.form-one {
+  width: 400px !important;
 }
 /*# sourceMappingURL=common.css.map */

@@ -11,6 +11,7 @@
     <div class='contentBox'>
       <div class='flex jc-end mb-20'>
         <el-select filterable
+          v-if='power.search_role.show'
           @change='searchFun'
           class='form-search mr-20'
           v-model="search.role" clearable placeholder="Role">
@@ -133,6 +134,8 @@
   </div>
 </div>
 <script>
+var power = JSON.parse('<?= $this->params['view_group'] ?>')
+console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -209,6 +212,7 @@
         }
       }
       return {
+        power: power,
         dialogBus: {
           title: null,
           type: null,

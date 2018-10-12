@@ -30,9 +30,10 @@
           </el-option>
         </el-select>
         <el-select filterable
+          v-if='power.offer_search_campaign_owner.show'
           @change='searchFun'
           class='col-auto-4'
-          v-model="search.campaignOwner" clearable placeholder="campaignOwner">
+          v-model="search.campaignOwner" clearable placeholder="Campaign Owner">
           <el-option
             v-for="item in search.campaignOwnerOptions"
             :key="item.value"
@@ -155,7 +156,7 @@
 </div>
 <script>
 var power = JSON.parse('<?= $this->params['view_group'] ?>')
-// console.log(power)
+console.log(power)
   new Vue({
     el: '.app',
     data () {
@@ -329,7 +330,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           type: 'post',
           data: ajaxData,
           success: function (result) {
-            console.log(result)
+            // console.log(result)
             if (result.status === 1) {
               that.list = result.data
               that.pagination.currentPage = result.page.page

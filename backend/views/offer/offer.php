@@ -568,6 +568,7 @@
         power: power,
         requestUid: "<?= $this->params['request_uid'] ?>",
         groupID: "<?= $this->params['group_id'] ?>",
+        agentGroupID: null,
         offerID: "<?php echo $offer_id; ?>",
         offerStatus: null,
         showOfferID: null,
@@ -887,9 +888,6 @@
     mounted () {
       var that = this
       this.csrf = document.querySelector('#spp_security').value
-      if (this.groupID === '3') {
-        this.ruleForm.campaignOwner = this.requestUid
-      }
       this.$watch('ruleForm.platform', function (newVal, oldVal) {
         this.$refs['ruleForm'].validateField('storeUrl')
         // android
@@ -926,6 +924,7 @@
           await this.initData()
           await this.initDate()
           await this.getUpdateInfo()
+          await this.setCampaignOwner()
         } catch (error) {
           console.log(error)
         }
@@ -940,6 +939,11 @@
       this.showCountryFun()
     },
     methods: {
+      setCampaignOwner () {
+        if (this.groupID === this.agentGroupID) {
+          this.ruleForm.campaignOwner = this.requestUid
+        }
+      },
       validatorUrl (rule, value, callback) {
         if (rule.required) {
           if (value.match(spaceReg) !== null) {
@@ -1028,6 +1032,7 @@
               that.ruleForm.name = result.data.pkg_name
               that.ruleForm.category = result.data.category_id
               that.ruleForm.trackingUrl = result.data.tracking_url
+              that.ruleForm.impressionUrl.splice(0)
               if (result.data.impression_url) {
                 result.data.impression_url.map(function (ele, i) {
                   that.ruleForm.impressionUrl.push({
@@ -1183,6 +1188,9 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
+            // console.log(result)
+            // 代理商的groupid
+            that.agentGroupID = result.data.group.id
             // Campaign Owner
             if (that.pageType === 'create') {
               result.data.user.map(function (ele) {
@@ -1593,7 +1601,7 @@
         that.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
-            if (that.groupID === '3') {
+            if (that.agentGroupID !== -1) {
               this.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',

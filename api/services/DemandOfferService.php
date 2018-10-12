@@ -73,6 +73,9 @@ class DemandOfferService extends BaseService
         foreach ($data as $k=>$v) {
             $oid = $v['id'];// offer id
 
+            // 查询offer 类别
+            //$category_ids = $v['category_id'];
+
             // $res[$k]['id'] = Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
             $res[$k]['id'] = $v['offer_id'];
             $res[$k]['channel'] = Yii::$app->params['THIRD_PARTY'][$v['channel']];
@@ -84,7 +87,7 @@ class DemandOfferService extends BaseService
             $res[$k]['payout'] = (float)$v['delivery_price'];// 投放单价
             $res[$k]['tracking_url'] = $v['tracking_url'];
             $res[$k]['final_url'] = $v['final_url'];
-            $res[$k]['category'] = $category[ $v['platform'] ][ $v['category_id'] ];
+            $res[$k]['category'] = [ $category[ $v['platform'] ][ $v['category_id'] ] ];
             $res[$k]['daily_cap'] = (int)$v['daily_cap'];
             $res[$k]['daily_cap'] = (int)$v['daily_cap'];
             $res[$k]['status'] = (int)$v['status'];

@@ -141,9 +141,11 @@ class UserService extends BaseService
 
             // 当用户状态改变时
             $all_offer_res = true;
-            if ($data['status'] == 2) { //关闭所有offer
+            // 查询用户下的offer数量
+            $num = OfferService::getOfferNumByUser($where['id']);
+            if ($data['status'] == 2 && $num) { //关闭所有offer
                 $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 2);
-            } else if($data['status'] == 1) {// offer 未审核
+            } else if($data['status'] == 1 && $num) {// offer 未审核
                 $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 3);
             }
 
@@ -156,7 +158,8 @@ class UserService extends BaseService
             }
         } catch (\Exception $e) {
             self::logs($e->getMessage());
-            self::$res['info'] = 'error';
+            //self::$res['info'] = 'error';
+            self::$res['info'] = $e->getMessage();
             $transaction->rollBack();
         }
 

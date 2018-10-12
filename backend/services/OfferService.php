@@ -507,6 +507,17 @@ class OfferService extends BaseService
     }
 
     /**
+     * 查询用户的offer数量
+     * @param $uid
+     * @return mixed
+     */
+    public static function getOfferNumByUser($uid)
+    {
+        $res = DemandOffers::getData(['count(*) as num'], ['campaign_owner='.$uid]);
+        return $res[0]['num'];
+    }
+
+    /**
      * 获取offer各种配置信息
      * @return array
      */

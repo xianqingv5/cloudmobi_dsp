@@ -1602,9 +1602,9 @@
           if (valid) {
             console.log('submit!')
             if (that.agentGroupID !== -1) {
-              this.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
+              that.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', 'Warning', {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
                 type: 'warning'
               }).then(() => {
                 that.submitAjax()

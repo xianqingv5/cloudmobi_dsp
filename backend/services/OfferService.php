@@ -35,7 +35,7 @@ class OfferService extends BaseService
         $res = DemandOffers::getData($fields, $where, '', 'update_date desc,status desc', $limit);
         if ($res) {
             foreach ($res as $k=>$v) {
-                $res[$k]['show_offer_id'] =  Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
+                $res[$k]['show_offer_id'] =  $v['channel'] . '_' . $v['offer_id'];
             }
             self::$res['status'] = 1;
             self::$res['data'] = $res;
@@ -110,7 +110,7 @@ class OfferService extends BaseService
         self::$res['data'] = $offer[0];
         // 页面显示offer id 组装
         // self::$res['data']['show_offer_id'] = $offer[0]['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $offer[0]['id'], 3, 0, STR_PAD_LEFT );
-        self::$res['data']['show_offer_id'] = Yii::$app->params['THIRD_PARTY'][$offer[0]['channel']] . $offer[0]['offer_id'];
+        self::$res['data']['show_offer_id'] = $offer[0]['channel'] . "_" . $offer[0]['offer_id'];
         // 数据转换
         $delivery_hour = !empty($offer[0]['delivery_hour']) ? json_decode($offer[0]['delivery_hour'], true) : [];
         $d_hour = [];
@@ -263,8 +263,10 @@ class OfferService extends BaseService
      */
     private static function getPostInfo()
     {
-        $data['channel'] = Yii::$app->request->post('channel', '');
+        $channel = Yii::$app->request->post('channel', '');
         $data['campaign_owner'] = Yii::$app->request->post('campaign_owner', 0);
+        // offer channel
+        $data['channel'] = Yii::$app->params['THIRD_PARTY'][$channel] . self::getUserShortName($data['campaign_owner']);
         $data['title'] = Yii::$app->request->post('title', '');
         $data['pkg_name'] = Yii::$app->request->post('pkg_name', '');
         $data['desc'] = Yii::$app->request->post('desc', '');
@@ -473,16 +475,25 @@ class OfferService extends BaseService
 
     /**
      * 生成offer id
-     * 规则: Account简称 + _ + 10位编号(日月年 + 4位随机数。例:0810181234)
+     * 规则: 10位编号(日月年 + 4位随机数。例:0810181234)
      * @return string
      */
     public static function generateOfferId()
     {
-        $uid = Yii::$app->request->post('campaign_owner', 0);
+        $offer_id = date('dmy') . rand(1000, 9999);
+        return $offer_id;
+    }
+
+    /**
+     * 获取用户简称
+     * @param $uid
+     * @return mixed|string
+     */
+    public static function getUserShortName($uid)
+    {
         $uInfo = User::findIdentity($uid);
         $short_name = !empty($uInfo) ? $uInfo->short_name : '';
-        $offer_id = $short_name . '_' . date('dmy') . rand(1000, 9999);
-        return $offer_id;
+        return $short_name;
     }
 
     /**

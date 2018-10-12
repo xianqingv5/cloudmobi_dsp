@@ -78,7 +78,7 @@ class DemandOfferService extends BaseService
 
             // $res[$k]['id'] = Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
             $res[$k]['id'] = $v['offer_id'];
-            $res[$k]['channel'] = Yii::$app->params['THIRD_PARTY'][$v['channel']];
+            $res[$k]['channel'] = $v['channel'];
             $res[$k]['title'] = $v['title'];
             $res[$k]['pkg'] = $v['pkg_name'];
             $res[$k]['desc'] = $v['desc'];

@@ -528,7 +528,7 @@ class OfferService extends BaseService
         self::$res['data']['country'] = CountryService::getCountryAllData(['id', 'full_name', 'short_name'], ['id>0']);
 
         // 获取应用类别
-        self::$res['data']['category'] = CategoryService::getCategoryData(0, ['id', 'en_name as name'], ['parent_id = 0']);
+        self::$res['data']['category'] = CategoryService::getCategoryData(0, ['id', 'en_name as name'], ['1=1']);
 
         // 获取设备信息
         self::$res['data']['mobile'] = Yii::$app->params['MOBILE'];

@@ -45,6 +45,11 @@ class OfferService extends BaseService
         // 是否是代理广告商
         if (Yii::$app->user->identity->group_id == 3) {
             $where['campaign_owner'] = "campaign_owner = '" . Yii::$app->user->identity->id . "'";
+        } else {
+            $campaign_owner = Yii::$app->request->post('campaign_owner', 0);
+            if ($campaign_owner) {
+                $where['campaign_owner'] = "campaign_owner = '" . $campaign_owner . "'";
+            }
         }
 
         // search campaign id

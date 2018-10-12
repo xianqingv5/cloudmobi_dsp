@@ -143,9 +143,9 @@ class UserService extends BaseService
             $all_offer_res = true;
             // 查询用户下的offer数量
             $num = OfferService::getOfferNumByUser($where['id']);
-            if ($data['status'] == 2 && $num) { //关闭所有offer
+            if ( ($data['status'] == 2) && $num) { //关闭所有offer
                 $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 2);
-            } else if($data['status'] == 1 && $num) {// offer 未审核
+            } else if( ($data['status'] == 1) && $num) {// offer 未审核
                 $all_offer_res = OfferService::updateOfferStatusByUser($where['id'], 3);
             }
 

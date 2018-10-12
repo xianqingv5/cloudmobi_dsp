@@ -64,8 +64,8 @@
         <thead>
           <th>Campaign ID</th>
           <th>Campaign Title</th>
-          <th>Price</th>
           <th>Platform</th>
+          <th>Price</th>
           <th v-if='power.offer_delivery_price.show'>Delivery Price</th>
           <th>Status</th>
           <th>Actions</th>
@@ -74,11 +74,11 @@
           <tr v-for='(item, index) in handleList' :key='index'>
             <td v-text='item.show_offer_id'></td>
             <td v-text='item.title'></td>
-            <td v-text='item.payout'></td>
             <td>
               <span v-if='item.platform === "2"'>iOS</span>
               <span v-if='item.platform === "1"'>Android</span>
             </td>
+            <td v-text='item.payout'></td>
             <td  v-if='power.offer_delivery_price.show' v-text='item.delivery_price' :class='{"color_danger":item.status === "1"&&item.delivery_price == 0}'></td>
             <td>
               <div class='flex'>

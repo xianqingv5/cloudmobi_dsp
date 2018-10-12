@@ -83,7 +83,7 @@ use yii\helpers\Url;
               <use xlink:href="#icon-xiugaimima"></use>
             </svg>
           </span>
-          <span>Edit Password</span>
+          <span>Change Password</span>
         </div>
         <span class='dn sidebar-icon-title-right glyphicon glyphicon-chevron-down'></span>
       </a>

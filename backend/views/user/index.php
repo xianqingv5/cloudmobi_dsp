@@ -10,11 +10,23 @@
   <div class='content'>
     <div class='contentBox'>
       <div class='flex jc-end mb-20'>
+        <el-select filterable
+          @change='searchFun'
+          class='form-search mr-20'
+          v-model="search.rule" clearable placeholder="Rule">
+          <el-option
+            v-for="item in options.rule"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-input
+          @change='searchFun'
           class='form-search'
-          placeholder="Email / User List"
+          placeholder="Email / User Name"
           prefix-icon="el-icon-search"
-          v-model="index.search">
+          v-model="search.name">
         </el-input>
       </div>
       <table class='table table-bordered'>
@@ -208,9 +220,20 @@
           json: {}
         },
         csrf: null,
+        options: {
+          rule: [
+            {
+              value: '3',
+              label: '3'
+            }
+          ]
+        },
+        search: {
+          name: '',
+          rule: ''
+        },
         index: {
-          list: [],
-          search: ''
+          list: []
         },
         ruleForm2: {
           pass: ''
@@ -269,11 +292,20 @@
         var vm = this
         return  this.index.list.filter(function (ele) {
           var str = ele.email + ele.username
-          return str.toLowerCase().indexOf(vm.index.search.toLowerCase()) !== -1
+          if (vm.search.rule) {
+            if (vm.search.rule === ele.group_id) {
+              return str.toLowerCase().indexOf(vm.search.name.toLowerCase()) !== -1
+            }
+          } else {
+            return str.toLowerCase().indexOf(vm.search.name.toLowerCase()) !== -1
+          }
         })
       }
     },
     methods: {
+      searchFun () {
+        console.log('search')
+      },
       // 验证简称
       judeAccount (value, callback) {
         var vm = this

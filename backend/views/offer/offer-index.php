@@ -20,6 +20,7 @@
         </el-input>
         <el-select filterable
           @change='searchFun'
+          class='col-auto-4'
           v-model="search.advertiser" clearable placeholder="Advertiser">
           <el-option
             v-for="item in search.advertiserOptions"
@@ -28,15 +29,16 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <!-- <el-input
+        <el-input
           @change='searchFun'
           v-model='search.campaignOwner'
           class='col-auto-4'
           placeholder="Campaigns Owner"
           prefix-icon="el-icon-search">
-        </el-input> -->
+        </el-input>
         <el-select filterable
           @change='searchFun'
+          class='col-auto-4'
           v-model="search.status" clearable placeholder="Status">
           <el-option
             v-for="item in search.statusOptions"
@@ -191,7 +193,8 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
             {value: 2, label: 'Inactive'},
             {value: 3, label: 'under review'}
           ],
-          title: ''
+          title: '',
+          rule: ''
         },
         list: [],
         ruleForm2: {
@@ -293,6 +296,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
         var ajaxData = {
           offer_id: this.search.campaignID,
           sponsor: this.search.advertiser,
+          campaign_owner: this.search.campaignOwner,
           status: this.search.status,
           title: this.search.title,
           dsp_security_param: this.csrf

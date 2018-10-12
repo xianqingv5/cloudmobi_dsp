@@ -31,7 +31,7 @@
               <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one' :disabled='groupID === "3" || judePowerOperate'
+              <el-select class='form-one' :disabled='pageType === "update" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -42,7 +42,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Advertiser" prop="advertiser">
-              <el-select class='form-one' :disabled='judePowerOperate'
+              <el-select class='form-one' :disabled='pageType === "update" || judePowerOperate'
                 v-model="ruleForm.advertiser" clearable placeholder="">
                 <el-option
                   v-for="item in options.advertiser"
@@ -756,6 +756,7 @@
     computed: {
       // 权限判断
       judePowerOperate () {
+        // operate为是否可操作
         if (!this.power.operate && this.pageType === 'update') return true
         return false
       },
@@ -1589,15 +1590,21 @@
         var that = this
         this.spiderFlag = false
         // that.submitAjax()
-        this.$refs[formName].validate(function (valid) {
-          if (valid) {
-            console.log('submit!')
-            that.submitAjax()
-          } else {
-            console.log('error submit!!')
-            return false
-          }
-        })
+        this.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.$refs[formName].validate(function (valid) {
+            if (valid) {
+              console.log('submit!')
+              that.submitAjax()
+            } else {
+              console.log('error submit!!')
+              return false
+            }
+          })
+        }).catch(() => {})
       },
       // 重置表单
       resetForm(formName) {

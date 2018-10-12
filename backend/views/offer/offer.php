@@ -917,18 +917,21 @@
         deep: false
       })
       // initData
-      this.initData()
+      // this.initData()
       // 就是这么嚣张
-      // const fn = async _ => {
-      //   try {
-      //     await this.initData()
-      //   } catch (error) {
-      //     console.log(error)
-      //   }
-      // }
-      // fn().then( _ => {
-      //   console.log('init success')
-      // })
+      const fn = async _ => {
+        try {
+          await this.initData()
+          await this.initDate()
+          await this.getUpdateInfo()
+          await this.setCampaignOwner()
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      fn().then( _ => {
+        console.log('init success')
+      })
       // 默认全选
       this.addAllDeliveryWeek()
       this.addAllDeliveryHour()
@@ -1008,7 +1011,8 @@
             offer_id: this.offerID,
             dsp_security_param: this.csrf
           }
-          $.ajax({
+          return new Promise((resolve, reject) => {
+            $.ajax({
             url: '/offer/offer-update-info',
             data: ajaxData,
             type: 'post',
@@ -1089,8 +1093,10 @@
               // 判断国家select是否显示
               that.showCountryFun()
               // 代理商时设置campaignOwner
-              that.setCampaignOwner()
+              // that.setCampaignOwner()
+              resolve(2)
             }
+          })
           })
         }
       },
@@ -1185,71 +1191,74 @@
         var ajaxData = {
           dsp_security_param: this.csrf
         }
-        $.ajax({
-          url: '/offer/get-offer-config',
-          type: 'post',
-          data: ajaxData,
-          success: function (result) {
-            console.log('initData')
-            // console.log(result)
-            // 代理商的groupid
-            that.agentGroupID = result.data.group.id
-            // Campaign Owner
-            if (that.pageType === 'create') {
-              result.data.user.map(function (ele) {
-                if (ele.status === '1') {
+        return new Promise((resolve, reject) => {
+          $.ajax({
+            url: '/offer/get-offer-config',
+            type: 'post',
+            data: ajaxData,
+            success: function (result) {
+              console.log('initData')
+              // console.log(result)
+              // 代理商的groupid
+              that.agentGroupID = result.data.group.id
+              // Campaign Owner
+              if (that.pageType === 'create') {
+                result.data.user.map(function (ele) {
+                  if (ele.status === '1') {
+                    that.options.campaignOwner.push({
+                      value: ele.id,
+                      label: ele.email
+                    })
+                  }
+                })
+              }
+              if (that.pageType === 'update') {
+                result.data.user.map(function (ele) {
                   that.options.campaignOwner.push({
                     value: ele.id,
                     label: ele.email
                   })
-                }
-              })
-            }
-            if (that.pageType === 'update') {
-              result.data.user.map(function (ele) {
-                that.options.campaignOwner.push({
+                })
+              }
+              // advertiser
+              result.data.ads.map(function (ele) {
+                that.options.advertiser.push({
                   value: ele.id,
-                  label: ele.email
+                  label: ele.ads
                 })
               })
+              // attributeProvider
+              result.data.tpm.map(function (ele) {
+                that.options.attributeProvider.push({
+                  channel: ele.channel,
+                  value: ele.id,
+                  label: ele.tpm,
+                  disabled: false
+                })
+              })
+              // country
+              var country = []
+              result.data.country.map(function (ele) {
+                country.push({
+                  value: ele.id,
+                  label: ele.full_name
+                })
+              })
+              // specificDevice
+              that.options.specificDeviceBase = result.data.mobile
+              // country
+              that.options.country = country
+              // version
+              that.options.minOSversionBase = result.data.version
+              // category
+              that.options.categoryBase = result.data.category
+              // initDate
+              // that.initDate()
+              // 获取edit信息
+              // that.getUpdateInfo()
+              resolve(1)
             }
-            // advertiser
-            result.data.ads.map(function (ele) {
-              that.options.advertiser.push({
-                value: ele.id,
-                label: ele.ads
-              })
-            })
-            // attributeProvider
-            result.data.tpm.map(function (ele) {
-              that.options.attributeProvider.push({
-                channel: ele.channel,
-                value: ele.id,
-                label: ele.tpm,
-                disabled: false
-              })
-            })
-            // country
-            var country = []
-            result.data.country.map(function (ele) {
-              country.push({
-                value: ele.id,
-                label: ele.full_name
-              })
-            })
-            // specificDevice
-            that.options.specificDeviceBase = result.data.mobile
-            // country
-            that.options.country = country
-            // version
-            that.options.minOSversionBase = result.data.version
-            // category
-            that.options.categoryBase = result.data.category
-            // initDate
-            that.initDate()
-            // 获取edit信息
-            that.getUpdateInfo()
-          }
+          })
         })
       },
       addAllDeliveryWeek () {

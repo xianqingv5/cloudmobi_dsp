@@ -29,13 +29,17 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input
+        <el-select filterable
           @change='searchFun'
-          v-model='search.campaignOwner'
           class='col-auto-4'
-          placeholder="Campaigns Owner"
-          prefix-icon="el-icon-search">
-        </el-input>
+          v-model="search.campaignOwner" clearable placeholder="campaignOwner">
+          <el-option
+            v-for="item in search.campaignOwnerOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-select filterable
           @change='searchFun'
           class='col-auto-4'
@@ -187,6 +191,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           advertiser: '',
           advertiserOptions: [],
           campaignOwner: '',
+          campaignOwnerOptions: [],
           status: '',
           statusOptions: [
             {value: 1, label: 'Active'},
@@ -213,6 +218,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
     },
     mounted () {
       this.csrf = document.querySelector('#spp_security').value
+      this.getConfig()
       this.initData()
       this.getList()
     },
@@ -229,6 +235,12 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
           success: function (result) {
             // console.log(result)
             that.userStatus = result.data.user_status
+            result.data.user.map(function (ele) {
+              that.search.campaignOwnerOptions.push({
+                value: ele.id,
+                label: ele.email
+              })
+            })
           }
         })
       },
@@ -310,7 +322,6 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
             // console.log(result)
             if (result.status === 1) {
               that.list = result.data
-              that.getConfig()
             } else {
               that.$message.error(result.info)
             }

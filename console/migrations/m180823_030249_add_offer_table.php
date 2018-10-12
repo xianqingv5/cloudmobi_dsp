@@ -28,7 +28,7 @@ class m180823_030249_add_offer_table extends Migration
             'price_way' => $this->smallInteger(4)->notNull()->defaultValue(0)->comment('付款方式:1:CPI 2:CPC 3:CPA 4:CPM'),
             'tracking_url' => $this->string(500)->notNull()->defaultValue('')->comment('offer跳转url'),
             'final_url' => $this->string(500)->notNull()->defaultValue('')->comment('offer最终的页面'),
-            'category_id' => $this->integer()->notNull()->defaultValue(0)->comment('offer所属分类id'),
+            'category_id' => $this->string(500)->notNull()->defaultValue('')->comment('offer所属分类id'),
             'daily_cap' => $this->integer(11)->notNull()->defaultValue(-1)->comment('每日上限:-1:无上限'),
             'total_cap' => $this->integer(11)->notNull()->defaultValue(-1)->comment('总上限:-1:无上限'),
             'platform' => $this->smallInteger(4)->notNull()->defaultValue(0)->comment('offer投放平台, 1:ANDROID、2:IOS'),

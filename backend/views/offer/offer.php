@@ -1590,21 +1590,25 @@
         var that = this
         this.spiderFlag = false
         // that.submitAjax()
-        this.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          that.$refs[formName].validate(function (valid) {
-            if (valid) {
-              console.log('submit!')
-              that.submitAjax()
+        that.$refs[formName].validate(function (valid) {
+          if (valid) {
+            console.log('submit!')
+            if (that.groupID === '3') {
+              this.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                that.submitAjax()
+              }).catch(() => {})
             } else {
-              console.log('error submit!!')
-              return false
+              that.submitAjax()
             }
-          })
-        }).catch(() => {})
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
       },
       // 重置表单
       resetForm(formName) {

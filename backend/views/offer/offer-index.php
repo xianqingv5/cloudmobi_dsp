@@ -323,6 +323,7 @@ var power = JSON.parse('<?= $this->params['view_group'] ?>')
             if (result.status === 1) {
               that.list = result.data
             } else {
+              that.list.splice(0)
               that.$message.error(result.info)
             }
           }

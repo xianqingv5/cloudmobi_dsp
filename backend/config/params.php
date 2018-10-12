@@ -19,7 +19,7 @@ return [
     // 区分不同的组的home_url
     'HOME_URL_BY_ROLE'      => [
         '1' => 'user/user-index',
-        '2' => 'user/user-index',
+        '2' => 'offer/offer-index',
         '3' => 'offer/offer-index',
         '4' => '',
     ],

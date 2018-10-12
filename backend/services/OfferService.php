@@ -13,6 +13,8 @@ class OfferService extends BaseService
 {
     public static $res = ['status'=>0, 'info'=>'', 'data'=>[]];
 
+    CONST PAGE_SIZE = 50;// 每页条数
+
     /**
      * offer 列表数据获取
      * @return array
@@ -20,14 +22,26 @@ class OfferService extends BaseService
     public static function getOfferList()
     {
         $where = self::getWhere();
-        $res = DemandOffers::getData(['id', 'channel', 'campaign_owner', 'offer_id', 'title', 'payout', 'delivery_price', 'status', 'platform'], $where);
+        $fields = ['id', 'channel', 'campaign_owner', 'offer_id', 'title', 'payout', 'delivery_price', 'status', 'platform'];
+        // 查询总条数
+        $res_count = DemandOffers::getData(['count(*) as num'], $where);
+
+        // 分页
+        $page = Yii::$app->request->post('page', 1);
+        $page_size = Yii::$app->request->post('page_size', self::PAGE_SIZE);
+        $page2 = ($page > 0) ? $page - 1 : 0;
+        $limit =  $page2 . "," . $page_size;
+
+        $res = DemandOffers::getData($fields, $where, '', 'update_date desc,status desc', $limit);
         if ($res) {
             foreach ($res as $k=>$v) {
-                // $res[$k]['show_offer_id'] =  $v['channel'] . '_' . Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
                 $res[$k]['show_offer_id'] =  Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
             }
             self::$res['status'] = 1;
             self::$res['data'] = $res;
+            self::$res['page']['count'] = $res_count[0]['num'];// 总条数
+            self::$res['page']['page_size'] = $page_size;// 每页条数
+            self::$res['page']['page'] = $page;// 当前页
         } else {
             self::$res['info'] = 'No Data';
         }

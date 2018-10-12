@@ -22,7 +22,7 @@ class UserService extends BaseService
                 break;
             case 2:// admin
                 $where['group_id'] = "group_id in(3)";
-                $where['status'] = "status = 1";
+                //$where['status'] = "status = 1";
                 break;
             case 3:// 广告代理商
                 $uid = Yii::$app->user->identity->id;
@@ -33,7 +33,7 @@ class UserService extends BaseService
                 } else {
                     $where['user_id'] = "id = 0";
                 }
-                $where['status'] = "status = 1";
+                //$where['status'] = "status = 1";
                 break;
             default :
                 $where['user_id'] = "id = 0";

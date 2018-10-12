@@ -122,6 +122,7 @@
             <el-form-item label="Tracking Link" prop="trackingUrl" 
               :rules="[
                 {
+                  required: true,
                   validator: validatorUrl,
                   trigger: ['blur', 'change']
                 }
@@ -137,7 +138,7 @@
             <template v-for='(obj, i) in ruleForm.impressionUrl'>
                 <el-form-item :label='"Impression Link (" + (i + 1) + ")"' :prop="'impressionUrl.' + i + '.value'"
                 :rules="[
-                  {required: true, validator: validatorUrl, trigger: ['blur', 'change']}
+                  { required: false, validator: validatorUrl, trigger: ['blur', 'change'] }
                 ]"
                 >
                   <div>
@@ -939,10 +940,14 @@
     },
     methods: {
       validatorUrl (rule, value, callback) {
-        if (value.match(spaceReg) !== null) {
-          callback(new Error(ruleLanguagePackage.notSpace))
-        } else if (!regHref.test(value)) {
-          callback(new Error(ruleLanguagePackage.notWWW))
+        if (rule.required) {
+          if (value.match(spaceReg) !== null) {
+            callback(new Error(ruleLanguagePackage.notSpace))
+          } else if (!regHref.test(value)) {
+            callback(new Error(ruleLanguagePackage.notWWW))
+          } else {
+            callback()
+          }
         } else {
           callback()
         }

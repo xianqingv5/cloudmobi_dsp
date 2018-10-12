@@ -136,7 +136,7 @@
               </div>
             </el-form-item>
             <template v-for='(obj, i) in ruleForm.impressionUrl'>
-                <el-form-item :label='"Impression Link (" + (i + 1) + ")"' :prop="'impressionUrl.' + i + '.value'"
+                <el-form-item :label='"Impression Link"' :prop="'impressionUrl.' + i + '.value'"
                 :rules="[
                   { required: false, validator: validatorUrl, trigger: ['blur', 'change'] }
                 ]"

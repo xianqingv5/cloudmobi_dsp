@@ -31,7 +31,7 @@
               <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one' :disabled='groupID === agentGroupID || pageType === "update" || judePowerOperate'
+              <el-select class='form-one' :disabled='groupID == agentGroupID || pageType === "update" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -917,21 +917,18 @@
         deep: false
       })
       // initData
-      // this.initData()
+      this.initData()
       // 就是这么嚣张
-      const fn = async _ => {
-        try {
-          await this.initData()
-          await this.initDate()
-          await this.getUpdateInfo()
-          await this.setCampaignOwner()
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      fn().then( _ => {
-        console.log('init success')
-      })
+      // const fn = async _ => {
+      //   try {
+      //     await this.initData()
+      //   } catch (error) {
+      //     console.log(error)
+      //   }
+      // }
+      // fn().then( _ => {
+      //   console.log('init success')
+      // })
       // 默认全选
       this.addAllDeliveryWeek()
       this.addAllDeliveryHour()
@@ -940,7 +937,8 @@
     },
     methods: {
       setCampaignOwner () {
-        if (this.groupID === this.agentGroupID) {
+        console.log('setCampaignOwner')
+        if (this.groupID == this.agentGroupID) {
           this.ruleForm.campaignOwner = this.requestUid
         }
       },
@@ -1015,6 +1013,7 @@
             data: ajaxData,
             type: 'post',
             success: function (result) {
+              console.log('getUpdateInfo')
               // console.log(result)
               that.offerStatus = result.data.status
               that.showOfferID = result.data.show_offer_id
@@ -1087,8 +1086,10 @@
               if (videoList) {
                 that.ruleForm.videoList = videoList
               }
-              // 
+              // 判断国家select是否显示
               that.showCountryFun()
+              // 代理商时设置campaignOwner
+              that.setCampaignOwner()
             }
           })
         }
@@ -1173,6 +1174,7 @@
       },
       // 初始化日期
       initDate () {
+        console.log('initDate')
         var start = moment().add(-2, 'day').format('YYYY-MM-DD')
         var end = moment().add(14, 'day').format('YYYY-MM-DD')
         this.ruleForm.deliveryDate = [start, end]
@@ -1188,6 +1190,7 @@
           type: 'post',
           data: ajaxData,
           success: function (result) {
+            console.log('initData')
             // console.log(result)
             // 代理商的groupid
             that.agentGroupID = result.data.group.id
@@ -1242,10 +1245,10 @@
             that.options.minOSversionBase = result.data.version
             // category
             that.options.categoryBase = result.data.category
-            // // initDate
-            // that.initDate()
-            // // 获取edit信息
-            // that.getUpdateInfo()
+            // initDate
+            that.initDate()
+            // 获取edit信息
+            that.getUpdateInfo()
           }
         })
       },

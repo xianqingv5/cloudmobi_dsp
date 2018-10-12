@@ -529,6 +529,9 @@ class OfferService extends BaseService
 
         // 获取用户状态
         self::$res['data']['user_status'] = UserService::getUserStatus();
+
+        // group id
+        self::$res['data']['group']['id'] = self::isAdvertiserAgent() ? Yii::$app->user->identity->group_id : -1;
         return self::$res;
     }
 }

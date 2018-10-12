@@ -31,7 +31,7 @@
               <div class='form-one' v-text='showOfferID'></div>
             </el-form-item>
             <el-form-item label="Campaign Owner" prop="campaignOwner">
-              <el-select class='form-one' :disabled='pageType === "update" || judePowerOperate'
+              <el-select class='form-one' :disabled='groupID === agentGroupID || pageType === "update" || judePowerOperate'
                 v-model="ruleForm.campaignOwner" clearable placeholder="">
                 <el-option
                   v-for="item in options.campaignOwner"
@@ -1601,17 +1601,7 @@
         that.$refs[formName].validate(function (valid) {
           if (valid) {
             console.log('submit!')
-            if (that.agentGroupID !== -1) {
-              that.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', 'Warning', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'warning'
-              }).then(() => {
-                that.submitAjax()
-              }).catch(() => {})
-            } else {
-              that.submitAjax()
-            }
+            that.submitAjax()
           } else {
             console.log('error submit!!')
             return false
@@ -1693,21 +1683,35 @@
           })
         }
         if (that.pageType === 'update') {
-          $.ajax({
-            url: '/offer/offer-update',
-            type: 'post',
-            data: ajaxData,
-            success: function (result) {
-              if (result.status === 1) {
-                window.location.href = '/offer/offer-index'
-              } else {
-                that.$message.error(result.info)
+          var her = this
+          this.sumbitAjaxFun = function () {
+            $.ajax({
+              url: '/offer/offer-update',
+              type: 'post',
+              data: ajaxData,
+              success: function (result) {
+                if (result.status === 1) {
+                  window.location.href = '/offer/offer-index'
+                } else {
+                  that.$message.error(result.info)
+                }
+              },
+              error: function (result) {
+                // console.log(result)
               }
-            },
-            error: function (result) {
-              // console.log(result)
-            }
-          })
+            })
+          }
+          if (that.agentGroupID !== -1) {
+            that.$confirm('The revised campaign will re-enter the review process, please confirm whether to save the changes.', 'Warning', {
+              confirmButtonText: 'Confirm',
+              cancelButtonText: 'Cancel',
+              type: 'warning'
+            }).then(() => {
+              her.sumbitAjaxFun()
+            }).catch(() => {})
+          } else {
+            this.sumbitAjaxFun()
+          }
         }
       }
     },

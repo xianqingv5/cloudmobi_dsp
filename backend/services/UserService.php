@@ -295,7 +295,7 @@ class UserService extends BaseService
         // 判断密码格式
         $reg = '/^[0-9a-zA-Z-_.@]{8,}$/';
         if (!preg_match($reg, $new_pwd)) {
-            self::$res['info'] = 'Incorrect password format.';
+            self::$res['info'] = 'The password must not contain symbols other than "@", "." or "_".';
             return false;
         }
 

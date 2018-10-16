@@ -58,6 +58,10 @@ class OfferReportingServices
         return $content;
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
     public static function insertData($data){
         if (empty($data) || !is_array($data)) return false;
 
@@ -90,10 +94,14 @@ class OfferReportingServices
         }
     }
 
+    /**
+     * 获取offer id
+     * @param $offer_id
+     * @param $user_id
+     * @return array|bool
+     */
     public static function getOfferId($offer_id,$user_id){
         $fields = ['id','channel','campaign_owner', 'offer_id'];
-
-        $offer_str = Yii::$app->params['OFFER_ID_STRING'];
         $where = [];
         if($offer_id){
             $where[] = "id = '". $offer_id . "'";
@@ -106,8 +114,8 @@ class OfferReportingServices
         $offer = DemandOffers::getData($fields,$where);
         if($offer){
             $data = [];
+            // 组装数据
             foreach ($offer as $k => $v) {
-                // $data[$k]['offer_id'] = $v['channel'] . '_' . $offer_str . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
                 $data[$k]['offer_id'] = $v['channel'] . '_' . $v['offer_id'];
                 $data[$k]['campaign_owner'] = $v['campaign_owner'];
             }
@@ -117,6 +125,12 @@ class OfferReportingServices
         }
     }
 
+    /**
+     * 获取时间天数,分割时间
+     * @param $st
+     * @param $et
+     * @return array
+     */
     public static function getDateFromRange($st, $et){
 
         $stimestamp = strtotime($st);

@@ -8,6 +8,7 @@ use common\models\Advertiser;
 use common\models\DemandOffers;
 use common\models\DemandOffersCreatives;
 use common\models\DemandOffersDeliveryCountry;
+use yii\log\Logger;
 
 class OfferService extends BaseService
 {
@@ -180,6 +181,7 @@ class OfferService extends BaseService
             if ($demand_offer_id && $offer_file && $offer_country) {
                 self::$res['status'] = 1;
                 self::$res['info'] = 'success';
+                self::offerLogs('add', ['id'=>$demand_offer_id]); // 写入日志
                 $transaction->commit();
             }
         } catch (\Exception $e) {
@@ -216,6 +218,7 @@ class OfferService extends BaseService
             if ($demand_offer && $del_offer_file && $add_offer_file && $del_offer_country && $add_offer_country) {
                 self::$res['status'] = 1;
                 self::$res['info'] = 'success';
+                self::offerLogs('update', ['id'=> $offer_id]);// 写入日志
                 $transaction->commit();
             }
 
@@ -249,6 +252,7 @@ class OfferService extends BaseService
         $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
         $data['create_date'] = date('Y-m-d H:i:s');
         $offer_id = DemandOffers::addData($data);
+
         return $offer_id;
     }
 
@@ -256,8 +260,10 @@ class OfferService extends BaseService
     {
         $status = Yii::$app->request->post('status', 1);
         $data = self::getPostInfo();
+
         $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? $status : 3;
-        $res = DemandOffers::updateData($data, ['id' => $offer_id]);
+        $res = DemandOffers::updateData($data, ['id' => $offer_id],false);
+
         return $res;
 
     }
@@ -463,6 +469,8 @@ class OfferService extends BaseService
         $status = Yii::$app->request->post('status', 1);
         $res = DemandOffers::updateData(['status' => $status], ['id' => $offer_id]);
         if ($res) {
+            // 写入日志
+            self::offerLogs('change-status', ['id' => $offer_id,'status'=>$status]);
             self::$res['status'] = 1;
             self::$res['info'] = 'success';
         } else {
@@ -515,6 +523,27 @@ class OfferService extends BaseService
     {
         $res = DemandOffers::getData(['count(*) as num'], ['campaign_owner='.$uid]);
         return $res[0]['num'];
+    }
+
+    public static function offerLogs($type='add', $data = [])
+    {
+        $status = [1=>'open', 2=>'close'];
+        $email = Yii::$app->user->identity->email;// 操作者
+        $message = '';
+        $res = DemandOffers::getData(['*'], ['id='. $data['id']]);
+        if ($type === 'add') {
+            // offer 创建
+            $message = $email . '--创建offer:' . $res[0]['channel'] . '_' . $res[0]['offer_id'] . ';单价为:$' . $res[0]['payout'];
+        } else if ($type === 'change-status') {
+            // offer 状态改变
+            $message = $email . '--修改offer:' . $res[0]['channel'] . '_' . $res[0]['offer_id'] . ';状态改变为' . $status[$data['status']];
+        } else if ($type === 'update') {
+            // offer 修改
+            $message = $email . '--修改offer:' . $res[0]['channel'] . '_' . $res[0]['offer_id'] . ';单价为:$' . $res[0]['payout'];
+        }
+
+        Yii::getLogger()->log($message, Logger::LEVEL_INFO, 'offer');
+
     }
 
     /**

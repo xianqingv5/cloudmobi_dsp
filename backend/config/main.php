@@ -38,6 +38,13 @@ return [
                 ],
                 [
                     'class' => 'yii\log\FileTarget',
+                    'categories' => ['offer'],
+                    'levels' => ['info'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/offer/' . date('Ym') . '.log',// offer 操作日志
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
                     'levels' => ['info'],
                     'categories' => ['dsp'],
                     'logFile' => '@runtime/logs/dsp/' . date('Ymd') . '.log',// 操作日志目录

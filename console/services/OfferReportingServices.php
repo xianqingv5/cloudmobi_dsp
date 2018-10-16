@@ -108,7 +108,7 @@ class OfferReportingServices
             $data = [];
             foreach ($offer as $k => $v) {
                 // $data[$k]['offer_id'] = $v['channel'] . '_' . $offer_str . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
-                $data[$k]['offer_id'] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
+                $data[$k]['offer_id'] = $v['channel'] . '_' . $v['offer_id'];
                 $data[$k]['campaign_owner'] = $v['campaign_owner'];
             }
             return $data;

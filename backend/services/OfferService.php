@@ -556,7 +556,7 @@ class OfferService extends BaseService
         self::$res['data']['user'] = User::getData(['id', 'email', 'status'], ['group_id = 3']);
 
         // 获取第三方检测平台
-        self::$res['data']['tpm'] = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['1=1']);
+        self::$res['data']['tpm'] = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['id!=6']);// 先去掉unknown,以后打开
 
         // 获取广告主信息
         self::$res['data']['ads'] = Advertiser::getData(['*'], ['id>0']);

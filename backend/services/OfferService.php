@@ -248,7 +248,7 @@ class OfferService extends BaseService
         } while($num);
         $data['offer_id'] = $offer_id;
 
-        $data['channel'] = Yii::$app->params['THIRD_PARTY'][$data['channel']] . self::getUserShortName($data['campaign_owner']);
+        $data['channel'] = $data['channel'] . self::getUserShortName($data['campaign_owner']);
         $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
         $data['create_date'] = date('Y-m-d H:i:s');
         $offer_id = DemandOffers::addData($data);
@@ -556,7 +556,7 @@ class OfferService extends BaseService
         self::$res['data']['user'] = User::getData(['id', 'email', 'status'], ['group_id = 3']);
 
         // 获取第三方检测平台
-        self::$res['data']['tpm'] = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['1=1']);
+        self::$res['data']['tpm'] = ThirdPartyMonitoring::getData(['id', 'tpm', 'channel'], ['id!=6']);// 先去掉unknown,以后打开
 
         // 获取广告主信息
         self::$res['data']['ads'] = Advertiser::getData(['*'], ['id>0']);

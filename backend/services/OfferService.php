@@ -248,7 +248,7 @@ class OfferService extends BaseService
         } while($num);
         $data['offer_id'] = $offer_id;
 
-        $data['channel'] = Yii::$app->params['THIRD_PARTY'][$data['channel']] . self::getUserShortName($data['campaign_owner']);
+        $data['channel'] = $data['channel'] . self::getUserShortName($data['campaign_owner']);
         $data['status'] = (self::isSuperAdmin() || self::isAdmin()) ? 1 : 3; // 如果是管理员创建状态为开启,否则状态为未审核
         $data['create_date'] = date('Y-m-d H:i:s');
         $offer_id = DemandOffers::addData($data);

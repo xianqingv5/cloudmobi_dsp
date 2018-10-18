@@ -75,15 +75,12 @@ class DemandOfferService extends BaseService
 
             // 查询offer 类别
             //$category_ids = $v['category_id'];
-
-            // $res[$k]['id'] = Yii::$app->params['OFFER_ID_STRING'] . str_pad( $v['id'], 3, 0, STR_PAD_LEFT );
             $res[$k]['id'] = $v['offer_id'];
             $res[$k]['channel'] = $v['channel'];
             $res[$k]['title'] = $v['title'];
             $res[$k]['pkg'] = $v['pkg_name'];
             $res[$k]['desc'] = $v['desc'];
             $res[$k]['open_type'] = (int)$v['open_type'];
-            //$res[$k]['payout'] = (float)$v['payout'];
             $res[$k]['payout'] = (float)$v['delivery_price'];// 投放单价
             $res[$k]['tracking_url'] = $v['tracking_url'];
             $res[$k]['final_url'] = $v['final_url'];

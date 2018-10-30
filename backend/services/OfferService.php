@@ -467,6 +467,11 @@ class OfferService extends BaseService
     {
         $offer_id = Yii::$app->request->post('offer_id', 0);
         $status = Yii::$app->request->post('status', 1);
+        // 广告代理商开启offer,offer将会被重置成review
+        if (self::isAdvertiserAgent() && $status == 1) {
+            $status = 3;
+        }
+
         $res = DemandOffers::updateData(['status' => $status], ['id' => $offer_id]);
         if ($res) {
             // 写入日志

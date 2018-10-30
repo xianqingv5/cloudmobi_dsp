@@ -118,7 +118,7 @@ return [
             // 查看
             'offer_see' => ['show' => false,'operate' => false],
             // 状态
-            'offer_status' => ['show' => true,'operate' => false],
+            'offer_status' => ['show' => true,'operate' => true],
             // offer 审核
             'offer_sh' => ['show' => true,'operate' => false],
 

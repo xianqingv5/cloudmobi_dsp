@@ -221,7 +221,7 @@ class OfferReportService extends BaseService
                 // offer id 组装
                 self::$res['status'] = 1;
                 foreach ($result as $k=>$v) {
-                    self::$res['data']['campaigns'][$k]['name'] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
+                    self::$res['data']['campaigns'][$k]['name'] = $v['channel'] . '_' . $v['offer_id'];
                     self::$res['data']['campaigns'][$k]['id'] = $v['id'];
                 }
             }

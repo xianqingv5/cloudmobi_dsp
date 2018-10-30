@@ -184,7 +184,7 @@ class OfferReportService extends BaseService
             $ofids = [];
             if ($off_ids) {
                 foreach ($off_ids as $v) {
-                    $ofids[] = Yii::$app->params['THIRD_PARTY'][$v['channel']] . $v['offer_id'];
+                    $ofids[] = $v['channel'] . '_' . $v['offer_id'];
                 }
             }
             $where['offer_id'] = "offer_id in('" . ( !empty($ofids) ? implode("','", $ofids) : '0' ) ."')";

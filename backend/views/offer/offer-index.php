@@ -382,8 +382,10 @@ console.log(power)
               })
             } else {
               that.$message.error(result.info)
-              window.location.reload()
             }
+            setTimeout(() => {
+              window.location.reload()
+            }, 200);
           }
         })
       }
